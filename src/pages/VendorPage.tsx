@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import Drawer from "../components/Drawer";
 
-import CreateProduct from "../components/dialogs/CreateProduct";
+import CreateVendor from "../components/dialogs/CreateVendor";
 import { MoreVert, Settings } from "@mui/icons-material";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
@@ -40,7 +40,7 @@ export default function VendorPage() {
             sx={{ width: "400px" }}
           />
           {/* BUTTON */}
-          <CreateProduct />
+          <CreateVendor />
         </Stack>
 
         <TableContainer

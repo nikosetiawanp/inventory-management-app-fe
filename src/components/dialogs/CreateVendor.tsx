@@ -9,7 +9,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Product } from "../../interfaces/interfaces";
+import { Vendor } from "../../interfaces/interfaces";
 
 export default function CreateProduct() {
   const units = ["pcs", "kg"];
@@ -20,9 +20,9 @@ export default function CreateProduct() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<Product>();
+  } = useForm<Vendor>();
 
-  const onSubmit: SubmitHandler<Product> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Vendor> = (data) => console.log(data);
 
   return (
     <>
@@ -31,7 +31,7 @@ export default function CreateProduct() {
         variant="contained"
         onClick={() => setOpen(true)}
       >
-        Tambah Produk
+        Tambah Vendor
       </Button>
 
       <Dialog
@@ -43,7 +43,7 @@ export default function CreateProduct() {
         {/* <DialogTitle fontWeight={"bold"}>Tambah Produk</DialogTitle> */}
         <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
           <Stack gap={3} padding={4}>
-            <Typography variant="h6">Tambah Produk</Typography>
+            <Typography variant="h6">Tambah Vendor</Typography>
 
             <TextField
               id="kode"
@@ -63,24 +63,41 @@ export default function CreateProduct() {
               helperText={errors.name?.message}
               required
             />
-
-            {/* SELECT */}
             <TextField
-              id="unit"
-              value={watch("unit", "pcs")}
-              label="Unit"
-              select
-              {...register("unit", { required: "Tidak boleh kosong" })}
-              error={!!errors.unit}
-              helperText={errors.unit?.message}
+              id="address"
+              label="Alamat"
+              variant="outlined"
+              {...register("address", { required: "Tidak boleh kosong" })}
+              error={!!errors.address}
+              helperText={errors.address?.message}
               required
-            >
-              {units.map((unit: string, index) => (
-                <MenuItem key={index} value={unit}>
-                  {unit}
-                </MenuItem>
-              ))}
-            </TextField>
+            />
+            <TextField
+              id="phone"
+              label="Nomor telepon"
+              variant="outlined"
+              {...register("phone", { required: "Tidak boleh kosong" })}
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
+              required
+            />
+
+            <TextField
+              id="email"
+              label="Email"
+              variant="outlined"
+              {...register("email", {
+                required: "Tidak boleh kosong",
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: "Masukkan format email yang benar",
+                },
+              })}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+              required
+            />
+
             <Stack
               direction={"row"}
               width={1}
