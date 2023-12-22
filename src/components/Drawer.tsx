@@ -8,15 +8,16 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import StorefrontIcon from "@mui/icons-material/Storefront";
 import AddIcon from "@mui/icons-material/Add";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 export default function Drawer() {
   //   const params = new URLSearchParams(window.location.pathname);
@@ -25,8 +26,18 @@ export default function Drawer() {
   const navigate = useNavigate();
 
   const links = [
-    { name: "Vendor", param: "/vendor", category: "Daftar" },
-    { name: "Produk", param: "/product", category: "Daftar" },
+    {
+      name: "Vendor",
+      param: "/vendor",
+      category: "Daftar",
+      icon: <StorefrontIcon />,
+    },
+    {
+      name: "Produk",
+      param: "/product",
+      category: "Daftar",
+      icon: <InventoryIcon />,
+    },
     {
       name: "Purchase Requisition",
       param: "/purchaserequisition",
@@ -51,9 +62,10 @@ export default function Drawer() {
         <List>
           {/* LOGO */}
           <ListItem>
-            <Typography variant="h5">Logo</Typography>
+            <Skeleton variant="rounded" width={"100%"} height={50} />
+            {/* <Typography variant="h5">Logo</Typography> */}
           </ListItem>
-          <Divider />
+          <Divider sx={{ marginY: 1 }} />
           {/* BUTTON */}
           <ListItem>
             <Button startIcon={<AddIcon />} variant="contained" size="large">
@@ -68,11 +80,9 @@ export default function Drawer() {
                   {item.category}
                 </ListSubheader>
               )}
-              <ListItem dense key={index}>
+              <ListItem key={index} disablePadding>
                 <ListItemButton onClick={() => navigate(item.param)}>
-                  <ListItemIcon>
-                    <StorefrontIcon />
-                  </ListItemIcon>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.name}></ListItemText>
                 </ListItemButton>
               </ListItem>

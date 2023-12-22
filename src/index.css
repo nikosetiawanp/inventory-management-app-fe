@@ -70,3 +70,7 @@ button:focus-visible {
 * {
   margin: 0;
 }
+
+table {
+  border-collapse: separate;
+}
