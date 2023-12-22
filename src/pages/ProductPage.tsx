@@ -60,7 +60,7 @@ export default function ProductPage() {
             >
               <TableRow>
                 <TableCell width={80}>Kode</TableCell>
-                <TableCell>Nama</TableCell>
+                <TableCell width={200}>Nama</TableCell>
                 <TableCell width={80}>Unit</TableCell>
                 <TableCell width={10}>
                   <IconButton>

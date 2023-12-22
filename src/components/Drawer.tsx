@@ -20,8 +20,9 @@ import StorefrontIcon from "@mui/icons-material/Storefront";
 import InventoryIcon from "@mui/icons-material/Inventory";
 
 export default function Drawer() {
-  //   const params = new URLSearchParams(window.location.pathname);
-  //   const { params } = useParams();
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const param = urlParams.get('');
+  const endpoint = window.location.pathname;
 
   const navigate = useNavigate();
 
@@ -63,7 +64,6 @@ export default function Drawer() {
           {/* LOGO */}
           <ListItem>
             <Skeleton variant="rounded" width={"100%"} height={50} />
-            {/* <Typography variant="h5">Logo</Typography> */}
           </ListItem>
           <Divider sx={{ marginY: 1 }} />
           {/* BUTTON */}
@@ -81,7 +81,10 @@ export default function Drawer() {
                 </ListSubheader>
               )}
               <ListItem key={index} disablePadding>
-                <ListItemButton onClick={() => navigate(item.param)}>
+                <ListItemButton
+                  onClick={() => navigate(item.param)}
+                  selected={endpoint == item.param}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.name}></ListItemText>
                 </ListItemButton>
