@@ -51,7 +51,7 @@ export default function Drawer() {
         <List>
           {/* LOGO */}
           <ListItem>
-            <Typography variant="h5">{}</Typography>
+            <Typography variant="h5">Logo</Typography>
           </ListItem>
           <Divider />
           {/* BUTTON */}
@@ -64,7 +64,9 @@ export default function Drawer() {
           {links.map((item, index) => (
             <>
               {links[index]?.category !== links[index - 1]?.category && (
-                <ListSubheader key={index}>{item.category}</ListSubheader>
+                <ListSubheader key={item.category}>
+                  {item.category}
+                </ListSubheader>
               )}
               <ListItem dense key={index}>
                 <ListItemButton onClick={() => navigate(item.param)}>
