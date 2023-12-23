@@ -9,6 +9,13 @@ const theme = createTheme({
   palette: {
     mode: "light",
   },
+  components: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: true,
+      },
+    },
+  },
 });
 
 function App() {

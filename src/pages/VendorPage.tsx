@@ -1,6 +1,4 @@
 import {
-  Button,
-  Divider,
   IconButton,
   Stack,
   Table,
@@ -9,14 +7,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TableSortLabel,
   TextField,
   Typography,
 } from "@mui/material";
 import Drawer from "../components/Drawer";
 
 import CreateVendor from "../components/buttons/CreateVendorButton";
-import { ArrowDownward, MoreVert, Settings } from "@mui/icons-material";
+import { MoreVert, Settings } from "@mui/icons-material";
+import MoreVertVendorButton from "../components/buttons/MoreVertVendorButton";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
@@ -83,9 +81,10 @@ export default function VendorPage() {
                   <TableCell>024 704234001</TableCell>
                   <TableCell>aksaracerah@gmail.com</TableCell>
                   <TableCell>
-                    <IconButton size="small">
+                    <MoreVertVendorButton />
+                    {/* <IconButton size="small">
                       <MoreVert fontSize="small" />
-                    </IconButton>
+                    </IconButton> */}
                   </TableCell>
                 </TableRow>
               ))}

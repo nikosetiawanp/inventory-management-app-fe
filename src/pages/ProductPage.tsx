@@ -14,6 +14,7 @@ import Drawer from "../components/Drawer";
 
 import CreateProduct from "../components/buttons/CreateProductButton";
 import { MoreVert, Settings } from "@mui/icons-material";
+import MoreVertProductButton from "../components/buttons/MoreVertProductButton";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
@@ -76,9 +77,7 @@ export default function ProductPage() {
                   <TableCell>Sendok Korea</TableCell>
                   <TableCell>pcs</TableCell>
                   <TableCell>
-                    <IconButton size="small">
-                      <MoreVert fontSize="small" />
-                    </IconButton>
+                    <MoreVertProductButton />
                   </TableCell>
                 </TableRow>
               ))}
