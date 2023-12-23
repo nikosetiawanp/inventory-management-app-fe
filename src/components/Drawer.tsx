@@ -12,12 +12,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import AddIcon from "@mui/icons-material/Add";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import InventoryIcon from "@mui/icons-material/Inventory";
+
+import CreateGlobalButton from "./buttons/CreateGlobalButton";
 
 export default function Drawer() {
   // const urlParams = new URLSearchParams(window.location.search);
@@ -68,9 +68,10 @@ export default function Drawer() {
           <Divider sx={{ marginY: 1 }} />
           {/* BUTTON */}
           <ListItem>
-            <Button startIcon={<AddIcon />} variant="contained" size="large">
+            <CreateGlobalButton />
+            {/* <Button startIcon={<AddIcon />} variant="contained" size="large">
               Tambah
-            </Button>
+            </Button> */}
           </ListItem>
 
           {links.map((item, index) => (

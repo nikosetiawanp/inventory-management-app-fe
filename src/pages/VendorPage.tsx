@@ -9,13 +9,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   TextField,
   Typography,
 } from "@mui/material";
 import Drawer from "../components/Drawer";
 
-import CreateVendor from "../components/dialogs/CreateVendor";
-import { MoreVert, Settings } from "@mui/icons-material";
+import CreateVendor from "../components/buttons/CreateVendorButton";
+import { ArrowDownward, MoreVert, Settings } from "@mui/icons-material";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
@@ -27,7 +28,7 @@ export default function VendorPage() {
       <Drawer />
 
       {/* CONTENT */}
-      <Stack padding={4} gap={2} width={1}>
+      <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
           Vendor
         </Typography>
@@ -46,7 +47,7 @@ export default function VendorPage() {
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table size="small" sx={{ borderCollapse: "separate" }}>
+          <Table size="medium" sx={{ borderCollapse: "separate" }}>
             {/* HEAD */}
             <TableHead
               sx={{
@@ -59,14 +60,14 @@ export default function VendorPage() {
               }}
             >
               <TableRow>
-                <TableCell>Kode</TableCell>
+                <TableCell>Kode </TableCell>
                 <TableCell>Nama</TableCell>
                 <TableCell>Alamat</TableCell>
                 <TableCell>Nomor Telepon</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell width={10}>
-                  <IconButton>
-                    <Settings />
+                  <IconButton size="small">
+                    <Settings fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -82,8 +83,8 @@ export default function VendorPage() {
                   <TableCell>024 704234001</TableCell>
                   <TableCell>aksaracerah@gmail.com</TableCell>
                   <TableCell>
-                    <IconButton>
-                      <MoreVert />
+                    <IconButton size="small">
+                      <MoreVert fontSize="small" />
                     </IconButton>
                   </TableCell>
                 </TableRow>

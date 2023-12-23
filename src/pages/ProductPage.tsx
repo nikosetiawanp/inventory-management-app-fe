@@ -1,6 +1,4 @@
 import {
-  Button,
-  Divider,
   IconButton,
   Stack,
   Table,
@@ -14,8 +12,8 @@ import {
 } from "@mui/material";
 import Drawer from "../components/Drawer";
 
-import CreateProduct from "../components/dialogs/CreateProduct";
-import { MoreHoriz, MoreVert, Settings } from "@mui/icons-material";
+import CreateProduct from "../components/buttons/CreateProductButton";
+import { MoreVert, Settings } from "@mui/icons-material";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
@@ -27,7 +25,7 @@ export default function ProductPage() {
       <Drawer />
 
       {/* CONTENT */}
-      <Stack padding={4} gap={2} width={1}>
+      <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
           Produk
         </Typography>
@@ -46,7 +44,7 @@ export default function ProductPage() {
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table size="small" sx={{ borderCollapse: "separate" }}>
+          <Table size="medium" sx={{ borderCollapse: "separate" }}>
             {/* HEAD */}
             <TableHead
               sx={{
@@ -60,11 +58,11 @@ export default function ProductPage() {
             >
               <TableRow>
                 <TableCell width={80}>Kode</TableCell>
-                <TableCell width={200}>Nama</TableCell>
-                <TableCell width={80}>Unit</TableCell>
+                <TableCell>Nama</TableCell>
+                <TableCell width={160}>Unit</TableCell>
                 <TableCell width={10}>
-                  <IconButton>
-                    <Settings />
+                  <IconButton size="small">
+                    <Settings fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -78,8 +76,8 @@ export default function ProductPage() {
                   <TableCell>Sendok Korea</TableCell>
                   <TableCell>pcs</TableCell>
                   <TableCell>
-                    <IconButton>
-                      <MoreVert />
+                    <IconButton size="small">
+                      <MoreVert fontSize="small" />
                     </IconButton>
                   </TableCell>
                 </TableRow>
