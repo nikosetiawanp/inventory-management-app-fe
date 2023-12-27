@@ -13,12 +13,27 @@ import {
 import Drawer from "../components/Drawer";
 
 import CreateProductButton from "../components/buttons/CreateProductButton";
-import { MoreVert, Settings } from "@mui/icons-material";
+import { Settings } from "@mui/icons-material";
 import MoreVertProductButton from "../components/buttons/MoreVertProductButton";
+import { useQuery } from "react-query";
+import { Product } from "../interfaces/interfaces";
+import RowSkeleton from "../components/skeletons/RowSkeleton";
+import axios from "axios";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 export default function ProductPage() {
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+
+  const getProducts = async () => {
+    const response = await axios.get(BACKEND_URL + "products/");
+    return response.data.data;
+  };
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["product"],
+    queryFn: () => getProducts(),
+  });
   return (
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -71,16 +86,20 @@ export default function ProductPage() {
 
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {rows.map((row, index) => (
-                <TableRow key={index} hover>
-                  <TableCell>SCT-02</TableCell>
-                  <TableCell>Sendok Korea</TableCell>
-                  <TableCell>pcs</TableCell>
-                  <TableCell>
-                    <MoreVertProductButton />
-                  </TableCell>
-                </TableRow>
-              ))}
+              {isLoading ? (
+                <RowSkeleton times={15} columns={4} />
+              ) : (
+                data.map((data: Product, index: number) => (
+                  <TableRow key={index} hover>
+                    <TableCell>{data.code}</TableCell>
+                    <TableCell>{data.name}</TableCell>
+                    <TableCell>{data.unit}</TableCell>
+                    <TableCell>
+                      <MoreVertProductButton />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>

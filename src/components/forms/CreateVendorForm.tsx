@@ -1,6 +1,15 @@
-import { Dialog, Stack, Typography, TextField, Button } from "@mui/material";
+import {
+  Dialog,
+  Stack,
+  Typography,
+  TextField,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Vendor } from "../../interfaces/interfaces";
+import axios from "axios";
+import { useMutation, useQueryClient } from "react-query";
 
 export default function CreateVendorForm(props: {
   open: boolean;
@@ -9,14 +18,39 @@ export default function CreateVendorForm(props: {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<Vendor>();
 
-  const onSubmit: SubmitHandler<Vendor> = (data, event) => {
+  // POST REQUEST
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const queryClient = useQueryClient();
+  const mutation = useMutation(
+    async (data: Vendor) => {
+      try {
+        const response = await axios.post(BACKEND_URL + "vendors/", data);
+        return response.data;
+      } catch (error) {
+        throw new Error("Network response was not ok");
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("vendor");
+      },
+    }
+  );
+
+  const { isLoading } = mutation;
+
+  const onSubmit: SubmitHandler<Vendor> = async (data, event) => {
     console.log(data);
+    try {
+      await mutation.mutateAsync(data);
+      props.setOpen(false);
+    } catch (error) {
+      console.log("Mutation Error:", error);
+    }
     event?.target.reset();
-    props.setOpen(false);
   };
 
   return (
@@ -93,8 +127,12 @@ export default function CreateVendorForm(props: {
             <Button onClick={() => props.setOpen(false)} type="button">
               Batal
             </Button>
-            <Button variant={"contained"} type="submit">
-              Simpan
+            <Button variant={"contained"} type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <CircularProgress color="inherit" size={15} />
+              ) : (
+                "Simpan"
+              )}
             </Button>
           </Stack>
         </Stack>

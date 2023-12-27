@@ -75,7 +75,7 @@ export default function Drawer() {
           </ListItem>
 
           {links.map((item, index) => (
-            <>
+            <div key={index}>
               {links[index]?.category !== links[index - 1]?.category && (
                 <ListSubheader key={item.category}>
                   {item.category}
@@ -90,7 +90,7 @@ export default function Drawer() {
                   <ListItemText primary={item.name}></ListItemText>
                 </ListItemButton>
               </ListItem>
-            </>
+            </div>
           ))}
 
           {/* PRODUK

@@ -6,12 +6,12 @@ export interface Product {
 }
 
 export interface Vendor {
-  id: string | any;
-  code: string | any;
-  name: string | any;
-  address: string | any;
-  phone: string | any;
-  email: string | any;
+  id: string;
+  code: string;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
 }
 
 export interface Purchase {

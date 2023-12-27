@@ -10,21 +10,35 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Drawer from "../components/Drawer";
 
-import CreateVendorButton from "../components/buttons/CreateVendorButton";
+import { useQuery } from "react-query";
 import { Settings } from "@mui/icons-material";
-import MoreVertVendorButton from "../components/buttons/MoreVertVendorButton";
+import { Vendor } from "../interfaces/interfaces";
 
-const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+import Drawer from "../components/Drawer";
+import CreateVendorButton from "../components/buttons/CreateVendorButton";
+import MoreVertVendorButton from "../components/buttons/MoreVertVendorButton";
+import RowSkeleton from "../components/skeletons/RowSkeleton";
+import axios from "axios";
 
 export default function VendorPage() {
+  // FETCHING DATA
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const getVendors = async () => {
+    const response = await axios.get(BACKEND_URL + "vendors/");
+    return response.data.data;
+  };
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["vendor"],
+    queryFn: () => getVendors(),
+  });
+
   return (
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
       {/* DRAWER */}
       <Drawer />
-
       {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
@@ -58,7 +72,7 @@ export default function VendorPage() {
               }}
             >
               <TableRow>
-                <TableCell>Kode </TableCell>
+                <TableCell>Kode</TableCell>
                 <TableCell>Nama</TableCell>
                 <TableCell>Alamat</TableCell>
                 <TableCell>Nomor Telepon</TableCell>
@@ -73,21 +87,22 @@ export default function VendorPage() {
 
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {rows.map((row, index) => (
-                <TableRow key={index} hover>
-                  <TableCell>AC-213</TableCell>
-                  <TableCell>PT Aksara Cerah</TableCell>
-                  <TableCell>Jl Pemuda Semarang Nomor 5</TableCell>
-                  <TableCell>024 704234001</TableCell>
-                  <TableCell>aksaracerah@gmail.com</TableCell>
-                  <TableCell>
-                    <MoreVertVendorButton />
-                    {/* <IconButton size="small">
-                      <MoreVert fontSize="small" />
-                    </IconButton> */}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {isLoading ? (
+                <RowSkeleton times={15} columns={6} />
+              ) : (
+                data?.map((data: Vendor) => (
+                  <TableRow key={data.id} hover>
+                    <TableCell>{data.code}</TableCell>
+                    <TableCell>{data.name}</TableCell>
+                    <TableCell>{data.address}</TableCell>
+                    <TableCell>{data.phone}</TableCell>
+                    <TableCell>{data.email}</TableCell>
+                    <TableCell>
+                      <MoreVertVendorButton />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>

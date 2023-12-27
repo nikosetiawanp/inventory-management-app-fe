@@ -5,15 +5,39 @@ import {
   TextField,
   MenuItem,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { Product } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
+import axios from "axios";
+import { useQueryClient, useMutation } from "react-query";
 
 export default function CreateProductForm(props: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const units = ["pcs", "kg"];
+
+  // POST
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const queryClient = useQueryClient();
+  const mutation = useMutation(
+    async (data: Product) => {
+      try {
+        const response = await axios.post(BACKEND_URL + "products/", data);
+        return response.data;
+      } catch (error) {
+        throw new Error("Network response was not ok");
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("product");
+      },
+    }
+  );
+
+  const { isLoading } = mutation;
 
   const {
     register,
@@ -22,8 +46,13 @@ export default function CreateProductForm(props: {
     formState: { errors },
   } = useForm<Product>();
 
-  const onSubmit: SubmitHandler<Product> = (data, event) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<Product> = async (data, event) => {
+    try {
+      await mutation.mutateAsync(data);
+      props.setOpen(false);
+    } catch (error) {
+      console.log("Mutation Error:", error);
+    }
     event?.target.reset();
     props.setOpen(false);
   };
@@ -85,7 +114,11 @@ export default function CreateProductForm(props: {
               Batal
             </Button>
             <Button variant={"contained"} type="submit">
-              Simpan
+              {isLoading ? (
+                <CircularProgress color="inherit" size={15} />
+              ) : (
+                "Simpan"
+              )}
             </Button>
           </Stack>
         </Stack>
