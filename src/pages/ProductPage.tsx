@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Drawer from "../components/Drawer";
 
-import CreateProduct from "../components/buttons/CreateProductButton";
+import CreateProductButton from "../components/buttons/CreateProductButton";
 import { MoreVert, Settings } from "@mui/icons-material";
 import MoreVertProductButton from "../components/buttons/MoreVertProductButton";
 
@@ -28,7 +28,7 @@ export default function ProductPage() {
       {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Produk
+          Daftar Produk
         </Typography>
         <Stack direction={"row"} justifyContent={"space-between"} width={1}>
           <TextField
@@ -39,7 +39,7 @@ export default function ProductPage() {
             sx={{ width: "400px" }}
           />
           {/* BUTTON */}
-          <CreateProduct />
+          <CreateProductButton />
         </Stack>
 
         <TableContainer

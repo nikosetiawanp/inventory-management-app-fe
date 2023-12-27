@@ -28,13 +28,13 @@ export default function Drawer() {
 
   const links = [
     {
-      name: "Vendor",
+      name: "Daftar Vendor",
       param: "/vendor",
       category: "Daftar",
       icon: <StorefrontIcon />,
     },
     {
-      name: "Produk",
+      name: "Daftar Produk",
       param: "/product",
       category: "Daftar",
       icon: <InventoryIcon />,

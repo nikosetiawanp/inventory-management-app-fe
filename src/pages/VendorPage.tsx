@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import Drawer from "../components/Drawer";
 
-import CreateVendor from "../components/buttons/CreateVendorButton";
-import { MoreVert, Settings } from "@mui/icons-material";
+import CreateVendorButton from "../components/buttons/CreateVendorButton";
+import { Settings } from "@mui/icons-material";
 import MoreVertVendorButton from "../components/buttons/MoreVertVendorButton";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
@@ -28,7 +28,7 @@ export default function VendorPage() {
       {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Vendor
+          Daftar Vendor
         </Typography>
         <Stack direction={"row"} justifyContent={"space-between"} width={1}>
           <TextField
@@ -39,7 +39,7 @@ export default function VendorPage() {
             sx={{ width: "400px" }}
           />
           {/* BUTTON */}
-          <CreateVendor />
+          <CreateVendorButton />
         </Stack>
 
         <TableContainer

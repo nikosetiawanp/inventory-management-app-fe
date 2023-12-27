@@ -1,6 +1,5 @@
-import { MoreVert } from "@mui/icons-material";
 import {
-  IconButton,
+  Button,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -10,8 +9,9 @@ import { useState } from "react";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-export default function MoreVertProductButton() {
+export default function MorePurchaseButton() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -26,15 +26,16 @@ export default function MoreVertProductButton() {
 
   return (
     <>
-      <IconButton
-        size="small"
+      <Button
+        variant="outlined"
+        endIcon={<ArrowDropDownIcon />}
         onClick={handleClick}
         aria-controls={open ? "demo-positioned-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
       >
-        <MoreVert fontSize="small" />
-      </IconButton>
+        Lainnya
+      </Button>
 
       <Menu
         id="demo-positioned-menu"
@@ -45,7 +46,7 @@ export default function MoreVertProductButton() {
           "aria-labelledby": "basic-button",
         }}
         anchorOrigin={{
-          vertical: "top",
+          vertical: "bottom",
           horizontal: "center",
         }}
         transformOrigin={{

@@ -22,7 +22,11 @@ export default function CreateProductForm(props: {
     formState: { errors },
   } = useForm<Product>();
 
-  const onSubmit: SubmitHandler<Product> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Product> = (data, event) => {
+    console.log(data);
+    event?.target.reset();
+    props.setOpen(false);
+  };
   return (
     <Dialog
       open={props.open}

@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import CreateVendorForm from "../dialogs/CreateVendorForm";
+import CreateVendorForm from "../forms/CreateVendorForm";
 
 export default function CreateProduct() {
   const [open, setOpen] = useState(false);

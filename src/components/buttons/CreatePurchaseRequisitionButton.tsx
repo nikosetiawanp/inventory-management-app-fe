@@ -1,23 +1,23 @@
 import { useState } from "react";
 import { Button } from "@mui/material";
-import CreateProductForm from "../forms/CreateProductForm";
+import CreatePurchaseRequisitionForm from "../forms/CreatePurchaseRequisitionForm";
 
 import AddIcon from "@mui/icons-material/Add";
 
-export default function CreateProduct() {
+export default function CreatePurchaseRequisitionButton() {
   const [open, setOpen] = useState(false);
-
   return (
     <>
       <Button
         startIcon={<AddIcon />}
         variant="contained"
         onClick={() => setOpen(true)}
+        sx={{ marginLeft: "auto" }}
       >
-        Tambah Produk
+        Buat Purchase Requisition
       </Button>
 
-      <CreateProductForm open={open} setOpen={setOpen} />
+      <CreatePurchaseRequisitionForm open={open} setOpen={setOpen} />
     </>
   );
 }

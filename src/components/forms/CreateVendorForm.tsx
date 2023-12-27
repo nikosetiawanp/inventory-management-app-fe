@@ -13,7 +13,11 @@ export default function CreateVendorForm(props: {
     formState: { errors },
   } = useForm<Vendor>();
 
-  const onSubmit: SubmitHandler<Vendor> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Vendor> = (data, event) => {
+    console.log(data);
+    event?.target.reset();
+    props.setOpen(false);
+  };
 
   return (
     <Dialog

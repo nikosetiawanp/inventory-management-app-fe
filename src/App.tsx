@@ -1,9 +1,10 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProductPage from "./pages/ProductPage";
-import PurchasePage from "./pages/PurchasePage";
-import VendorPage from "./pages/VendorPage";
 import { createTheme, ThemeProvider } from "@mui/material";
+
+import ProductPage from "./pages/ProductPage";
+import VendorPage from "./pages/VendorPage";
+import PurchaseRequisitionPage from "./pages/PurchaseRequisitionPage";
 
 const theme = createTheme({
   palette: {
@@ -13,6 +14,11 @@ const theme = createTheme({
     MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
+      },
+    },
+    MuiButton: {
+      defaultProps: {
+        disableElevation: true,
       },
     },
   },
@@ -27,7 +33,10 @@ function App() {
             <Route path="/" element={<App />} />
             <Route path="/vendor" element={<VendorPage />} />
             <Route path="/product" element={<ProductPage />} />
-            <Route path="/purchase" element={<PurchasePage />} />
+            <Route
+              path="/purchaserequisition"
+              element={<PurchaseRequisitionPage />}
+            />
           </Routes>
         </Router>
       </ThemeProvider>
