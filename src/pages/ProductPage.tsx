@@ -89,13 +89,13 @@ export default function ProductPage() {
               {isLoading ? (
                 <RowSkeleton times={15} columns={4} />
               ) : (
-                data.map((data: Product, index: number) => (
+                data.map((product: Product, index: number) => (
                   <TableRow key={index} hover>
-                    <TableCell>{data.code}</TableCell>
-                    <TableCell>{data.name}</TableCell>
-                    <TableCell>{data.unit}</TableCell>
+                    <TableCell>{product.code}</TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{product.unit}</TableCell>
                     <TableCell>
-                      <MoreVertProductButton />
+                      <MoreVertProductButton product={product} />
                     </TableCell>
                   </TableRow>
                 ))

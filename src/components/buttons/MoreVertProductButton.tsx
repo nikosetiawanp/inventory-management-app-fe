@@ -10,8 +10,10 @@ import { useState } from "react";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteProductButton from "./DeleteProductButton";
+import { Product } from "../../interfaces/interfaces";
 
-export default function MoreVertProductButton() {
+export default function MoreVertProductButton(props: { product: Product }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -59,12 +61,13 @@ export default function MoreVertProductButton() {
           </ListItemIcon>
           <ListItemText>Ubah</ListItemText>
         </MenuItem>
-        <MenuItem>
+        <DeleteProductButton product={props.product} />
+        {/* <MenuItem>
           <ListItemIcon>
             <DeleteIcon fontSize="small" color="error" />
           </ListItemIcon>
           <ListItemText sx={{ color: "error.main" }}>Hapus</ListItemText>
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
     </>
   );

@@ -6,7 +6,7 @@ export interface Product {
 }
 
 export interface Vendor {
-  id: string;
+  id: number;
   code: string;
   name: string;
   address: string;

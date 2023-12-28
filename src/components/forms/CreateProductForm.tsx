@@ -21,7 +21,7 @@ export default function CreateProductForm(props: {
   // POST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
-  const mutation = useMutation(
+  const createProduct = useMutation(
     async (data: Product) => {
       try {
         const response = await axios.post(BACKEND_URL + "products/", data);
@@ -37,7 +37,7 @@ export default function CreateProductForm(props: {
     }
   );
 
-  const { isLoading } = mutation;
+  const { isLoading } = createProduct;
 
   const {
     register,
@@ -48,7 +48,7 @@ export default function CreateProductForm(props: {
 
   const onSubmit: SubmitHandler<Product> = async (data, event) => {
     try {
-      await mutation.mutateAsync(data);
+      await createProduct.mutateAsync(data);
       props.setOpen(false);
     } catch (error) {
       console.log("Mutation Error:", error);

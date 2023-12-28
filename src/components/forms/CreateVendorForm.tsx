@@ -24,13 +24,16 @@ export default function CreateVendorForm(props: {
   // POST REQUEST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
-  const mutation = useMutation(
+  const createVendor = useMutation(
     async (data: Vendor) => {
       try {
         const response = await axios.post(BACKEND_URL + "vendors/", data);
         return response.data;
-      } catch (error) {
-        throw new Error("Network response was not ok");
+      } catch (error: any) {
+        console.log(error);
+
+        if (error?.code == "ERR_BAD_RESPONSE")
+          throw new Error("Network response was not ok");
       }
     },
     {
@@ -40,17 +43,16 @@ export default function CreateVendorForm(props: {
     }
   );
 
-  const { isLoading } = mutation;
+  const { isLoading } = createVendor;
 
   const onSubmit: SubmitHandler<Vendor> = async (data, event) => {
-    console.log(data);
     try {
-      await mutation.mutateAsync(data);
+      await createVendor.mutateAsync(data);
+      event?.target.reset();
       props.setOpen(false);
     } catch (error) {
-      console.log("Mutation Error:", error);
+      console.log(error);
     }
-    event?.target.reset();
   };
 
   return (
@@ -60,7 +62,6 @@ export default function CreateVendorForm(props: {
       fullWidth
       maxWidth={"xs"}
     >
-      {/* <DialogTitle fontWeight={"bold"}>Tambah Produk</DialogTitle> */}
       <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Stack gap={3} padding={4}>
           <Typography variant="h6">Tambah Vendor</Typography>
