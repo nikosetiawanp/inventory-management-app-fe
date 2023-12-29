@@ -23,8 +23,8 @@ import axios from "axios";
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 export default function ProductPage() {
+  // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-
   const getProducts = async () => {
     const response = await axios.get(BACKEND_URL + "products/");
     return response.data.data;
@@ -87,7 +87,7 @@ export default function ProductPage() {
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
               {isLoading ? (
-                <RowSkeleton times={15} columns={4} />
+                <RowSkeleton rows={15} columns={4} />
               ) : (
                 data.map((product: Product, index: number) => (
                   <TableRow key={index} hover>

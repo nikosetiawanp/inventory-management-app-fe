@@ -10,22 +10,20 @@ import {
   ListItemText,
   MenuItem,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Product } from "../../interfaces/interfaces";
-import { useMutation, useQueryClient } from "react-query";
+import { Product, Purchase } from "../../interfaces/interfaces";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 
-export default function DeleteProductButton(props: { product: Product }) {
+export default function DeletePurchaseButton(props: { purchase: Purchase }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const [open, setOpen] = useState(false);
-  const handleClickOpen = (event: any) => {
-    event.stopPropagation();
+  const handleClickOpen = () => {
     setOpen(true);
   };
-  const handleClose = (event: any) => {
-    event?.stopPropagation();
+  const handleClose = () => {
     setOpen(false);
   };
 
@@ -33,7 +31,7 @@ export default function DeleteProductButton(props: { product: Product }) {
   const deleteProduct = useMutation(
     async (id: number | any) => {
       try {
-        const response = await axios.delete(BACKEND_URL + "products/" + id);
+        const response = await axios.delete(BACKEND_URL + "purchases/" + id);
         return response.data;
       } catch (error: any) {
         console.log(error);
@@ -66,7 +64,7 @@ export default function DeleteProductButton(props: { product: Product }) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          Hapus {props.product.code}?
+          Hapus {props.purchase.prNumber}?
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
@@ -78,7 +76,7 @@ export default function DeleteProductButton(props: { product: Product }) {
           <Button
             color={isLoading ? "inherit" : "error"}
             onClick={() => {
-              deleteProduct.mutateAsync(props.product.id);
+              deleteProduct.mutateAsync(props.purchase.id);
             }}
             autoFocus
             disabled={isLoading}

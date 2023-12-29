@@ -26,7 +26,6 @@ export default function VendorPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getVendors = async () => {
     const response = await axios.get(BACKEND_URL + "vendors/");
-
     return response.data.data;
   };
 
@@ -89,7 +88,7 @@ export default function VendorPage() {
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
               {isLoading ? (
-                <RowSkeleton times={15} columns={6} />
+                <RowSkeleton rows={15} columns={6} />
               ) : (
                 data?.map((vendor: Vendor) => (
                   <TableRow key={vendor.id} hover>

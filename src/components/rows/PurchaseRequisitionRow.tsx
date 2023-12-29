@@ -1,5 +1,4 @@
-import MoreVertProductButton from "../buttons/MoreVertProductButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TableRow,
   TableCell,
@@ -19,12 +18,43 @@ import {
 
 import AddIcon from "@mui/icons-material/Add";
 import MorePurchaseButton from "../buttons/MorePurchaseButton";
-import { Settings } from "@mui/icons-material";
-import EditableCell from "../tables/EditableCell";
+// import { Settings } from "@mui/icons-material";
+// import EditableCell from "../tables/EditableCell";
+import { Item, Purchase } from "../../interfaces/interfaces";
+import MoreVertPurchaseButton from "../buttons/MoreVertPurchaseButton";
 
-export default function PurchaseRequisitionRow(props: { index: number }) {
+export default function PurchaseRequisitionRow(props: {
+  index: number;
+  purchase: Purchase;
+}) {
   const [open, setOpen] = useState(false);
-  const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+
+  const calculateTotal = (
+    quantity: number,
+    price: number,
+    discount: number,
+    tax: number
+  ) => {
+    const priceTotal = quantity * price;
+    const discountTotal = priceTotal * (discount / 100);
+    const taxTotal = priceTotal * (tax / 100);
+
+    const result = priceTotal - discountTotal + taxTotal;
+    return result;
+  };
+
+  const calculateSum = (items: Item[]) => {
+    const totals = items.map((item) =>
+      calculateTotal(item.quantity, item.price, item.discount, item.tax)
+    );
+    let sum = 0;
+
+    totals.forEach((price) => {
+      sum += price;
+    });
+
+    return sum;
+  };
 
   return (
     <>
@@ -34,12 +64,12 @@ export default function PurchaseRequisitionRow(props: { index: number }) {
         sx={{ cursor: "pointer" }}
         onClick={() => setOpen(true)}
       >
-        <TableCell>15 Desember 2023</TableCell>
-        <TableCell>SCT-02</TableCell>
-        <TableCell>Solusi Cerdas Teknologi</TableCell>
-        <TableCell>ABC/0223/456</TableCell>
+        <TableCell>{props.purchase.prDate}</TableCell>
+        <TableCell>{props.purchase.vendor.code}</TableCell>
+        <TableCell>{props.purchase.vendor.name}</TableCell>
+        <TableCell>{props.purchase.prNumber}</TableCell>
         <TableCell>
-          <MoreVertProductButton />
+          <MoreVertPurchaseButton purchase={props.purchase} />
         </TableCell>
       </TableRow>
 
@@ -60,9 +90,11 @@ export default function PurchaseRequisitionRow(props: { index: number }) {
           >
             {/* TITLE */}
             <Stack>
-              <Typography variant="h4">045/ADM/2023</Typography>
-              <Typography variant="body1">3 Desember 2023</Typography>
-              <Typography variant="body1">PT Jaya Bersama</Typography>
+              <Typography variant="h4">{props.purchase.prNumber}</Typography>
+              <Typography variant="body1">{props.purchase.prDate}</Typography>
+              <Typography variant="body1">
+                {props.purchase.vendor.name}
+              </Typography>
             </Stack>
             {/* BUTTONS */}
             <Stack direction="row" alignItems={"center"} gap={2}>
@@ -106,68 +138,44 @@ export default function PurchaseRequisitionRow(props: { index: number }) {
                 </TableRow>
               </TableHead>
 
-              <TableBody
-                sx={{
-                  position: "sticky",
-                  backgroundColor: "white",
-                  borderColor: "divider",
-                  width: 1,
-                  overflowY: "scroll",
-                  maxHeight: 100,
-                }}
-              >
-                {items.map((item) => (
-                  <TableRow>
-                    <TableCell>Kursi</TableCell>
-                    {/* <TableCell>
-                      <InputBase placeholder="Kursi" />
-                    </TableCell> */}
-                    <TableCell align="center">1</TableCell>
-                    <TableCell align="center">pcs</TableCell>
-                    {/* <TableCell padding="none">
-                      <Paper elevation={4} sx={{ paddingY: 1 }}>
-                        <InputBase placeholder="Rp 100,000.00" />
-                      </Paper>
-                    </TableCell> */}
-                    <EditableCell />
-                    {/* <TableCell align="right">Rp 100,000.00</TableCell> */}
-                    <TableCell align="center">5%</TableCell>
-                    <TableCell align="center">10%</TableCell>
-                    <TableCell align="right">Rp 120,000.00</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+              {props.purchase.items.length == 0 ? (
+                <Stack bgcolor={"primary.main"}>
+                  <Typography>Belum ada produk</Typography>
+                </Stack>
+              ) : (
+                <TableBody
+                  sx={{
+                    position: "sticky",
+                    backgroundColor: "white",
+                    borderColor: "divider",
+                    width: 1,
+                    overflowY: "scroll",
+                    maxHeight: 100,
+                  }}
+                >
+                  {props.purchase.items.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{item.product.name}</TableCell>
 
-              {/* <TableFooter
-                sx={{
-                  position: "sticky",
-                  backgroundColor: "white",
-                  bottom: 0,
-                  borderTop: 5,
-                  borderColor: "divider",
-                  zIndex: 50,
-                  bgcolor: "primary.main",
-                }}
-              >
-                <TableRow>
-                  <TableCell>
-                    {" "}
-                    <Typography variant="body1" fontWeight={"bold"}>
-                      Total
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="right"></TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="right">
-                    <Typography variant="body1" fontWeight={"bold"}>
-                      Rp 120,000.00
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              </TableFooter> */}
+                      <TableCell align="center">{item.quantity}</TableCell>
+                      <TableCell align="center">pcs</TableCell>
+                      <TableCell align="center">{item.price}</TableCell>
+
+                      {/* <EditableCell /> */}
+                      <TableCell align="center">{item.discount}%</TableCell>
+                      <TableCell align="center">{item.tax}%</TableCell>
+                      <TableCell align="right">
+                        {calculateTotal(
+                          item.quantity,
+                          item.price,
+                          item.discount,
+                          item.tax
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              )}
             </Table>
           </TableContainer>
           {/* FOOTER */}
@@ -185,7 +193,7 @@ export default function PurchaseRequisitionRow(props: { index: number }) {
               Total
             </Typography>
             <Typography fontWeight={"bold"} variant="body1">
-              Rp 120,000,000.00
+              {calculateSum(props.purchase.items)}
             </Typography>
           </Stack>
         </Stack>

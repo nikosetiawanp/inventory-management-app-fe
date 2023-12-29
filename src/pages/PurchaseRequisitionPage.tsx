@@ -22,11 +22,25 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useState } from "react";
 import MonthFilterButton from "../components/buttons/MonthFilterButton";
 import PurchaseRequisitionRow from "../components/rows/PurchaseRequisitionRow";
-
-const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+import axios from "axios";
+import { useQuery } from "react-query";
+import { Purchase } from "../interfaces/interfaces";
+import RowSkeleton from "../components/skeletons/RowSkeleton";
 
 export default function PurchaseRequisitionPage() {
   const [selectedMonth, setSelectedMonth] = useState("Januari");
+
+  // FETCHING PRODUCTS
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const getPurchases = async () => {
+    const response = await axios.get(BACKEND_URL + "purchases/");
+    return response.data.data;
+  };
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["purchase"],
+    queryFn: () => getPurchases(),
+  });
 
   return (
     // PAGE
@@ -40,58 +54,10 @@ export default function PurchaseRequisitionPage() {
           Purchase Requisition
         </Typography>
         <Stack direction={"row"} gap={2} width={1}>
-          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DatePicker"]}>
-              <DatePicker views={["year", "month"]} label="Basic date picker" />
-            </DemoContainer>
-          </LocalizationProvider> */}
-
-          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              views={["year", "month"]}
-              label="Year and Month"
-              minDate={new Date("2012-03-01")}
-              maxDate={new Date("2023-06-01")}
-              value={selectedDate}
-              onChange={() => setSelectedDate}
-              renderInput={(params: any) => (
-                <TextField {...params} helperText={null} />
-              )}
-            />
-          </LocalizationProvider> */}
-
-          {/* <Controller
-            name="datePickerField"
-            control={control}
-            defaultValue={null}
-            render={({ field }) => (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  {...field}
-                  views={["year", "month"]}
-                  label="Year and Month"
-                  minDate={new Date("2012-03-01")}
-                  maxDate={new Date("2023-06-01")}
-                  value={selectedDate || field.value}
-                  onChange={(newValue) => {
-                    setSelectedDate(newValue);
-                    field.onChange(newValue);
-                  }}
-                />
-              </LocalizationProvider>
-            )}
-          /> */}
           <MonthFilterButton
             selectedMonth={selectedMonth}
             setSelectedMonth={setSelectedMonth}
           />
-          {/* <Button
-            variant="outlined"
-            size="small"
-            endIcon={<ArrowDropDownIcon />}
-          >
-            Desember
-          </Button> */}
 
           <Button
             variant="outlined"
@@ -115,7 +81,7 @@ export default function PurchaseRequisitionPage() {
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table size="small" sx={{ borderCollapse: "separate" }}>
+          <Table sx={{ borderCollapse: "separate" }}>
             {/* HEAD */}
             <TableHead
               sx={{
@@ -142,19 +108,17 @@ export default function PurchaseRequisitionPage() {
 
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {rows.map((row, index) => (
-                <PurchaseRequisitionRow index={index} />
-                // <TableRow key={index} hover sx={{ cursor: "pointer" }}>
-                //   <TableCell>15 Desember 2023</TableCell>
-                //   <TableCell>SCT-02</TableCell>
-                //   <TableCell>Solusi Cerdas Teknologi</TableCell>
-                //   <TableCell>ABC/0223/456</TableCell>
-
-                //   <TableCell>
-                //     <MoreVertProductButton />
-                //   </TableCell>
-                // </TableRow>
-              ))}
+              {isLoading ? (
+                <RowSkeleton rows={15} columns={5} />
+              ) : (
+                data?.map((purchase: Purchase, index: number) => (
+                  <PurchaseRequisitionRow
+                    index={index}
+                    key={index}
+                    purchase={purchase}
+                  />
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>

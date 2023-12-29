@@ -1,8 +1,8 @@
 import { Skeleton, TableCell, TableRow } from "@mui/material";
 import MoreVertVendorButton from "../buttons/MoreVertVendorButton";
 
-export default function RowSkeleton(props: { times: number; columns: number }) {
-  const keys = [...Array(props.times).keys()];
+export default function RowSkeleton(props: { rows: number; columns: number }) {
+  const keys = [...Array(props.rows).keys()];
   const columns = [...Array(props.columns).keys()];
 
   return keys.map((item, index) => (

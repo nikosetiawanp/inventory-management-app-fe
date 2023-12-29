@@ -5,28 +5,14 @@ import {
   TextField,
   Button,
   Autocomplete,
+  AutocompleteRenderInputParams,
+  Box,
 } from "@mui/material";
-import { Purchase } from "../../interfaces/interfaces";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
-const vendors = [
-  {
-    id: "",
-    code: "SCT05",
-    name: "PT Sinar Kreasi Teknologi",
-    email: "",
-    address: "",
-    phone: "",
-  },
-  {
-    id: "",
-    code: "ABS30",
-    name: "PT Aman Bahagia Sentosa",
-    email: "",
-    address: "",
-    phone: "",
-  },
-];
+import { Purchase, Vendor } from "../../interfaces/interfaces";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useQuery } from "react-query";
+import axios from "axios";
+import { useState } from "react";
 
 export default function CreatePurchaseRequisitionForm(props: {
   open: boolean;
@@ -38,12 +24,33 @@ export default function CreatePurchaseRequisitionForm(props: {
     watch,
     control,
     formState: { errors },
+    setValue,
   } = useForm<Purchase>();
 
   const onSubmit: SubmitHandler<Purchase> = (data, event) => {
-    console.log(data);
-    event?.target.reset();
-    props.setOpen(false);
+    const dataToSubmit = {
+      vendorId: selectedVendor?.id,
+      prDate: "",
+      prNumber: data.prNumber,
+    };
+  };
+
+  const getVendors = async () => {
+    // FETCHING DATA
+    const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+    const response = await axios.get(BACKEND_URL + "vendors/");
+    return response.data.data;
+  };
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["vendor"],
+    queryFn: () => getVendors(),
+  });
+
+  const [selectedVendor, setSelectedVendor] = useState<Vendor>();
+  const handleVendorChange = (event: any, value: any) => {
+    setSelectedVendor(value);
+    setValue("vendor", value ? value.id : "");
   };
 
   return (
@@ -58,26 +65,34 @@ export default function CreatePurchaseRequisitionForm(props: {
         <Stack gap={3} padding={4}>
           <Typography variant="h6">Buat Purchase Requisition</Typography>
 
-          {/* VENDOR */}
-          <Controller
-            name="vendor"
-            control={control}
-            defaultValue={vendors[0]}
-            render={({ field }) => (
-              <Autocomplete
-                {...field}
-                options={vendors}
-                getOptionLabel={(vendor) => `${vendor.code} - ${vendor.name}`}
-                onChange={(_, selectedOption) => field.onChange(selectedOption)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Vendor"
-                    variant="outlined"
-                    error={!!errors.vendor}
-                    helperText={errors.vendor?.message || ""}
-                  />
-                )}
+          {/* AUTOCOMPLETE */}
+          <Autocomplete
+            id="vendor"
+            options={data}
+            autoHighlight
+            getOptionLabel={(option) => option.name}
+            value={selectedVendor}
+            onChange={handleVendorChange}
+            renderOption={(props, option) => (
+              <Box
+                component="li"
+                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                {...props}
+              >
+                {option.code} - {option.name}
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Vendor"
+                inputProps={{
+                  ...params.inputProps,
+                  autoComplete: "new-password",
+                }}
+                {...register("vendor", { required: "Tidak boleh kosong" })}
+                error={!!errors.vendor}
+                helperText={errors.vendor?.message}
               />
             )}
           />
