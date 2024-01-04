@@ -29,15 +29,21 @@ export interface Item {
 }
 
 export interface Purchase {
-  id: string;
-  vendorId: string | number;
+  id: string | any;
+  vendorId: string | number | undefined;
 
   prDate: any;
   prNumber: string;
 
-  poDate: any;
-  poNumber: string;
+  poDate: any | null;
+  poNumber: string | null;
 
   vendor: Vendor;
   items: Item[];
+}
+
+export interface CreatePurchaseRequisition {
+  vendorId: string | number | undefined;
+  prDate: string;
+  prNumber: string;
 }

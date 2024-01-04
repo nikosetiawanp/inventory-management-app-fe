@@ -20,15 +20,17 @@ import axios from "axios";
 export default function DeletePurchaseButton(props: { purchase: Purchase }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
+  const handleClickOpen = (event: any) => {
+    event.stopPropagation();
     setOpen(true);
   };
-  const handleClose = () => {
+  const handleClose = (event: any) => {
+    event.stopPropagation();
     setOpen(false);
   };
 
   const queryClient = useQueryClient();
-  const deleteProduct = useMutation(
+  const deletePurchase = useMutation(
     async (id: number | any) => {
       try {
         const response = await axios.delete(BACKEND_URL + "purchases/" + id);
@@ -41,12 +43,12 @@ export default function DeletePurchaseButton(props: { purchase: Purchase }) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("product");
+        queryClient.invalidateQueries("purchase");
       },
     }
   );
 
-  const { isLoading } = deleteProduct;
+  const { isLoading } = deletePurchase;
 
   return (
     <>
@@ -75,8 +77,9 @@ export default function DeletePurchaseButton(props: { purchase: Purchase }) {
           <Button onClick={handleClose}>Batal</Button>
           <Button
             color={isLoading ? "inherit" : "error"}
-            onClick={() => {
-              deleteProduct.mutateAsync(props.purchase.id);
+            onClick={(event: any) => {
+              event.stopPropagation();
+              deletePurchase.mutateAsync(props.purchase.id);
             }}
             autoFocus
             disabled={isLoading}

@@ -5,14 +5,20 @@ import {
   TextField,
   Button,
   Autocomplete,
-  AutocompleteRenderInputParams,
   Box,
 } from "@mui/material";
-import { Purchase, Vendor } from "../../interfaces/interfaces";
+import {
+  CreatePurchaseRequisition,
+  Purchase,
+  Vendor,
+} from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import { useState } from "react";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 export default function CreatePurchaseRequisitionForm(props: {
   open: boolean;
@@ -21,19 +27,10 @@ export default function CreatePurchaseRequisitionForm(props: {
   const {
     register,
     handleSubmit,
-    watch,
-    control,
+
     formState: { errors },
     setValue,
   } = useForm<Purchase>();
-
-  const onSubmit: SubmitHandler<Purchase> = (data, event) => {
-    const dataToSubmit = {
-      vendorId: selectedVendor?.id,
-      prDate: "",
-      prNumber: data.prNumber,
-    };
-  };
 
   const getVendors = async () => {
     // FETCHING DATA
@@ -41,16 +38,57 @@ export default function CreatePurchaseRequisitionForm(props: {
     const response = await axios.get(BACKEND_URL + "vendors/");
     return response.data.data;
   };
-
   const { isLoading, error, data } = useQuery({
     queryKey: ["vendor"],
     queryFn: () => getVendors(),
   });
 
+  // VENDOR
   const [selectedVendor, setSelectedVendor] = useState<Vendor>();
   const handleVendorChange = (event: any, value: any) => {
     setSelectedVendor(value);
     setValue("vendor", value ? value.id : "");
+  };
+
+  // DATE
+  const [selectedDate, setSelectedDate] = useState();
+  const formattedDate = dayjs(selectedDate).format("DD-MM-YYYY");
+
+  // POST
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const queryClient = useQueryClient();
+  const createPurchase = useMutation(
+    async (data: Purchase) => {
+      try {
+        const response = await axios.post(BACKEND_URL + "purchases/", data);
+        return response.data;
+      } catch (error) {
+        throw new Error("Network response was not ok");
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("purchase");
+      },
+    }
+  );
+
+  const onSubmit: SubmitHandler<CreatePurchaseRequisition> = async (
+    data,
+    event
+  ) => {
+    const dataToSubmit: any = {
+      vendorId: selectedVendor?.id,
+      prDate: formattedDate,
+      prNumber: data?.prNumber,
+    };
+
+    try {
+      await createPurchase.mutateAsync(dataToSubmit);
+      props.setOpen(false);
+    } catch (error) {
+      console.log("Mutation Error:", error);
+    }
   };
 
   return (
@@ -64,6 +102,19 @@ export default function CreatePurchaseRequisitionForm(props: {
       <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Stack gap={3} padding={4}>
           <Typography variant="h6">Buat Purchase Requisition</Typography>
+
+          {/* DATE PICKER */}
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Tanggal PR"
+              value={selectedDate}
+              onChange={(newValue: any) => setSelectedDate(newValue)}
+              format="DD/MM/YYYY"
+              slotProps={{
+                field: { clearable: true },
+              }}
+            />
+          </LocalizationProvider>
 
           {/* AUTOCOMPLETE */}
           <Autocomplete

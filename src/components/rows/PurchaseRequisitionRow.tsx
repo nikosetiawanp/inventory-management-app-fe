@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   TableRow,
   TableCell,
@@ -11,17 +11,14 @@ import {
   IconButton,
   TableBody,
   Table,
-  TableFooter,
-  InputBase,
-  Paper,
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import MorePurchaseButton from "../buttons/MorePurchaseButton";
-// import { Settings } from "@mui/icons-material";
-// import EditableCell from "../tables/EditableCell";
 import { Item, Purchase } from "../../interfaces/interfaces";
 import MoreVertPurchaseButton from "../buttons/MoreVertPurchaseButton";
+import NewItemRow from "./NewItemRow";
+import { Settings } from "@mui/icons-material";
 
 export default function PurchaseRequisitionRow(props: {
   index: number;
@@ -135,12 +132,17 @@ export default function PurchaseRequisitionRow(props: {
                   <TableCell align="center">Diskon</TableCell>
                   <TableCell align="center">Pajak</TableCell>
                   <TableCell align="right">Total</TableCell>
+                  <TableCell width={10}>
+                    <IconButton size="small">
+                      <Settings fontSize="small" />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               </TableHead>
 
               {props.purchase.items.length == 0 ? (
                 <Stack bgcolor={"primary.main"}>
-                  <Typography>Belum ada produk</Typography>
+                  {/* <Typography>Belum ada produk</Typography> */}
                 </Stack>
               ) : (
                 <TableBody
@@ -153,6 +155,7 @@ export default function PurchaseRequisitionRow(props: {
                     maxHeight: 100,
                   }}
                 >
+                  <NewItemRow index={0} />
                   {props.purchase.items.map((item, index) => (
                     <TableRow key={index}>
                       <TableCell>{item.product.name}</TableCell>
@@ -174,8 +177,11 @@ export default function PurchaseRequisitionRow(props: {
                       </TableCell>
                     </TableRow>
                   ))}
+                  {/* <Typography>ASDFGHJKL</Typography> */}
+                  {/* <NewItemRow index={0} /> */}
                 </TableBody>
               )}
+              {/* <Typography>SDFF</Typography> */}
             </Table>
           </TableContainer>
           {/* FOOTER */}
