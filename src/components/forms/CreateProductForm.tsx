@@ -56,6 +56,7 @@ export default function CreateProductForm(props: {
     event?.target.reset();
     props.setOpen(false);
   };
+
   return (
     <Dialog
       open={props.open}
@@ -63,7 +64,6 @@ export default function CreateProductForm(props: {
       fullWidth
       maxWidth={"xs"}
     >
-      {/* <DialogTitle fontWeight={"bold"}>Tambah Produk</DialogTitle> */}
       <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Stack gap={3} padding={4}>
           <Typography variant="h6">Tambah Produk</Typography>

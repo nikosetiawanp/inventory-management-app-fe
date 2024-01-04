@@ -119,7 +119,7 @@ export default function CreatePurchaseRequisitionForm(props: {
           {/* AUTOCOMPLETE */}
           <Autocomplete
             id="vendor"
-            options={data}
+            options={data && data}
             autoHighlight
             getOptionLabel={(option) => option.name}
             value={selectedVendor}

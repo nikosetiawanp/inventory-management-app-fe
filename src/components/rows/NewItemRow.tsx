@@ -20,9 +20,7 @@ export default function NewItemRow(props: { index: number }) {
         <TextField id="quantity" variant="outlined" size="small" />
       </TableCell>
       {/* UNIT */}
-      <TableCell align="center">
-        <Typography>kg</Typography>
-      </TableCell>
+      <TableCell align="center">kg</TableCell>
       {/* PRICE */}
       <TableCell width={200}>
         <TextField
@@ -59,14 +57,11 @@ export default function NewItemRow(props: { index: number }) {
         />
       </TableCell>
       {/* TOTAL */}
-      <TableCell align="right">
-        <Typography>Rp 50,000.00</Typography>
-      </TableCell>
+      <TableCell align="right">Rp 50,000.00</TableCell>
       {/* OPTION */}
       <TableCell width={10}>
         <IconButton size="small">
           <ClearIcon fontSize="small" />
-          {/* <Settings fontSize="small" /> */}
         </IconButton>
       </TableCell>
     </TableRow>
