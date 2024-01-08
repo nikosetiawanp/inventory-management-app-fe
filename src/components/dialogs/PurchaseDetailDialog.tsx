@@ -1,4 +1,4 @@
-import { Settings } from "@mui/icons-material";
+import { MoreVert, Settings } from "@mui/icons-material";
 import {
   Dialog,
   Stack,
@@ -13,6 +13,7 @@ import {
   TableBody,
   InputAdornment,
   TextField,
+  Chip,
 } from "@mui/material";
 import MorePurchaseButton from "../buttons/MorePurchaseButton";
 import NewItemRow from "../rows/NewItemRow";
@@ -22,11 +23,13 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { ClearIcon } from "@mui/x-date-pickers";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
+import MoveToPurchaseOrder from "../buttons/MoveToPurchaseOrder";
 
 export default function PurchaseDetailDialog(props: {
   open: boolean;
   setOpen: any;
   purchase: Purchase;
+  refetch: any;
 }) {
   // TOTAL PRICE
   const calculateTotal = (
@@ -68,7 +71,50 @@ export default function PurchaseDetailDialog(props: {
     name: "items",
   });
 
-  const clearFieldsArray = () => {};
+  const clearFieldsArray = () => {
+    for (let i = 0; i < fields.length; i++) {
+      if (fields.length > 0) {
+        remove(0);
+      } else return;
+    }
+  };
+  // FORMAT DATE
+  const formatDate = (inputDate: string) => {
+    const date = new Date(inputDate);
+    const options: any = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+
+    const formattedDate = date.toLocaleDateString("id-ID", options);
+
+    const [day, month, year] = formattedDate.split(" ");
+
+    const monthNames = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    const monthIndex = monthNames.indexOf(month);
+
+    if (monthIndex !== -1) {
+      const indonesianMonth = monthNames[monthIndex];
+      return `${day} ${indonesianMonth} ${year}`;
+    }
+
+    return formattedDate;
+  };
 
   // POST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -91,10 +137,11 @@ export default function PurchaseDetailDialog(props: {
 
   const { isLoading } = createItems;
 
-  const onSubmit: SubmitHandler<Item> = async (data, event) => {
+  const onSubmit: SubmitHandler<Item> = async (data: { items: any }, event) => {
     try {
       await createItems.mutateAsync(data.items);
-      alert("saved");
+      clearFieldsArray();
+      //   alert("saved");
     } catch (error) {
       console.log("Mutation Error:", error);
     }
@@ -115,7 +162,7 @@ export default function PurchaseDetailDialog(props: {
               required: "Tidak boleh kosong",
             })}
             // error={!!errors?.[`items[${index}].productId`]}
-            //             helperText={errors?.[`items[${index}].productId`]?.message}
+            // helperText={errors?.[`items[${index}].productId`]?.message}
           />
         </TableCell>
         {/* QUANTITY */}
@@ -178,6 +225,7 @@ export default function PurchaseDetailDialog(props: {
         {/* TOTAL */}
         <TableCell align="right"></TableCell>
         {/* REMOVE */}
+        <TableCell></TableCell>
         <TableCell width={10}>
           <IconButton size="small" onClick={() => remove(index)}>
             <ClearIcon fontSize="small" />
@@ -204,8 +252,16 @@ export default function PurchaseDetailDialog(props: {
         >
           {/* TITLE */}
           <Stack>
-            <Typography variant="h4">{props.purchase.prNumber}</Typography>
-            <Typography variant="body1">{props.purchase.prDate}</Typography>
+            <Typography variant="h4">
+              {props.purchase.status == "PR"
+                ? props.purchase.prNumber
+                : props.purchase.poNumber}
+            </Typography>
+            <Typography variant="body1">
+              {props.purchase.status == "PR"
+                ? formatDate(props.purchase.prDate)
+                : formatDate(props.purchase.poDate)}
+            </Typography>
             <Typography variant="body1">
               {props.purchase.vendor.name}
             </Typography>
@@ -229,12 +285,21 @@ export default function PurchaseDetailDialog(props: {
               Tambah Item
             </Button>
             {fields.length > 0 ? (
-              <Button variant="contained" onClick={handleSubmit(onSubmit)}>
+              <Button
+                variant="contained"
+                onClick={handleSubmit(onSubmit as any)}
+              >
                 Simpan
               </Button>
             ) : (
               <>
-                <Button variant="outlined">Pindahkan ke PO</Button>
+                {props.purchase.status == "PR" && (
+                  <MoveToPurchaseOrder
+                    purchase={props.purchase}
+                    refetch={props.refetch}
+                  />
+                )}
+
                 <MorePurchaseButton />
               </>
             )}
@@ -270,6 +335,7 @@ export default function PurchaseDetailDialog(props: {
                 <TableCell align="center">Diskon</TableCell>
                 <TableCell align="center">Pajak</TableCell>
                 <TableCell align="right">Total</TableCell>
+                <TableCell align="center">Status</TableCell>
                 <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -289,6 +355,7 @@ export default function PurchaseDetailDialog(props: {
               }}
             >
               {/* NEW ITEM */}
+
               {fields.map((field, index) => (
                 <NewItem
                   key={field.id}
@@ -321,6 +388,17 @@ export default function PurchaseDetailDialog(props: {
                         item.tax
                       )
                     )}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      size="small"
+                      variant="filled"
+                      color="error"
+                      label="Pending"
+                    />
+                  </TableCell>
+                  <TableCell align="center">
+                    <MoreVert fontSize="small" />
                   </TableCell>
                 </TableRow>
               ))}

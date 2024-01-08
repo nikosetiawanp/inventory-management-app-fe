@@ -17,22 +17,17 @@ import { Settings } from "@mui/icons-material";
 
 import CreatePurchaseRequisitionButton from "../components/buttons/CreatePurchaseRequisitionButton";
 
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useEffect, useState } from "react";
-import MonthFilterButton from "../components/buttons/MonthFilterButton";
 import PurchaseRow from "../components/rows/PurchaseRow";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { Purchase } from "../interfaces/interfaces";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
-import YearFilterButton from "../components/buttons/VendorFilterButton";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
 export default function PurchaseRequisitionPage() {
-  const [status, setStatus] = useState("PR");
-
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
   const selectedYear = formattedDate.split("-")[0];
@@ -43,7 +38,7 @@ export default function PurchaseRequisitionPage() {
   const getPurchases = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PR`
+        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PO`
     );
     return response.data.data;
   };

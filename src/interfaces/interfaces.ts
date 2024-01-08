@@ -17,6 +17,7 @@ export interface Vendor {
 }
 
 export interface Item {
+  items(items: any): unknown;
   id: string;
   quantity: number;
   price: number;
@@ -31,6 +32,7 @@ export interface Item {
 export interface Purchase {
   id: string | any;
   vendorId: string | number | undefined;
+  status: "PR" | "PO";
 
   prDate: any;
   prNumber: string;

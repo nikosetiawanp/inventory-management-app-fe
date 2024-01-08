@@ -7,7 +7,7 @@ export default function MonthFilterButton(props: {
   selectedMonth: string;
   setSelectedMonth: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -98,9 +98,6 @@ export default function MonthFilterButton(props: {
             {month.name}
           </MenuItem>
         ))}
-        {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
-          <MenuItem onClick={handleClose}>My account</MenuItem>
-          <MenuItem onClick={handleClose}>Logout</MenuItem> */}
       </Menu>
     </>
   );

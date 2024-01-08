@@ -32,8 +32,8 @@ export default function CreatePurchaseRequisitionForm(props: {
     setValue,
   } = useForm<Purchase>();
 
+  // GET VENDOR LIST
   const getVendors = async () => {
-    // FETCHING DATA
     const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
     const response = await axios.get(BACKEND_URL + "vendors/");
     return response.data.data;
@@ -51,8 +51,8 @@ export default function CreatePurchaseRequisitionForm(props: {
   };
 
   // DATE
-  const [selectedDate, setSelectedDate] = useState();
-  const formattedDate = dayjs(selectedDate).format("DD-MM-YYYY");
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
 
   // POST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -81,6 +81,7 @@ export default function CreatePurchaseRequisitionForm(props: {
       vendorId: selectedVendor?.id,
       prDate: formattedDate,
       prNumber: data?.prNumber,
+      status: "PR",
     };
 
     try {
@@ -119,7 +120,7 @@ export default function CreatePurchaseRequisitionForm(props: {
           {/* AUTOCOMPLETE */}
           <Autocomplete
             id="vendor"
-            options={data && data}
+            options={data}
             autoHighlight
             getOptionLabel={(option) => option.name}
             value={selectedVendor}
@@ -142,6 +143,7 @@ export default function CreatePurchaseRequisitionForm(props: {
                   autoComplete: "new-password",
                 }}
                 {...register("vendor", { required: "Tidak boleh kosong" })}
+                required
                 error={!!errors.vendor}
                 helperText={errors.vendor?.message}
               />

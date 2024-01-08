@@ -13,6 +13,7 @@ export default function CreatePurchaseRequisitionButton() {
         variant="contained"
         onClick={() => setOpen(true)}
         sx={{ marginLeft: "auto" }}
+        size="small"
       >
         Buat Purchase Requisition
       </Button>
