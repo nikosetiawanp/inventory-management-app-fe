@@ -39,7 +39,7 @@ export default function CreatePurchaseRequisitionForm(props: {
     return response.data.data;
   };
   const { isLoading, error, data } = useQuery({
-    queryKey: ["vendor"],
+    queryKey: ["vendors"],
     queryFn: () => getVendors(),
   });
 
@@ -68,7 +68,7 @@ export default function CreatePurchaseRequisitionForm(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("purchase");
+        queryClient.invalidateQueries("purchases");
       },
     }
   );

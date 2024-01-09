@@ -21,7 +21,7 @@ import { Item, Product, Purchase } from "../../interfaces/interfaces";
 import AddIcon from "@mui/icons-material/Add";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { ClearIcon } from "@mui/x-date-pickers";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import MoveToPurchaseOrder from "../buttons/MoveToPurchaseOrder";
 
@@ -31,6 +31,21 @@ export default function PurchaseDetailDialog(props: {
   purchase: Purchase;
   refetch: any;
 }) {
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const queryClient = useQueryClient();
+
+  // GET ITEMS
+  const getItems = async () => {
+    const response = await axios.get(
+      BACKEND_URL + `items?purchaseId=${props.purchase.id}`
+    );
+    return response.data.data;
+  };
+  const { isLoading, error, data } = useQuery({
+    queryKey: [`items.${props.purchase.id}`],
+    queryFn: () => getItems(),
+  });
+
   // TOTAL PRICE
   const calculateTotal = (
     quantity: number,
@@ -88,9 +103,7 @@ export default function PurchaseDetailDialog(props: {
     };
 
     const formattedDate = date.toLocaleDateString("id-ID", options);
-
     const [day, month, year] = formattedDate.split(" ");
-
     const monthNames = [
       "Januari",
       "Februari",
@@ -107,7 +120,6 @@ export default function PurchaseDetailDialog(props: {
     ];
 
     const monthIndex = monthNames.indexOf(month);
-
     if (monthIndex !== -1) {
       const indonesianMonth = monthNames[monthIndex];
       return `${day} ${indonesianMonth} ${year}`;
@@ -117,8 +129,7 @@ export default function PurchaseDetailDialog(props: {
   };
 
   // POST
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const queryClient = useQueryClient();
+
   const createItems = useMutation(
     async (data: Product) => {
       try {
@@ -130,18 +141,17 @@ export default function PurchaseDetailDialog(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("purchase");
+        queryClient.invalidateQueries(`items.${props.purchase.id}`);
       },
     }
   );
 
-  const { isLoading } = createItems;
+  // const { isLoading } = createItems;
 
   const onSubmit: SubmitHandler<Item> = async (data: { items: any }, event) => {
     try {
       await createItems.mutateAsync(data.items);
       clearFieldsArray();
-      //   alert("saved");
     } catch (error) {
       console.log("Mutation Error:", error);
     }
@@ -149,7 +159,6 @@ export default function PurchaseDetailDialog(props: {
 
   const NewItem = ({ update, index, value, control }: any) => {
     const { register } = control;
-
     return (
       <TableRow>
         {/* PRODUCT */}
@@ -288,6 +297,7 @@ export default function PurchaseDetailDialog(props: {
               <Button
                 variant="contained"
                 onClick={handleSubmit(onSubmit as any)}
+                type="submit"
               >
                 Simpan
               </Button>
@@ -366,7 +376,7 @@ export default function PurchaseDetailDialog(props: {
                 />
               ))}
 
-              {props.purchase.items.map((item, index) => (
+              {data?.map((item: Item, index: number) => (
                 <TableRow key={index}>
                   <TableCell>{item.product.name}</TableCell>
 
@@ -376,7 +386,6 @@ export default function PurchaseDetailDialog(props: {
                     {currencyFormatter.format(item.price)}
                   </TableCell>
 
-                  {/* <EditableCell /> */}
                   <TableCell align="center">{item.discount}%</TableCell>
                   <TableCell align="center">{item.tax}%</TableCell>
                   <TableCell align="right">
@@ -420,7 +429,7 @@ export default function PurchaseDetailDialog(props: {
             Total
           </Typography>
           <Typography fontWeight={"bold"} variant="body1">
-            {currencyFormatter.format(calculateSum(props.purchase.items))}
+            {currencyFormatter.format(calculateSum(data))}
           </Typography>
         </Stack>
       </Stack>

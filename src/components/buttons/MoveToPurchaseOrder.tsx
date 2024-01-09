@@ -38,7 +38,7 @@ export default function MoveToPurchaseRequisition(props: {
           BACKEND_URL + "purchases/" + props.purchase.id,
           data
         );
-        props.refetch();
+        // props.refetch();
         return response.data;
       } catch (error) {
         throw new Error("Network response was not ok");
@@ -80,7 +80,7 @@ export default function MoveToPurchaseRequisition(props: {
   };
   return (
     <>
-      <Button variant="outlined" onClick={() => setOpen(true)}>
+      <Button variant="outlined" type="button" onClick={() => setOpen(true)}>
         Pindahkan ke PO
       </Button>
       <Dialog
@@ -124,7 +124,7 @@ export default function MoveToPurchaseRequisition(props: {
               <Button onClick={() => setOpen(false)} type="button">
                 Batal
               </Button>
-              <Button variant={"contained"} type="submit">
+              <Button variant={"contained"} type="button">
                 {isLoading ? (
                   <CircularProgress color="inherit" size={15} />
                 ) : (

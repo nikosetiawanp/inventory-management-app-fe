@@ -41,7 +41,7 @@ export default function DeleteVendorButton(props: { vendor: Vendor }) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("vendor");
+        queryClient.invalidateQueries("vendors");
       },
     }
   );

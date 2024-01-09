@@ -44,7 +44,7 @@ export default function PurchaseRequisitionPage() {
   };
 
   const { isLoading, error, data, refetch, isRefetching } = useQuery({
-    queryKey: ["purchase"],
+    queryKey: ["purchases"],
     queryFn: () => getPurchases(),
   });
 

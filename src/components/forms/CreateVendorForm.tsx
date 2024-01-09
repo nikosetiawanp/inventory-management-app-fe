@@ -38,7 +38,7 @@ export default function CreateVendorForm(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("vendor");
+        queryClient.invalidateQueries("vendors");
       },
     }
   );

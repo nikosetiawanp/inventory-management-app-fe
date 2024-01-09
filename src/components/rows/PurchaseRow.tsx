@@ -1,19 +1,7 @@
 import { useState } from "react";
-import {
-  TableRow,
-  TableCell,
-  Stack,
-  Typography,
-  Dialog,
-  Button,
-  TableContainer,
-  TableHead,
-  IconButton,
-  TableBody,
-  Table,
-} from "@mui/material";
+import { TableRow, TableCell } from "@mui/material";
 
-import { Item, Purchase } from "../../interfaces/interfaces";
+import { Purchase } from "../../interfaces/interfaces";
 import MoreVertPurchaseButton from "../buttons/MoreVertPurchaseButton";
 
 import PurchaseDetailDialog from "../dialogs/PurchaseDetailDialog";

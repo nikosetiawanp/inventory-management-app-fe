@@ -30,7 +30,7 @@ export default function VendorPage() {
   };
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["vendor"],
+    queryKey: ["vendors"],
     queryFn: () => getVendors(),
   });
 
