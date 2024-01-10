@@ -1,11 +1,4 @@
-import {
-  Dialog,
-  Stack,
-  Typography,
-  TextField,
-  Button,
-  CircularProgress,
-} from "@mui/material";
+import { Dialog, Stack, Typography, TextField, Button } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Vendor } from "../../interfaces/interfaces";
 import axios from "axios";
@@ -129,11 +122,10 @@ export default function CreateVendorForm(props: {
               Batal
             </Button>
             <Button variant={"contained"} type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <CircularProgress color="inherit" size={15} />
-              ) : (
-                "Simpan"
-              )}
+              {isLoading
+                ? // <CircularProgress color="inherit" size={15} />
+                  "Menyimpan"
+                : "Simpan"}
             </Button>
           </Stack>
         </Stack>

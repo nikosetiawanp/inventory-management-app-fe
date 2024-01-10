@@ -32,6 +32,7 @@ export default function VendorPage() {
   const { isLoading, error, data } = useQuery({
     queryKey: ["vendors"],
     queryFn: () => getVendors(),
+    refetchOnWindowFocus: false,
   });
 
   return (

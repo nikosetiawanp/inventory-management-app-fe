@@ -51,6 +51,7 @@ export default function PurchaseRequisitionPage() {
   const { isLoading, error, data, refetch, isRefetching } = useQuery({
     queryKey: ["purchases"],
     queryFn: () => getPurchases(),
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -116,7 +117,7 @@ export default function PurchaseRequisitionPage() {
 
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {isLoading || isRefetching ? (
+              {isLoading ? (
                 <RowSkeleton rows={15} columns={5} />
               ) : (
                 data?.map((purchase: Purchase, index: number) => (

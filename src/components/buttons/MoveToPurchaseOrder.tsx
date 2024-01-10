@@ -124,7 +124,7 @@ export default function MoveToPurchaseRequisition(props: {
               <Button onClick={() => setOpen(false)} type="button">
                 Batal
               </Button>
-              <Button variant={"contained"} type="button">
+              <Button variant={"contained"} type="button" disabled={isLoading}>
                 {isLoading ? (
                   <CircularProgress color="inherit" size={15} />
                 ) : (

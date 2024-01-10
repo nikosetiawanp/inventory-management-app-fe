@@ -14,16 +14,20 @@ import {
   InputAdornment,
   TextField,
   Chip,
+  Autocomplete,
+  Box,
 } from "@mui/material";
 import MorePurchaseButton from "../buttons/MorePurchaseButton";
-import NewItemRow from "../rows/NewItemRow";
-import { Item, Product, Purchase } from "../../interfaces/interfaces";
+
+import { Item, Product, Purchase, Vendor } from "../../interfaces/interfaces";
 import AddIcon from "@mui/icons-material/Add";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { ClearIcon } from "@mui/x-date-pickers";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import MoveToPurchaseOrder from "../buttons/MoveToPurchaseOrder";
+import RowSkeleton from "../skeletons/RowSkeleton";
+import { useEffect, useState } from "react";
 
 export default function PurchaseDetailDialog(props: {
   open: boolean;
@@ -44,7 +48,15 @@ export default function PurchaseDetailDialog(props: {
   const { isLoading, error, data } = useQuery({
     queryKey: [`items.${props.purchase.id}`],
     queryFn: () => getItems(),
+    refetchOnWindowFocus: false,
+    enabled: props.open,
   });
+
+  // GET VENDORS
+  const getVendors = async () => {
+    const response = await axios.get(BACKEND_URL + `vendors`);
+    return response.data.data;
+  };
 
   // TOTAL PRICE
   const calculateTotal = (
@@ -62,15 +74,16 @@ export default function PurchaseDetailDialog(props: {
   };
 
   const calculateSum = (items: Item[]) => {
-    const totals = items.map((item) =>
+    if (!items) return 0;
+
+    const totals = items?.map((item: Item) =>
       calculateTotal(item.quantity, item.price, item.discount, item.tax)
     );
     let sum = 0;
 
-    totals.forEach((price) => {
+    totals.forEach((price: number) => {
       sum += price;
     });
-
     return sum;
   };
 
@@ -84,6 +97,13 @@ export default function PurchaseDetailDialog(props: {
   const { fields, append, update, remove } = useFieldArray({
     control,
     name: "items",
+  });
+
+  const vendorsQuery = useQuery({
+    queryKey: ["vendors"],
+    queryFn: getVendors,
+    refetchOnWindowFocus: false,
+    enabled: fields?.length > 0,
   });
 
   const clearFieldsArray = () => {
@@ -129,13 +149,16 @@ export default function PurchaseDetailDialog(props: {
   };
 
   // POST
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const createItems = useMutation(
     async (data: Product) => {
+      setIsSubmitting(true);
       try {
         const response = await axios.post(BACKEND_URL + "items/bulk", data);
+        setIsSubmitting(false);
         return response.data;
       } catch (error) {
+        setIsSubmitting(false);
         throw new Error("Network response was not ok");
       }
     },
@@ -157,22 +180,63 @@ export default function PurchaseDetailDialog(props: {
     }
   };
 
+  useEffect(() => {
+    // console.log(vendorsQuery);
+    console.log(fields);
+  }, [fields]);
+
   const NewItem = ({ update, index, value, control }: any) => {
-    const { register } = control;
+    const { register, setValue } = control;
+    const [selectedVendor, setSelectedVendor] = useState<Vendor>();
+    const handleVendorChange = (event: any, value: any) => {
+      setSelectedVendor(value);
+      setValue("vendor", value ? value.id : "");
+    };
+
     return (
       <TableRow>
         {/* PRODUCT */}
+        <TableCell>{selectedVendor?.id}</TableCell>
         <TableCell>
-          <TextField
+          <Autocomplete
+            id={`items[${index}].productId`}
+            options={vendorsQuery.data ? vendorsQuery.data : []}
+            autoHighlight
+            getOptionLabel={(option: any) => option.id}
+            value={selectedVendor}
+            onChange={handleVendorChange}
+            renderOption={(props, option) => (
+              <Box
+                component="li"
+                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                {...props}
+              >
+                {option.code} - {option.name}
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Vendor"
+                inputProps={{
+                  ...params.inputProps,
+                  autoComplete: "new-password",
+                }}
+                {...register(`items[${index}.productId]`, {
+                  required: "Tidak boleh kosong",
+                })}
+                required
+              />
+            )}
+          />
+          {/* <TextField
             id={`items[${index}].productId`}
             variant="outlined"
             size="small"
             {...register(`items[${index}].productId`, {
               required: "Tidak boleh kosong",
             })}
-            // error={!!errors?.[`items[${index}].productId`]}
-            // helperText={errors?.[`items[${index}].productId`]?.message}
-          />
+          /> */}
         </TableCell>
         {/* QUANTITY */}
         <TableCell width={75}>
@@ -298,8 +362,13 @@ export default function PurchaseDetailDialog(props: {
                 variant="contained"
                 onClick={handleSubmit(onSubmit as any)}
                 type="submit"
+                disabled={isSubmitting}
+                sx={{ minHeight: "100%" }}
               >
-                Simpan
+                {isSubmitting
+                  ? "Menyimpan"
+                  : // <CircularProgress color="inherit" size={15} />
+                    "Simpan"}
               </Button>
             ) : (
               <>
@@ -376,41 +445,45 @@ export default function PurchaseDetailDialog(props: {
                 />
               ))}
 
-              {data?.map((item: Item, index: number) => (
-                <TableRow key={index}>
-                  <TableCell>{item.product.name}</TableCell>
+              {isLoading ? (
+                <RowSkeleton rows={15} columns={9} />
+              ) : (
+                data?.map((item: Item, index: number) => (
+                  <TableRow key={index}>
+                    <TableCell>{item.product.name}</TableCell>
 
-                  <TableCell align="center">{item.quantity}</TableCell>
-                  <TableCell align="center">pcs</TableCell>
-                  <TableCell align="right">
-                    {currencyFormatter.format(item.price)}
-                  </TableCell>
+                    <TableCell align="center">{item.quantity}</TableCell>
+                    <TableCell align="center">pcs</TableCell>
+                    <TableCell align="right">
+                      {currencyFormatter.format(item.price)}
+                    </TableCell>
 
-                  <TableCell align="center">{item.discount}%</TableCell>
-                  <TableCell align="center">{item.tax}%</TableCell>
-                  <TableCell align="right">
-                    {currencyFormatter.format(
-                      calculateTotal(
-                        item.quantity,
-                        item.price,
-                        item.discount,
-                        item.tax
-                      )
-                    )}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Chip
-                      size="small"
-                      variant="filled"
-                      color="error"
-                      label="Pending"
-                    />
-                  </TableCell>
-                  <TableCell align="center">
-                    <MoreVert fontSize="small" />
-                  </TableCell>
-                </TableRow>
-              ))}
+                    <TableCell align="center">{item.discount}%</TableCell>
+                    <TableCell align="center">{item.tax}%</TableCell>
+                    <TableCell align="right">
+                      {currencyFormatter.format(
+                        calculateTotal(
+                          item.quantity,
+                          item.price,
+                          item.discount,
+                          item.tax
+                        )
+                      )}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Chip
+                        size="small"
+                        variant="filled"
+                        color="error"
+                        label="Pending"
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      <MoreVert fontSize="small" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>

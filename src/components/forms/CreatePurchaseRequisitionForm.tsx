@@ -6,6 +6,7 @@ import {
   Button,
   Autocomplete,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import {
   CreatePurchaseRequisition,
@@ -27,7 +28,6 @@ export default function CreatePurchaseRequisitionForm(props: {
   const {
     register,
     handleSubmit,
-
     formState: { errors },
     setValue,
   } = useForm<Purchase>();
@@ -38,9 +38,10 @@ export default function CreatePurchaseRequisitionForm(props: {
     const response = await axios.get(BACKEND_URL + "vendors/");
     return response.data.data;
   };
-  const { isLoading, error, data } = useQuery({
+  const { error, data } = useQuery({
     queryKey: ["vendors"],
     queryFn: () => getVendors(),
+    refetchOnWindowFocus: false,
   });
 
   // VENDOR
@@ -72,6 +73,8 @@ export default function CreatePurchaseRequisitionForm(props: {
       },
     }
   );
+
+  const { isLoading } = createPurchase;
 
   const onSubmit: SubmitHandler<CreatePurchaseRequisition> = async (
     data,
@@ -120,7 +123,7 @@ export default function CreatePurchaseRequisitionForm(props: {
           {/* AUTOCOMPLETE */}
           <Autocomplete
             id="vendor"
-            options={data}
+            options={data ? data : []}
             autoHighlight
             getOptionLabel={(option) => option.name}
             value={selectedVendor}
@@ -170,8 +173,11 @@ export default function CreatePurchaseRequisitionForm(props: {
             <Button onClick={() => props.setOpen(false)} type="button">
               Batal
             </Button>
-            <Button variant={"contained"} type="submit">
-              Simpan
+            <Button variant={"contained"} type="submit" disabled={isLoading}>
+              {isLoading
+                ? // <CircularProgress color="inherit" size={15} />
+                  "Menyimpan"
+                : "Simpan"}
             </Button>
           </Stack>
         </Stack>

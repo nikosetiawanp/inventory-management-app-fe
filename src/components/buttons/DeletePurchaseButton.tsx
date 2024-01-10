@@ -84,11 +84,10 @@ export default function DeletePurchaseButton(props: { purchase: Purchase }) {
             autoFocus
             disabled={isLoading}
           >
-            {isLoading ? (
-              <CircularProgress color="inherit" size={15} />
-            ) : (
-              "Hapus"
-            )}
+            {isLoading
+              ? "Menghapus"
+              : // <CircularProgress color="inherit" size={15} />
+                "Hapus"}
           </Button>
         </DialogActions>
       </Dialog>

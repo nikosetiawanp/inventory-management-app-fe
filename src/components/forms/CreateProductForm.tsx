@@ -113,12 +113,11 @@ export default function CreateProductForm(props: {
             <Button onClick={() => props.setOpen(false)} type="button">
               Batal
             </Button>
-            <Button variant={"contained"} type="submit">
-              {isLoading ? (
-                <CircularProgress color="inherit" size={15} />
-              ) : (
-                "Simpan"
-              )}
+            <Button variant={"contained"} type="submit" disabled={isLoading}>
+              {isLoading
+                ? "Menyimpan"
+                : // <CircularProgress color="inherit" size={15} />
+                  "Simpan"}
             </Button>
           </Stack>
         </Stack>

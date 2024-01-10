@@ -46,6 +46,7 @@ export default function PurchaseRequisitionPage() {
   const { isLoading, error, data, refetch, isRefetching } = useQuery({
     queryKey: ["purchases"],
     queryFn: () => getPurchases(),
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {

@@ -83,11 +83,10 @@ export default function DeleteProductButton(props: { product: Product }) {
             autoFocus
             disabled={isLoading}
           >
-            {isLoading ? (
-              <CircularProgress color="inherit" size={15} />
-            ) : (
-              "Hapus"
-            )}
+            {isLoading
+              ? "Menghapus"
+              : // <CircularProgress color="inherit" size={15} />
+                "Hapus"}
           </Button>
         </DialogActions>
       </Dialog>

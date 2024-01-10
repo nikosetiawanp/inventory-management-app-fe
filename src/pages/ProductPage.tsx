@@ -33,6 +33,7 @@ export default function ProductPage() {
   const { isLoading, error, data } = useQuery({
     queryKey: ["product"],
     queryFn: () => getProducts(),
+    refetchOnWindowFocus: false,
   });
   return (
     // PAGE

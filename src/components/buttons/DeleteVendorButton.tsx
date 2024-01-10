@@ -83,11 +83,10 @@ export default function DeleteVendorButton(props: { vendor: Vendor }) {
             autoFocus
             disabled={isLoading}
           >
-            {isLoading ? (
-              <CircularProgress color="inherit" size={15} />
-            ) : (
-              "Hapus"
-            )}
+            {isLoading
+              ? "Menghapus"
+              : // <CircularProgress color="inherit" size={15} />
+                "Hapus"}
           </Button>
         </DialogActions>
       </Dialog>
