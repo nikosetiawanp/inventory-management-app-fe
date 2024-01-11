@@ -67,7 +67,7 @@ export default function PurchaseRequisitionPage() {
       {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Purchase
+          Purchase Requisition
         </Typography>
 
         {/* <Typography>{selectedDate?.toString()}</Typography> */}

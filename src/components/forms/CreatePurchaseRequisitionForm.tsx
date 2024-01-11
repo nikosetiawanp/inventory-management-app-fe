@@ -7,6 +7,7 @@ import {
   Autocomplete,
   Box,
   CircularProgress,
+  Select,
 } from "@mui/material";
 import {
   CreatePurchaseRequisition,
@@ -95,6 +96,35 @@ export default function CreatePurchaseRequisitionForm(props: {
     }
   };
 
+  const SelectVendor = () => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        <TextField
+          id="vendorId"
+          variant="outlined"
+          label="Vendor"
+          {...register("vendorId", { required: "Tidak boleh kosong" })}
+          error={!!errors.vendorId}
+          required
+          onClick={() => setOpen(true)}
+        />
+
+        <Dialog
+          open={open}
+          onClose={() => setOpen(false)}
+          fullWidth
+          maxWidth={"lg"}
+        >
+          <Stack>
+            <Typography variant="h4">Pilih Vendor</Typography>
+          </Stack>
+        </Dialog>
+      </>
+    );
+  };
+
   return (
     <Dialog
       open={props.open}
@@ -102,10 +132,10 @@ export default function CreatePurchaseRequisitionForm(props: {
       fullWidth
       maxWidth={"xs"}
     >
-      {/* <DialogTitle fontWeight={"bold"}>Tambah Produk</DialogTitle> */}
       <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Stack gap={3} padding={4}>
           <Typography variant="h6">Buat Purchase Requisition</Typography>
+          {/* <SelectVendor /> */}
 
           {/* DATE PICKER */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -125,7 +155,7 @@ export default function CreatePurchaseRequisitionForm(props: {
             id="vendor"
             options={data ? data : []}
             autoHighlight
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => `${option.code} - ${option.name}`}
             value={selectedVendor}
             onChange={handleVendorChange}
             renderOption={(props, option) => (

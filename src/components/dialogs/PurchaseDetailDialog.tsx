@@ -11,23 +11,29 @@ import {
   TableCell,
   IconButton,
   TableBody,
-  InputAdornment,
-  TextField,
   Chip,
   Autocomplete,
   Box,
+  InputAdornment,
+  TextField,
 } from "@mui/material";
 import MorePurchaseButton from "../buttons/MorePurchaseButton";
 
-import { Item, Product, Purchase, Vendor } from "../../interfaces/interfaces";
+import { Item, Product, Purchase } from "../../interfaces/interfaces";
 import AddIcon from "@mui/icons-material/Add";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
-import { ClearIcon } from "@mui/x-date-pickers";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import MoveToPurchaseOrder from "../buttons/MoveToPurchaseOrder";
 import RowSkeleton from "../skeletons/RowSkeleton";
 import { useEffect, useState } from "react";
+import NewItem from "../rows/NewItem";
+import { ClearIcon } from "@mui/x-date-pickers";
 
 export default function PurchaseDetailDialog(props: {
   open: boolean;
@@ -37,6 +43,13 @@ export default function PurchaseDetailDialog(props: {
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
+
+  //   FORM
+  const { control, handleSubmit, watch } = useForm();
+  const { fields, append, prepend, update, remove } = useFieldArray({
+    control,
+    name: "items",
+  });
 
   // GET ITEMS
   const getItems = async () => {
@@ -53,10 +66,17 @@ export default function PurchaseDetailDialog(props: {
   });
 
   // GET VENDORS
-  const getVendors = async () => {
-    const response = await axios.get(BACKEND_URL + `vendors`);
+  const getProducts = async () => {
+    const response = await axios.get(BACKEND_URL + `products`);
     return response.data.data;
   };
+
+  const productsQuery = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+    refetchOnWindowFocus: false,
+    enabled: fields?.length > 0,
+  });
 
   // TOTAL PRICE
   const calculateTotal = (
@@ -90,20 +110,6 @@ export default function PurchaseDetailDialog(props: {
   const currencyFormatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
-  });
-
-  //   FORM
-  const { control, handleSubmit, reset } = useForm();
-  const { fields, append, update, remove } = useFieldArray({
-    control,
-    name: "items",
-  });
-
-  const vendorsQuery = useQuery({
-    queryKey: ["vendors"],
-    queryFn: getVendors,
-    refetchOnWindowFocus: false,
-    enabled: fields?.length > 0,
   });
 
   const clearFieldsArray = () => {
@@ -169,10 +175,10 @@ export default function PurchaseDetailDialog(props: {
     }
   );
 
-  // const { isLoading } = createItems;
-
   const onSubmit: SubmitHandler<Item> = async (data: { items: any }, event) => {
     try {
+      console.log(data);
+
       await createItems.mutateAsync(data.items);
       clearFieldsArray();
     } catch (error) {
@@ -181,62 +187,53 @@ export default function PurchaseDetailDialog(props: {
   };
 
   useEffect(() => {
-    // console.log(vendorsQuery);
-    console.log(fields);
-  }, [fields]);
+    // console.log(fields);
+  }, []);
 
-  const NewItem = ({ update, index, value, control }: any) => {
-    const { register, setValue } = control;
-    const [selectedVendor, setSelectedVendor] = useState<Vendor>();
-    const handleVendorChange = (event: any, value: any) => {
-      setSelectedVendor(value);
-      setValue("vendor", value ? value.id : "");
-    };
+  const NewItem2 = ({ update, index, value, control }: any) => {
+    const { register, setValue, watch } = control;
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(
+      null
+    );
 
     return (
       <TableRow>
         {/* PRODUCT */}
-        <TableCell>{selectedVendor?.id}</TableCell>
         <TableCell>
           <Autocomplete
             id={`items[${index}].productId`}
-            options={vendorsQuery.data ? vendorsQuery.data : []}
             autoHighlight
-            getOptionLabel={(option: any) => option.id}
-            value={selectedVendor}
-            onChange={handleVendorChange}
+            options={productsQuery.data ? productsQuery.data : []}
+            getOptionLabel={(option: Product) => `${option.id}`}
+            value={selectedProduct}
+            onChange={(event, value) => {
+              setSelectedProduct(value);
+            }}
             renderOption={(props, option) => (
               <Box
                 component="li"
                 sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
                 {...props}
               >
-                {option.code} - {option.name}
+                <Typography variant="body2">
+                  {option.code} - {option.name}
+                </Typography>
               </Box>
             )}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Vendor"
                 inputProps={{
                   ...params.inputProps,
-                  autoComplete: "new-password",
                 }}
-                {...register(`items[${index}.productId]`, {
+                {...register(`items[${index}].productId`, {
                   required: "Tidak boleh kosong",
                 })}
                 required
+                size="small"
               />
             )}
           />
-          {/* <TextField
-            id={`items[${index}].productId`}
-            variant="outlined"
-            size="small"
-            {...register(`items[${index}].productId`, {
-              required: "Tidak boleh kosong",
-            })}
-          /> */}
         </TableCell>
         {/* QUANTITY */}
         <TableCell width={75}>
@@ -296,7 +293,9 @@ export default function PurchaseDetailDialog(props: {
           />
         </TableCell>
         {/* TOTAL */}
-        <TableCell align="right"></TableCell>
+        {props.purchase.status == "PO" ? (
+          <TableCell align="right"></TableCell>
+        ) : null}
         {/* REMOVE */}
         <TableCell></TableCell>
         <TableCell width={10}>
@@ -372,12 +371,12 @@ export default function PurchaseDetailDialog(props: {
               </Button>
             ) : (
               <>
-                {props.purchase.status == "PR" && (
+                {props.purchase.status == "PR" ? (
                   <MoveToPurchaseOrder
                     purchase={props.purchase}
                     refetch={props.refetch}
                   />
-                )}
+                ) : null}
 
                 <MorePurchaseButton />
               </>
@@ -414,7 +413,9 @@ export default function PurchaseDetailDialog(props: {
                 <TableCell align="center">Diskon</TableCell>
                 <TableCell align="center">Pajak</TableCell>
                 <TableCell align="right">Total</TableCell>
-                <TableCell align="center">Status</TableCell>
+                {props.purchase.status == "PO" ? (
+                  <TableCell align="center">Status</TableCell>
+                ) : null}
                 <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -435,18 +436,11 @@ export default function PurchaseDetailDialog(props: {
             >
               {/* NEW ITEM */}
 
-              {fields.map((field, index) => (
-                <NewItem
-                  key={field.id}
-                  control={control}
-                  update={update}
-                  index={index}
-                  value={field}
-                />
-              ))}
-
               {isLoading ? (
-                <RowSkeleton rows={15} columns={9} />
+                <RowSkeleton
+                  rows={15}
+                  columns={props.purchase.status == "PR" ? 8 : 9}
+                />
               ) : (
                 data?.map((item: Item, index: number) => (
                   <TableRow key={index}>
@@ -470,20 +464,38 @@ export default function PurchaseDetailDialog(props: {
                         )
                       )}
                     </TableCell>
-                    <TableCell align="center">
-                      <Chip
-                        size="small"
-                        variant="filled"
-                        color="error"
-                        label="Pending"
-                      />
-                    </TableCell>
+
+                    {props.purchase.status == "PO" ? (
+                      <TableCell align="center">
+                        <Chip
+                          size="small"
+                          variant="filled"
+                          color="error"
+                          label="Pending"
+                        />
+                      </TableCell>
+                    ) : null}
+
                     <TableCell align="center">
                       <MoreVert fontSize="small" />
                     </TableCell>
                   </TableRow>
                 ))
               )}
+              {fields.map((field, index) => (
+                <NewItem
+                  key={field.id}
+                  control={control}
+                  update={update}
+                  index={index}
+                  value={field}
+                  remove={remove}
+                  products={productsQuery.data}
+                  purchase={props.purchase}
+                  watch={watch}
+                  fields={fields}
+                />
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
