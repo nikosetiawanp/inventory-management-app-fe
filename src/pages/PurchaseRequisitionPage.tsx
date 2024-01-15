@@ -70,11 +70,9 @@ export default function PurchaseRequisitionPage() {
           Purchase Requisition
         </Typography>
 
-        {/* <Typography>{selectedDate?.toString()}</Typography> */}
         <Stack direction={"row"} gap={2} width={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label={"Bulan Tahun"}
               views={["month", "year"]}
               slotProps={{ textField: { size: "small" } }}
               value={selectedDate}

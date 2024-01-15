@@ -45,7 +45,7 @@ export default function PurchaseDetailDialog(props: {
   const queryClient = useQueryClient();
 
   //   FORM
-  const { control, handleSubmit, watch } = useForm();
+  const { control, handleSubmit, watch, setValue } = useForm();
   const { fields, append, prepend, update, remove } = useFieldArray({
     control,
     name: "items",
@@ -65,7 +65,7 @@ export default function PurchaseDetailDialog(props: {
     enabled: props.open,
   });
 
-  // GET VENDORS
+  // GET PRODUCTS
   const getProducts = async () => {
     const response = await axios.get(BACKEND_URL + `products`);
     return response.data.data;
@@ -177,8 +177,7 @@ export default function PurchaseDetailDialog(props: {
 
   const onSubmit: SubmitHandler<Item> = async (data: { items: any }, event) => {
     try {
-      console.log(data);
-
+      console.log(data.items);
       await createItems.mutateAsync(data.items);
       clearFieldsArray();
     } catch (error) {
@@ -190,122 +189,122 @@ export default function PurchaseDetailDialog(props: {
     // console.log(fields);
   }, []);
 
-  const NewItem2 = ({ update, index, value, control }: any) => {
-    const { register, setValue, watch } = control;
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(
-      null
-    );
+  // const NewItem2 = ({ update, index, value, control }: any) => {
+  //   const { register, setValue, watch } = control;
+  //   const [selectedProduct, setSelectedProduct] = useState<Product | null>(
+  //     null
+  //   );
 
-    return (
-      <TableRow>
-        {/* PRODUCT */}
-        <TableCell>
-          <Autocomplete
-            id={`items[${index}].productId`}
-            autoHighlight
-            options={productsQuery.data ? productsQuery.data : []}
-            getOptionLabel={(option: Product) => `${option.id}`}
-            value={selectedProduct}
-            onChange={(event, value) => {
-              setSelectedProduct(value);
-            }}
-            renderOption={(props, option) => (
-              <Box
-                component="li"
-                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                {...props}
-              >
-                <Typography variant="body2">
-                  {option.code} - {option.name}
-                </Typography>
-              </Box>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                inputProps={{
-                  ...params.inputProps,
-                }}
-                {...register(`items[${index}].productId`, {
-                  required: "Tidak boleh kosong",
-                })}
-                required
-                size="small"
-              />
-            )}
-          />
-        </TableCell>
-        {/* QUANTITY */}
-        <TableCell width={75}>
-          <TextField
-            id={`items[${index}].quantity`}
-            variant="outlined"
-            size="small"
-            {...register(`items[${index}].quantity`, {
-              required: "Tidak boleh kosong",
-            })}
-          />
-        </TableCell>
-        {/* UNIT */}
-        <TableCell align="center">kg</TableCell>
-        {/* PRICE */}
-        <TableCell width={200}>
-          <TextField
-            id={`items[${index}].price`}
-            variant="outlined"
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">Rp</InputAdornment>
-              ),
-            }}
-            {...register(`items[${index}].price`, {
-              required: "Tidak boleh kosong",
-            })}
-          />
-        </TableCell>
-        {/* DISCOUNT */}
-        <TableCell width={80}>
-          <TextField
-            id={`items[${index}].discount`}
-            variant="outlined"
-            size="small"
-            InputProps={{
-              endAdornment: <InputAdornment position="end">%</InputAdornment>,
-            }}
-            {...register(`items[${index}].discount`, {
-              required: "Tidak boleh kosong",
-            })}
-          />
-        </TableCell>
-        {/* TAX */}
-        <TableCell width={80}>
-          <TextField
-            id={`items[${index}].tax`}
-            variant="outlined"
-            size="small"
-            InputProps={{
-              endAdornment: <InputAdornment position="end">%</InputAdornment>,
-            }}
-            {...register(`items[${index}].tax`, {
-              required: "Tidak boleh kosong",
-            })}
-          />
-        </TableCell>
-        {/* TOTAL */}
-        {props.purchase.status == "PO" ? (
-          <TableCell align="right"></TableCell>
-        ) : null}
-        {/* REMOVE */}
-        <TableCell></TableCell>
-        <TableCell width={10}>
-          <IconButton size="small" onClick={() => remove(index)}>
-            <ClearIcon fontSize="small" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-    );
-  };
+  //   return (
+  //     <TableRow>
+  //       {/* PRODUCT */}
+  //       <TableCell>
+  //         <Autocomplete
+  //           id={`items[${index}].productId`}
+  //           autoHighlight
+  //           options={productsQuery.data ? productsQuery.data : []}
+  //           getOptionLabel={(option: Product) => `${option.id}`}
+  //           value={selectedProduct}
+  //           onChange={(event, value) => {
+  //             setSelectedProduct(value);
+  //           }}
+  //           renderOption={(props, option) => (
+  //             <Box
+  //               component="li"
+  //               sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+  //               {...props}
+  //             >
+  //               <Typography variant="body2">
+  //                 {option.code} - {option.name}
+  //               </Typography>
+  //             </Box>
+  //           )}
+  //           renderInput={(params) => (
+  //             <TextField
+  //               {...params}
+  //               inputProps={{
+  //                 ...params.inputProps,
+  //               }}
+  //               {...register(`items[${index}].productId`, {
+  //                 required: "Tidak boleh kosong",
+  //               })}
+  //               required
+  //               size="small"
+  //             />
+  //           )}
+  //         />
+  //       </TableCell>
+  //       {/* QUANTITY */}
+  //       <TableCell width={75}>
+  //         <TextField
+  //           id={`items[${index}].quantity`}
+  //           variant="outlined"
+  //           size="small"
+  //           {...register(`items[${index}].quantity`, {
+  //             required: "Tidak boleh kosong",
+  //           })}
+  //         />
+  //       </TableCell>
+  //       {/* UNIT */}
+  //       <TableCell align="center">kg</TableCell>
+  //       {/* PRICE */}
+  //       <TableCell width={200}>
+  //         <TextField
+  //           id={`items[${index}].price`}
+  //           variant="outlined"
+  //           size="small"
+  //           InputProps={{
+  //             startAdornment: (
+  //               <InputAdornment position="start">Rp</InputAdornment>
+  //             ),
+  //           }}
+  //           {...register(`items[${index}].price`, {
+  //             required: "Tidak boleh kosong",
+  //           })}
+  //         />
+  //       </TableCell>
+  //       {/* DISCOUNT */}
+  //       <TableCell width={80}>
+  //         <TextField
+  //           id={`items[${index}].discount`}
+  //           variant="outlined"
+  //           size="small"
+  //           InputProps={{
+  //             endAdornment: <InputAdornment position="end">%</InputAdornment>,
+  //           }}
+  //           {...register(`items[${index}].discount`, {
+  //             required: "Tidak boleh kosong",
+  //           })}
+  //         />
+  //       </TableCell>
+  //       {/* TAX */}
+  //       <TableCell width={80}>
+  //         <TextField
+  //           id={`items[${index}].tax`}
+  //           variant="outlined"
+  //           size="small"
+  //           InputProps={{
+  //             endAdornment: <InputAdornment position="end">%</InputAdornment>,
+  //           }}
+  //           {...register(`items[${index}].tax`, {
+  //             required: "Tidak boleh kosong",
+  //           })}
+  //         />
+  //       </TableCell>
+  //       {/* TOTAL */}
+  //       {props.purchase.status == "PO" ? (
+  //         <TableCell align="right"></TableCell>
+  //       ) : null}
+  //       {/* REMOVE */}
+  //       <TableCell></TableCell>
+  //       <TableCell width={10}>
+  //         <IconButton size="small" onClick={() => remove(index)}>
+  //           <ClearIcon fontSize="small" />
+  //         </IconButton>
+  //       </TableCell>
+  //     </TableRow>
+  //   );
+  // };
 
   return (
     <Dialog
@@ -435,7 +434,6 @@ export default function PurchaseDetailDialog(props: {
               }}
             >
               {/* NEW ITEM */}
-
               {isLoading ? (
                 <RowSkeleton
                   rows={15}
@@ -494,6 +492,7 @@ export default function PurchaseDetailDialog(props: {
                   purchase={props.purchase}
                   watch={watch}
                   fields={fields}
+                  setValue={setValue}
                 />
               ))}
             </TableBody>

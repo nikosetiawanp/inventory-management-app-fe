@@ -49,6 +49,11 @@ export default function Drawer() {
       param: "/purchaseorder",
       category: "Pembelian",
     },
+    {
+      name: "Gudang Masuk",
+      param: "/arrivalhistory",
+      category: "Gudang",
+    },
   ];
   return (
     <Box

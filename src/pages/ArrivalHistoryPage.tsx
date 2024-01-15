@@ -1,5 +1,4 @@
 import {
-  Button,
   IconButton,
   Stack,
   Table,
@@ -8,64 +7,57 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import Drawer from "../components/Drawer";
-
 import { Settings } from "@mui/icons-material";
-
-import CreatePurchaseRequisitionButton from "../components/buttons/CreatePurchaseRequisitionButton";
-
-import { useEffect, useState } from "react";
-import PurchaseRow from "../components/rows/PurchaseRow";
-import axios from "axios";
-import { useQuery } from "react-query";
-import { Purchase } from "../interfaces/interfaces";
-import RowSkeleton from "../components/skeletons/RowSkeleton";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import CreateInventoryArrival from "../components/forms/CreateInventoryArrival";
+import axios from "axios";
+import { useQuery, useQueryClient } from "react-query";
+import ArrivalHistoryRow from "../components/rows/ArrivalHistoryRow";
+import { InventoryHistory } from "../interfaces/interfaces";
 
-export default function PurchaseRequisitionPage() {
+export default function ArrivalHistoryPage() {
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
   const selectedYear = formattedDate.split("-")[0];
   const selectedMonth = formattedDate.split("-")[1];
 
-  // FETCHING PRODUCTS
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const getPurchases = async () => {
+  // GET INVENTORY HISTORY
+  const getInventoryHistories = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PO`
+        `inventory-histories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=A`
     );
     return response.data.data;
   };
 
-  const { isLoading, error, data, refetch, isRefetching } = useQuery({
-    queryKey: ["purchases"],
-    queryFn: () => getPurchases(),
+  const inventoryHistoryQuery = useQuery({
+    queryKey: ["inventoryhistories"],
+    queryFn: getInventoryHistories,
     refetchOnWindowFocus: false,
+    enabled: true,
   });
 
   useEffect(() => {
-    refetch();
+    inventoryHistoryQuery.refetch();
   }, [selectedDate]);
 
   return (
-    // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
-      {/* DRAWER */}
       <Drawer />
-
-      {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Purchase Order
+          Gudang Masuk
         </Typography>
 
-        {/* <Typography>{selectedDate?.toString()}</Typography> */}
+        {/* NAVS */}
         <Stack direction={"row"} gap={2} width={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -78,14 +70,13 @@ export default function PurchaseRequisitionPage() {
           </LocalizationProvider>
 
           {/* BUTTON */}
-          <CreatePurchaseRequisitionButton />
+          <CreateInventoryArrival />
         </Stack>
 
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
           <Table sx={{ borderCollapse: "separate" }}>
-            {/* HEAD */}
             <TableHead
               sx={{
                 position: "sticky",
@@ -97,11 +88,14 @@ export default function PurchaseRequisitionPage() {
               }}
             >
               <TableRow>
-                <TableCell>Tanggal Surat</TableCell>
-                <TableCell>Kode Vendor</TableCell>
-                <TableCell>Nama Vendor</TableCell>
-                <TableCell>Nomor Surat</TableCell>
-                <TableCell width={10}>
+                <TableCell>Tanggal Masuk</TableCell>
+                <TableCell>Produk</TableCell>
+                <TableCell>Vendor</TableCell>
+                <TableCell>Nomor PO</TableCell>
+                <TableCell>Keterangan</TableCell>
+                <TableCell align="center">Quantity</TableCell>
+                <TableCell>Sisa Stok</TableCell>
+                <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />
                   </IconButton>
@@ -109,19 +103,15 @@ export default function PurchaseRequisitionPage() {
               </TableRow>
             </TableHead>
 
-            {/* ROWS */}
-            <TableBody sx={{ overflowY: "scroll" }}>
-              {isLoading ? (
-                <RowSkeleton rows={15} columns={5} />
-              ) : (
-                data?.map((purchase: Purchase, index: number) => (
-                  <PurchaseRow
-                    index={index}
+            <TableBody>
+              {inventoryHistoryQuery?.data?.map(
+                (inventoryHistory: InventoryHistory, index: number) => (
+                  <ArrivalHistoryRow
                     key={index}
-                    purchase={purchase}
-                    refetch={refetch}
+                    index={index}
+                    inventoryHistory={inventoryHistory}
                   />
-                ))
+                )
               )}
             </TableBody>
           </Table>

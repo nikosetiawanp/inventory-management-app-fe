@@ -18,7 +18,6 @@ import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
 export default function DeleteProductButton(props: { product: Product }) {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const [open, setOpen] = useState(false);
   const handleClickOpen = (event: any) => {
     event.stopPropagation();
@@ -29,6 +28,7 @@ export default function DeleteProductButton(props: { product: Product }) {
     setOpen(false);
   };
 
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
   const deleteProduct = useMutation(
     async (id: number | any) => {

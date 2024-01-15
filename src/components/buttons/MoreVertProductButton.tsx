@@ -10,6 +10,7 @@ import { useState } from "react";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+
 import DeleteProductButton from "./DeleteProductButton";
 import { Product } from "../../interfaces/interfaces";
 
@@ -62,12 +63,6 @@ export default function MoreVertProductButton(props: { product: Product }) {
           <ListItemText>Ubah</ListItemText>
         </MenuItem>
         <DeleteProductButton product={props.product} />
-        {/* <MenuItem>
-          <ListItemIcon>
-            <DeleteIcon fontSize="small" color="error" />
-          </ListItemIcon>
-          <ListItemText sx={{ color: "error.main" }}>Hapus</ListItemText>
-        </MenuItem> */}
       </Menu>
     </>
   );

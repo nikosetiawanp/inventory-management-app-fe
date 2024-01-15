@@ -23,8 +23,18 @@ export default function CreateProductForm(props: {
   const queryClient = useQueryClient();
   const createProduct = useMutation(
     async (data: Product) => {
+      const dataToSubmit = {
+        code: data.code,
+        name: data.name,
+        unit: data.unit,
+        quantity: 0,
+      };
+
       try {
-        const response = await axios.post(BACKEND_URL + "products/", data);
+        const response = await axios.post(
+          BACKEND_URL + "products/",
+          dataToSubmit
+        );
         return response.data;
       } catch (error) {
         throw new Error("Network response was not ok");

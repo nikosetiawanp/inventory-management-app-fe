@@ -7,6 +7,7 @@ import VendorPage from "./pages/VendorPage";
 import PurchaseRequisitionPage from "./pages/PurchaseRequisitionPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import PurchaseOrderPage from "./pages/PurchaseOrderPage";
+import ArrivalHistoryPage from "./pages/ArrivalHistoryPage";
 
 const queryClient = new QueryClient();
 const theme = createTheme({
@@ -42,6 +43,7 @@ function App() {
                 element={<PurchaseRequisitionPage />}
               />
               <Route path="/purchaseorder" element={<PurchaseOrderPage />} />
+              <Route path="/arrivalhistory" element={<ArrivalHistoryPage />} />
             </Routes>
           </Router>
         </ThemeProvider>

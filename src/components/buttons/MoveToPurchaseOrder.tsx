@@ -38,7 +38,7 @@ export default function MoveToPurchaseRequisition(props: {
           BACKEND_URL + "purchases/" + props.purchase.id,
           data
         );
-        // props.refetch();
+        props.refetch();
         return response.data;
       } catch (error) {
         throw new Error("Network response was not ok");
@@ -76,7 +76,7 @@ export default function MoveToPurchaseRequisition(props: {
       console.log("Mutation Error:", error);
     }
     event?.target.reset();
-    // setOpen(false);
+    setOpen(false);
   };
   return (
     <>
@@ -124,7 +124,7 @@ export default function MoveToPurchaseRequisition(props: {
               <Button onClick={() => setOpen(false)} type="button">
                 Batal
               </Button>
-              <Button variant={"contained"} type="button" disabled={isLoading}>
+              <Button variant={"contained"} type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <CircularProgress color="inherit" size={15} />
                 ) : (

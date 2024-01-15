@@ -9,10 +9,9 @@ import {
   IconButton,
 } from "@mui/material";
 import { ClearIcon } from "@mui/x-date-pickers";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { Product } from "../../interfaces/interfaces";
-import { log } from "console";
+import SelectProduct from "../select/SelectProduct";
 
 export default function NewItem(props: {
   update: any;
@@ -24,58 +23,41 @@ export default function NewItem(props: {
   remove: any;
   watch: any;
   fields: any;
+  setValue: any;
 }) {
-  const { register, setValue, watch } = props.control;
+  const { register } = props.control;
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    // console.log("value changed");
+    console.log(selectedProduct);
+    props.setValue(`items[${props.index}].productId`, selectedProduct?.id);
+  }, [selectedProduct]);
 
   return (
     <TableRow>
       {/* PRODUCT */}
       <TableCell>
-        <Autocomplete
-          id={`items[${props.index}].productId`}
-          autoHighlight
-          options={props.products ? props.products : []}
-          getOptionLabel={(option: Product) => `${option.id}`}
-          value={selectedProduct}
-          onChange={(event, value) => {
-            setSelectedProduct(value);
-          }}
-          renderOption={(props, option) => (
-            <Box
-              component="li"
-              sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-              {...props}
-            >
-              <Typography variant="body2">
-                {option.code} - {option.name}
-              </Typography>
-            </Box>
-          )}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              inputProps={{
-                ...params.inputProps,
-              }}
-              {...register(`items[${props.index}].productId`, {
-                required: "Tidak boleh kosong",
-              })}
-              required
-              size="small"
-            />
-          )}
+        <SelectProduct
+          selectedProduct={selectedProduct}
+          setSelectedProduct={setSelectedProduct}
+          control={props.control}
+          index={props.index}
+          update={props.update}
+          setValue={props.setValue}
         />
-
         {/* <Autocomplete
           id={`items[${props.index}].productId`}
           autoHighlight
           options={props.products ? props.products : []}
-          getOptionLabel={(option: Product) => `${option.id}`}
+          getOptionLabel={(option: Product) => `${option.name}`}
           value={selectedProduct}
           onChange={(event, value) => {
             setSelectedProduct(value);
-            console.log(props.fields);
+            props.setValue(
+              `items[${props.index}.productId]`,
+              selectedProduct?.id
+            );
           }}
           renderOption={(props, option) => (
             <Box
@@ -102,49 +84,8 @@ export default function NewItem(props: {
             />
           )}
         /> */}
-
-        {/* <Controller
-          name={`items[${props.index}].productId`}
-          control={props.control}
-          render={({ field }) => (
-            <Autocomplete
-              {...field}
-              id={`items[${props.index}].productId`}
-              options={props.products ? props.products : []}
-              getOptionLabel={(option: Product) => `${option.id}`}
-              value={selectedProduct}
-              onChange={(event, value) => {
-                setSelectedProduct(value);
-                field.onChange(value);
-              }}
-              renderOption={(props, option) => (
-                <Box
-                  component="li"
-                  sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                  {...props}
-                >
-                  <Typography variant="body2">
-                    {option.code} - {option.name}
-                  </Typography>
-                </Box>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  inputProps={{
-                    ...params.inputProps,
-                  }}
-                  {...register(`items[${props.index}].productId`, {
-                    required: "Tidak boleh kosong",
-                  })}
-                  required
-                  size="small"
-                />
-              )}
-            />
-          )}
-        /> */}
       </TableCell>
+
       {/* QUANTITY */}
       <TableCell width={75}>
         <TextField

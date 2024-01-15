@@ -44,6 +44,21 @@ export interface Purchase {
   items: Item[];
 }
 
+export interface InventoryHistory {
+  date: any;
+  description: string | null;
+  id: number | string;
+  quantity: number;
+  stockAfter: number;
+  type: "A" | "D";
+
+  productId: string | number;
+  purchaseId: string | number;
+  product: Product;
+  purchase: Purchase;
+  vendor: Vendor;
+}
+
 export interface CreatePurchaseRequisition {
   vendorId: string | number | undefined;
   prDate: string;

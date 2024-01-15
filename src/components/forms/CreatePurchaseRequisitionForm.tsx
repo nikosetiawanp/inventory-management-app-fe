@@ -21,6 +21,7 @@ import { useState } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import SelectVendor from "../select/SelectVendor";
 
 export default function CreatePurchaseRequisitionForm(props: {
   open: boolean;
@@ -39,7 +40,7 @@ export default function CreatePurchaseRequisitionForm(props: {
     const response = await axios.get(BACKEND_URL + "vendors/");
     return response.data.data;
   };
-  const { error, data } = useQuery({
+  const vendorsQuery = useQuery({
     queryKey: ["vendors"],
     queryFn: () => getVendors(),
     refetchOnWindowFocus: false,
@@ -96,35 +97,6 @@ export default function CreatePurchaseRequisitionForm(props: {
     }
   };
 
-  const SelectVendor = () => {
-    const [open, setOpen] = useState(false);
-
-    return (
-      <>
-        <TextField
-          id="vendorId"
-          variant="outlined"
-          label="Vendor"
-          {...register("vendorId", { required: "Tidak boleh kosong" })}
-          error={!!errors.vendorId}
-          required
-          onClick={() => setOpen(true)}
-        />
-
-        <Dialog
-          open={open}
-          onClose={() => setOpen(false)}
-          fullWidth
-          maxWidth={"lg"}
-        >
-          <Stack>
-            <Typography variant="h4">Pilih Vendor</Typography>
-          </Stack>
-        </Dialog>
-      </>
-    );
-  };
-
   return (
     <Dialog
       open={props.open}
@@ -151,7 +123,12 @@ export default function CreatePurchaseRequisitionForm(props: {
           </LocalizationProvider>
 
           {/* AUTOCOMPLETE */}
-          <Autocomplete
+          <SelectVendor
+            selectedVendor={selectedVendor}
+            setSelectedVendor={setSelectedVendor}
+            handleVendorChange={handleVendorChange}
+          />
+          {/* <Autocomplete
             id="vendor"
             options={data ? data : []}
             autoHighlight
@@ -181,7 +158,7 @@ export default function CreatePurchaseRequisitionForm(props: {
                 helperText={errors.vendor?.message}
               />
             )}
-          />
+          /> */}
 
           {/* NOMOR SURAT */}
           <TextField
