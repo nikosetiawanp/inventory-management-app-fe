@@ -15,13 +15,11 @@ import {
 import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { InventoryHistory } from "../../interfaces/interfaces";
+import { Inventory } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
-const DeleteArrivalHistory = (props: {
-  inventoryHistory: InventoryHistory;
-}) => {
+const DeleteArrivalHistory = (props: { inventory: Inventory }) => {
   const [open, setOpen] = useState(false);
   const handleClickOpen = (event: any) => {
     event.stopPropagation();
@@ -80,7 +78,7 @@ const DeleteArrivalHistory = (props: {
           <Button
             color={deleteInventoryHistory.isLoading ? "inherit" : "error"}
             onClick={() => {
-              deleteInventoryHistory.mutateAsync(props.inventoryHistory.id);
+              deleteInventoryHistory.mutateAsync(props.inventory.id);
             }}
             autoFocus
             disabled={deleteInventoryHistory.isLoading}
@@ -97,7 +95,7 @@ const DeleteArrivalHistory = (props: {
 };
 
 export default function ArrivalHistoryOptionButton(props: {
-  inventoryHistory: InventoryHistory;
+  inventory: Inventory;
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -145,7 +143,7 @@ export default function ArrivalHistoryOptionButton(props: {
           </ListItemIcon>
           <ListItemText>Ubah</ListItemText>
         </MenuItem>
-        <DeleteArrivalHistory inventoryHistory={props.inventoryHistory} />
+        <DeleteArrivalHistory inventory={props.inventory} />
         {/* <DeleteProductButton product={props.product} /> */}
       </Menu>
     </>

@@ -42,7 +42,7 @@ export default function CreateProductForm(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("product");
+        queryClient.invalidateQueries("products");
       },
     }
   );

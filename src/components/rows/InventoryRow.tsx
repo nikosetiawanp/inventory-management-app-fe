@@ -1,12 +1,15 @@
 import { TableCell, TableRow } from "@mui/material";
 import ArrivalHistoryOptionButton from "../buttons/ArrivalHistoryOptionButton";
+import { Inventory } from "../../interfaces/interfaces";
+import { useState } from "react";
+import InventoryDetailDialog from "../dialogs/InventoryDetailDialog";
 // import { useState } from "react";
 
-export default function ArrivalHistoryRow(props: {
+export default function InventoryRow(props: {
   index: number;
-  inventoryHistory: any;
+  inventory: Inventory;
 }) {
-  //   const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const formatDate = (inputDate: string) => {
     const date = new Date(inputDate);
     const options: any = {
@@ -50,21 +53,26 @@ export default function ArrivalHistoryRow(props: {
         key={props.index}
         hover
         sx={{ cursor: "pointer" }}
-        // onClick={() => setOpen(true)}
+        onClick={() => setOpen(true)}
       >
-        <TableCell>{formatDate(props.inventoryHistory?.date)}</TableCell>
-        <TableCell>{props.inventoryHistory?.product.name}</TableCell>
-        <TableCell>{props.inventoryHistory?.purchase.vendor.name}</TableCell>
-        <TableCell>{props.inventoryHistory?.purchase.poNumber}</TableCell>
-        <TableCell>{props.inventoryHistory?.description}</TableCell>
-        <TableCell align="center">{props.inventoryHistory.quantity}</TableCell>
-        <TableCell>{props.inventoryHistory?.stockAfter}</TableCell>
+        <TableCell>{formatDate(props.inventory?.date)}</TableCell>
+        <TableCell>
+          {props.inventory?.purchase.poNumber &&
+            props.inventory?.purchase.poNumber}
+        </TableCell>
+        <TableCell>{props.inventory?.letterNumber}</TableCell>
+        <TableCell>{props.inventory?.purchase.vendor.name}</TableCell>
+        <TableCell>{props.inventory?.description}</TableCell>
         <TableCell align="center" width={10}>
-          <ArrivalHistoryOptionButton
-            inventoryHistory={props.inventoryHistory}
-          />
+          <ArrivalHistoryOptionButton inventory={props.inventory} />
         </TableCell>
       </TableRow>
+
+      <InventoryDetailDialog
+        open={open}
+        setOpen={setOpen}
+        inventory={props.inventory}
+      />
     </>
   );
 }

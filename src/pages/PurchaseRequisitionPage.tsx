@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   IconButton,
   Stack,
   Table,
@@ -14,6 +15,7 @@ import {
 import Drawer from "../components/Drawer";
 
 import { Settings } from "@mui/icons-material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 import CreatePurchaseRequisitionButton from "../components/buttons/CreatePurchaseRequisitionButton";
 
@@ -48,15 +50,15 @@ export default function PurchaseRequisitionPage() {
     return response.data.data;
   };
 
-  const { isLoading, error, data, refetch, isRefetching } = useQuery({
+  const purchasesQuery = useQuery({
     queryKey: ["purchases"],
     queryFn: () => getPurchases(),
     refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    refetch();
-  }, [selectedDate]);
+  // useEffect(() => {
+  //   purchasesQuery.refetch();
+  // }, [selectedDate]);
 
   return (
     // PAGE
@@ -80,6 +82,18 @@ export default function PurchaseRequisitionPage() {
               format="MMMM YYYY"
             />
           </LocalizationProvider>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => purchasesQuery.refetch()}
+            disabled={purchasesQuery.isRefetching || purchasesQuery.isLoading}
+          >
+            {purchasesQuery.isRefetching || purchasesQuery.isLoading ? (
+              <CircularProgress size={15} color="inherit" />
+            ) : (
+              <RefreshIcon fontSize="small" />
+            )}
+          </Button>
 
           {/* BUTTON */}
           <CreatePurchaseRequisitionButton />
@@ -115,17 +129,20 @@ export default function PurchaseRequisitionPage() {
 
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {isLoading ? (
+              {purchasesQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={5} />
               ) : (
-                data?.map((purchase: Purchase, index: number) => (
-                  <PurchaseRow
-                    index={index}
-                    key={index}
-                    purchase={purchase}
-                    refetch={refetch}
-                  />
-                ))
+                purchasesQuery.data?.map(
+                  (purchase: Purchase, index: number) => (
+                    <PurchaseRow
+                      index={index}
+                      key={index}
+                      purchase={purchase}
+                      refetch={purchasesQuery.refetch}
+                      arrayLength={purchasesQuery.data.length}
+                    />
+                  )
+                )
               )}
             </TableBody>
           </Table>

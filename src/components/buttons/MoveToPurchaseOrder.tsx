@@ -46,7 +46,7 @@ export default function MoveToPurchaseRequisition(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("product");
+        queryClient.invalidateQueries("products");
       },
     }
   );

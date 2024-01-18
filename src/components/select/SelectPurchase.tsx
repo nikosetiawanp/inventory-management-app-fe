@@ -55,7 +55,7 @@ export default function SelectPurchase(props: {
         id="outlined-basic"
         label="Nomor PO"
         variant="outlined"
-        sx={{ cursor: "pointer" }}
+        sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
         value={props.selectedPurchase?.poNumber || ""}
         placeholder="Nomor PO"

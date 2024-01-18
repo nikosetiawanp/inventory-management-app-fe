@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { Product } from "../../interfaces/interfaces";
 import SelectProduct from "../select/SelectProduct";
 
-export default function NewItem(props: {
+export default function NewPurchaseItem(props: {
   update: any;
   index: any;
   value: any;
@@ -29,9 +29,10 @@ export default function NewItem(props: {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    // console.log("value changed");
-    console.log(selectedProduct);
-    props.setValue(`items[${props.index}].productId`, selectedProduct?.id);
+    props.setValue(
+      `purchaseItems[${props.index}].productId`,
+      selectedProduct?.id
+    );
   }, [selectedProduct]);
 
   return (
@@ -92,13 +93,14 @@ export default function NewItem(props: {
           id={`items[${props.index}].quantity`}
           variant="outlined"
           size="small"
-          {...register(`items[${props.index}].quantity`, {
+          {...register(`purchaseItems[${props.index}].quantity`, {
             required: "Tidak boleh kosong",
           })}
+          sx={{ textAlign: "center" }}
         />
       </TableCell>
       {/* UNIT */}
-      <TableCell align="center">kg</TableCell>
+      <TableCell align="center">{selectedProduct?.unit}</TableCell>
       {/* PRICE */}
       <TableCell width={200}>
         <TextField
@@ -110,7 +112,7 @@ export default function NewItem(props: {
               <InputAdornment position="start">Rp</InputAdornment>
             ),
           }}
-          {...register(`items[${props.index}].price`, {
+          {...register(`purchaseItems[${props.index}].price`, {
             required: "Tidak boleh kosong",
           })}
         />
@@ -118,13 +120,13 @@ export default function NewItem(props: {
       {/* DISCOUNT */}
       <TableCell width={80}>
         <TextField
-          id={`items[${props.index}].discount`}
+          id={`purchaseItems[${props.index}].discount`}
           variant="outlined"
           size="small"
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}
-          {...register(`items[${props.index}].discount`, {
+          {...register(`purchaseItems[${props.index}].discount`, {
             required: "Tidak boleh kosong",
           })}
         />
@@ -138,15 +140,12 @@ export default function NewItem(props: {
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}
-          {...register(`items[${props.index}].tax`, {
+          {...register(`purchaseItems[${props.index}].tax`, {
             required: "Tidak boleh kosong",
           })}
         />
       </TableCell>
-      {/* TOTAL */}
-      {props.purchase.status == "PO" ? (
-        <TableCell align="right"></TableCell>
-      ) : null}
+
       {/* REMOVE */}
       <TableCell></TableCell>
       <TableCell width={10}>

@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
-  InventoryHistory,
+  Inventory,
   Product,
   Purchase,
   Vendor,
@@ -24,13 +24,13 @@ import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import SelectPurchase from "../select/SelectPurchase";
 
-export default function CreateInventoryArrival() {
+export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<InventoryHistory>();
+  } = useForm<Inventory>();
 
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const [open, setOpen] = useState(false);
@@ -43,24 +43,6 @@ export default function CreateInventoryArrival() {
     setValue("vendor", value ? value.id : "");
   };
 
-  // PRODUCT
-  const [selectedProduct, setSelectedProduct] = useState<Vendor>();
-  const handleProductChange = (event: any, value: any) => {
-    setSelectedProduct(value);
-    setValue("product", value ? value.id : "");
-  };
-
-  const getProducts = async () => {
-    const response = await axios.get(BACKEND_URL + `products`);
-    return response.data.data;
-  };
-  const productsQuery = useQuery({
-    queryKey: ["products"],
-    queryFn: getProducts,
-    refetchOnWindowFocus: false,
-    enabled: open,
-  });
-
   // DATE
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
@@ -69,13 +51,17 @@ export default function CreateInventoryArrival() {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createInventoryHistory = useMutation(
-    async (data: Product) => {
+    async (data: Inventory) => {
+      // const dataToSubmit = {
+      //   date: formattedDate,
+      //   type: "A",
+      //   letterNumber: data.letterNumber,
+      //   purchaseId: data.purchaseId,
+      // };
       setIsSubmitting(true);
+
       try {
-        const response = await axios.post(
-          BACKEND_URL + "inventory-histories",
-          data
-        );
+        const response = await axios.post(BACKEND_URL + "inventories", data);
         setIsSubmitting(false);
         setOpen(false);
         return response.data;
@@ -86,21 +72,19 @@ export default function CreateInventoryArrival() {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(`inventoryhistories`);
+        queryClient.invalidateQueries(`inventories`);
       },
     }
   );
 
-  const onSubmit: SubmitHandler<InventoryHistory> = async (
-    data: InventoryHistory,
+  const onSubmit: SubmitHandler<Inventory> = async (
+    data: Inventory,
     event: any
   ) => {
     const dataToSubmit = {
       date: formattedDate,
-      type: "A",
-      quantity: data.quantity,
-      stockAfter: 100,
-      productId: selectedProduct?.id,
+      letterNumber: data.letterNumber,
+      type: props.type,
       purchaseId: selectedPurchase?.id,
     };
     try {
@@ -120,7 +104,7 @@ export default function CreateInventoryArrival() {
         sx={{ marginLeft: "auto" }}
         size="small"
       >
-        Catat Gudang Masuk
+        {props.type == "A" ? "Catat Gudang Masuk" : "Catat Gudang Keluar"}
       </Button>
 
       <Dialog
@@ -144,12 +128,12 @@ export default function CreateInventoryArrival() {
               />
             </LocalizationProvider>
             <TextField
-              id="quantity"
-              label="Quantity"
+              id="letterNumber"
+              label="Nomor Surat"
               variant="outlined"
-              {...register("quantity", { required: "Tidak boleh kosong" })}
-              error={!!errors.quantity}
-              helperText={errors.quantity?.message}
+              {...register("letterNumber", { required: "Tidak boleh kosong" })}
+              error={!!errors.letterNumber}
+              helperText={errors.letterNumber?.message}
               required
             />
             {/* PURCHASE */}
@@ -158,38 +142,7 @@ export default function CreateInventoryArrival() {
               setSelectedPurchase={setSelectedPurchase}
               handlePurchaseChange={handlePurchaseChange}
             />
-            {/* AUTOCOMPLETE PRODUCT */}
-            <Autocomplete
-              id="product"
-              options={productsQuery.data ? productsQuery.data : []}
-              autoHighlight
-              getOptionLabel={(option) => `${option?.code} - ${option?.name}`}
-              value={selectedProduct}
-              onChange={handleProductChange}
-              renderOption={(props, option) => (
-                <Box
-                  component="li"
-                  sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                  {...props}
-                >
-                  {option.code} - {option.name}
-                </Box>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Produk"
-                  inputProps={{
-                    ...params.inputProps,
-                    autoComplete: "new-password",
-                  }}
-                  {...register("product", { required: "Tidak boleh kosong" })}
-                  required
-                  error={!!errors.product}
-                  helperText={errors.product?.message}
-                />
-              )}
-            />
+
             {/* ACTIONS */}
             <Stack
               direction={"row"}

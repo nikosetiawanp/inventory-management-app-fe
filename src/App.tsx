@@ -7,7 +7,9 @@ import VendorPage from "./pages/VendorPage";
 import PurchaseRequisitionPage from "./pages/PurchaseRequisitionPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import PurchaseOrderPage from "./pages/PurchaseOrderPage";
-import ArrivalHistoryPage from "./pages/ArrivalHistoryPage";
+import InventoryArrivalPage from "./pages/InventoryArrivalPage";
+import InventoryPage from "./pages/InventoryPage";
+import InventoryDeparturePage from "./pages/InventoryDeparturePage";
 
 const queryClient = new QueryClient();
 const theme = createTheme({
@@ -39,11 +41,19 @@ function App() {
               <Route path="/vendor" element={<VendorPage />} />
               <Route path="/product" element={<ProductPage />} />
               <Route
-                path="/purchaserequisition"
+                path="/purchase-requisition"
                 element={<PurchaseRequisitionPage />}
               />
-              <Route path="/purchaseorder" element={<PurchaseOrderPage />} />
-              <Route path="/arrivalhistory" element={<ArrivalHistoryPage />} />
+              <Route path="/purchase-order" element={<PurchaseOrderPage />} />
+              <Route path="/inventory" element={<InventoryPage />} />
+              <Route
+                path="/inventory-arrival"
+                element={<InventoryArrivalPage />}
+              />
+              <Route
+                path="/inventory-departure"
+                element={<InventoryDeparturePage />}
+              />
             </Routes>
           </Router>
         </ThemeProvider>

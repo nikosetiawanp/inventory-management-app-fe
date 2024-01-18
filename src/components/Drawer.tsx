@@ -41,17 +41,27 @@ export default function Drawer() {
     },
     {
       name: "Purchase Requisition",
-      param: "/purchaserequisition",
+      param: "/purchase-requisition",
       category: "Pembelian",
     },
     {
       name: "Purchase Order",
-      param: "/purchaseorder",
+      param: "/purchase-order",
       category: "Pembelian",
     },
     {
+      name: "Stok Gudang",
+      param: "/inventory",
+      category: "Gudang",
+    },
+    {
       name: "Gudang Masuk",
-      param: "/arrivalhistory",
+      param: "/inventory-arrival",
+      category: "Gudang",
+    },
+    {
+      name: "Gudang Keluar",
+      param: "/inventory-departure",
       category: "Gudang",
     },
   ];

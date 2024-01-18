@@ -20,9 +20,7 @@ import { Product } from "../interfaces/interfaces";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import axios from "axios";
 
-const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-
-export default function ProductPage() {
+export default function InventoryPage() {
   // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getProducts = async () => {
@@ -44,7 +42,7 @@ export default function ProductPage() {
       {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Daftar Produk
+          Stok Gudang
         </Typography>
         <Stack direction={"row"} justifyContent={"space-between"} width={1}>
           <TextField
@@ -76,7 +74,10 @@ export default function ProductPage() {
               <TableRow>
                 <TableCell width={80}>Kode</TableCell>
                 <TableCell>Nama</TableCell>
-                <TableCell width={160}>Unit</TableCell>
+                <TableCell width={160} align="center">
+                  Quantity
+                </TableCell>
+
                 <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -94,7 +95,10 @@ export default function ProductPage() {
                   <TableRow key={index} hover>
                     <TableCell>{product.code}</TableCell>
                     <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.unit}</TableCell>
+                    {/* <TableCell>{product.unit}</TableCell> */}
+                    <TableCell align="center">
+                      {product.quantity} {product.unit}
+                    </TableCell>
 
                     <TableCell>
                       <MoreVertProductButton product={product} />

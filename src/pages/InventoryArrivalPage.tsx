@@ -1,4 +1,6 @@
 import {
+  Button,
+  CircularProgress,
   IconButton,
   Stack,
   Table,
@@ -15,13 +17,14 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import CreateInventoryArrival from "../components/forms/CreateInventoryArrival";
+import CreateInventory from "../components/forms/CreateInventory";
 import axios from "axios";
-import { useQuery, useQueryClient } from "react-query";
-import ArrivalHistoryRow from "../components/rows/ArrivalHistoryRow";
-import { InventoryHistory } from "../interfaces/interfaces";
+import { useQuery } from "react-query";
+import InventoryRow from "../components/rows/InventoryRow";
+import { Inventory } from "../interfaces/interfaces";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
-export default function ArrivalHistoryPage() {
+export default function InventoryArrivalPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -30,24 +33,21 @@ export default function ArrivalHistoryPage() {
   const selectedMonth = formattedDate.split("-")[1];
 
   // GET INVENTORY HISTORY
-  const getInventoryHistories = async () => {
+  const getInventories = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `inventory-histories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=A`
+        `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=A`
     );
+
     return response.data.data;
   };
 
-  const inventoryHistoryQuery = useQuery({
-    queryKey: ["inventoryhistories"],
-    queryFn: getInventoryHistories,
+  const inventoriesQuery = useQuery({
+    queryKey: ["inventories"],
+    queryFn: getInventories,
     refetchOnWindowFocus: false,
     enabled: true,
   });
-
-  useEffect(() => {
-    inventoryHistoryQuery.refetch();
-  }, [selectedDate]);
 
   return (
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -68,9 +68,23 @@ export default function ArrivalHistoryPage() {
               format="MMMM YYYY"
             />
           </LocalizationProvider>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => inventoriesQuery.refetch()}
+            disabled={
+              inventoriesQuery.isRefetching || inventoriesQuery.isLoading
+            }
+          >
+            {inventoriesQuery.isRefetching || inventoriesQuery.isLoading ? (
+              <CircularProgress size={15} color="inherit" />
+            ) : (
+              <RefreshIcon fontSize="small" />
+            )}
+          </Button>
 
           {/* BUTTON */}
-          <CreateInventoryArrival />
+          <CreateInventory type="A" />
         </Stack>
 
         <TableContainer
@@ -89,12 +103,10 @@ export default function ArrivalHistoryPage() {
             >
               <TableRow>
                 <TableCell>Tanggal Masuk</TableCell>
-                <TableCell>Produk</TableCell>
-                <TableCell>Vendor</TableCell>
                 <TableCell>Nomor PO</TableCell>
+                <TableCell>Nomor Surat Jalan</TableCell>
+                <TableCell>Vendor</TableCell>
                 <TableCell>Keterangan</TableCell>
-                <TableCell align="center">Quantity</TableCell>
-                <TableCell>Sisa Stok</TableCell>
                 <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -102,14 +114,13 @@ export default function ArrivalHistoryPage() {
                 </TableCell>
               </TableRow>
             </TableHead>
-
             <TableBody>
-              {inventoryHistoryQuery?.data?.map(
-                (inventoryHistory: InventoryHistory, index: number) => (
-                  <ArrivalHistoryRow
+              {inventoriesQuery?.data?.map(
+                (inventory: Inventory, index: number) => (
+                  <InventoryRow
                     key={index}
                     index={index}
-                    inventoryHistory={inventoryHistory}
+                    inventory={inventory}
                   />
                 )
               )}

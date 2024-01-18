@@ -1,4 +1,5 @@
 import {
+  Button,
   Dialog,
   Stack,
   Table,
@@ -50,14 +51,17 @@ export default function SelectProduct(props: {
 
   return (
     <>
-      <TextField
+      <Button size="small" onClick={() => setOpen(true)}>
+        {props.selectedProduct ? props.selectedProduct?.name : "Pilih Produk"}
+      </Button>
+      {/* <TextField
         id="outlined-basic"
         variant="outlined"
         size="small"
-        sx={{ cursor: "pointer" }}
+        sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
         value={props.selectedProduct?.name || ""}
-      />
+      /> */}
 
       <Dialog
         open={open}

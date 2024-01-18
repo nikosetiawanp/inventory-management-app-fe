@@ -9,65 +9,56 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import Drawer from "../components/Drawer";
-
 import { Settings } from "@mui/icons-material";
-import RefreshIcon from "@mui/icons-material/Refresh";
-
-import CreatePurchaseRequisitionButton from "../components/buttons/CreatePurchaseRequisitionButton";
-
-import { useEffect, useState } from "react";
-import PurchaseRow from "../components/rows/PurchaseRow";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState } from "react";
+import dayjs from "dayjs";
+import CreateInventory from "../components/forms/CreateInventory";
 import axios from "axios";
 import { useQuery } from "react-query";
-import { Purchase } from "../interfaces/interfaces";
-import RowSkeleton from "../components/skeletons/RowSkeleton";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import InventoryRow from "../components/rows/InventoryRow";
+import { Inventory } from "../interfaces/interfaces";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
-export default function PurchaseRequisitionPage() {
+export default function InventoryDeparturePage() {
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
   const selectedYear = formattedDate.split("-")[0];
   const selectedMonth = formattedDate.split("-")[1];
 
-  // FETCHING PRODUCTS
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const getPurchases = async () => {
+  // GET INVENTORY HISTORY
+  const getInventories = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PO`
+        `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=D`
     );
+    console.log(response.data.data);
+
     return response.data.data;
   };
 
-  const purchasesQuery = useQuery({
-    queryKey: ["purchases"],
-    queryFn: () => getPurchases(),
+  const inventoriesQuery = useQuery({
+    queryKey: ["inventories"],
+    queryFn: getInventories,
     refetchOnWindowFocus: false,
+    enabled: true,
   });
 
-  // useEffect(() => {
-  //   purchasesQuery.refetch();
-  // }, [selectedDate]);
-
   return (
-    // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
-      {/* DRAWER */}
       <Drawer />
-
-      {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Purchase Order
+          Gudang Keluar
         </Typography>
 
-        {/* <Typography>{selectedDate?.toString()}</Typography> */}
+        {/* NAVS */}
         <Stack direction={"row"} gap={2} width={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -81,10 +72,12 @@ export default function PurchaseRequisitionPage() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => purchasesQuery.refetch()}
-            disabled={purchasesQuery.isRefetching || purchasesQuery.isLoading}
+            onClick={() => inventoriesQuery.refetch()}
+            disabled={
+              inventoriesQuery.isRefetching || inventoriesQuery.isLoading
+            }
           >
-            {purchasesQuery.isRefetching || purchasesQuery.isLoading ? (
+            {inventoriesQuery.isRefetching || inventoriesQuery.isLoading ? (
               <CircularProgress size={15} color="inherit" />
             ) : (
               <RefreshIcon fontSize="small" />
@@ -92,14 +85,13 @@ export default function PurchaseRequisitionPage() {
           </Button>
 
           {/* BUTTON */}
-          <CreatePurchaseRequisitionButton />
+          <CreateInventory type="D" />
         </Stack>
 
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
           <Table sx={{ borderCollapse: "separate" }}>
-            {/* HEAD */}
             <TableHead
               sx={{
                 position: "sticky",
@@ -111,33 +103,26 @@ export default function PurchaseRequisitionPage() {
               }}
             >
               <TableRow>
-                <TableCell>Tanggal Surat</TableCell>
-                <TableCell>Kode Vendor</TableCell>
-                <TableCell>Nama Vendor</TableCell>
-                <TableCell>Nomor Surat</TableCell>
-                <TableCell width={10}>
+                <TableCell>Tanggal Masuk</TableCell>
+                <TableCell>Nomor PO</TableCell>
+                <TableCell>Nomor Surat Jalan</TableCell>
+                <TableCell>Vendor</TableCell>
+                <TableCell>Keterangan</TableCell>
+                <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
             </TableHead>
-
-            {/* ROWS */}
-            <TableBody sx={{ overflowY: "scroll" }}>
-              {purchasesQuery.isLoading ? (
-                <RowSkeleton rows={15} columns={5} />
-              ) : (
-                purchasesQuery.data?.map(
-                  (purchase: Purchase, index: number) => (
-                    <PurchaseRow
-                      index={index}
-                      key={index}
-                      purchase={purchase}
-                      refetch={purchasesQuery.refetch}
-                      arrayLength={purchasesQuery.data.length}
-                    />
-                  )
+            <TableBody>
+              {inventoriesQuery?.data?.map(
+                (inventory: Inventory, index: number) => (
+                  <InventoryRow
+                    key={index}
+                    index={index}
+                    inventory={inventory}
+                  />
                 )
               )}
             </TableBody>

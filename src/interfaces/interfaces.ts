@@ -5,6 +5,7 @@ export interface Product {
   code: string;
   name: string;
   unit: string;
+  quantity: number;
 }
 
 export interface Vendor {
@@ -16,7 +17,7 @@ export interface Vendor {
   email: string;
 }
 
-export interface Item {
+export interface PurchaseItem {
   items(items: any): unknown;
   id: string;
   quantity: number;
@@ -41,22 +42,28 @@ export interface Purchase {
   poNumber: string | null;
 
   vendor: Vendor;
-  items: Item[];
+  purchaseItems: PurchaseItem[];
 }
 
-export interface InventoryHistory {
+export interface Inventory {
+  id: number | string;
   date: any;
+  letterNumber: string;
   description: string | null;
+  type: "A" | "D";
+
+  purchaseId: string | number;
+  purchase: Purchase;
+  vendor: Vendor;
+  inventoryItems: InventoryItem[];
+}
+
+export interface InventoryItem {
   id: number | string;
   quantity: number;
   stockAfter: number;
-  type: "A" | "D";
-
-  productId: string | number;
-  purchaseId: string | number;
   product: Product;
-  purchase: Purchase;
-  vendor: Vendor;
+  productId: string | number;
 }
 
 export interface CreatePurchaseRequisition {

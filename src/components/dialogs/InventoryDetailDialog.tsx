@@ -17,8 +17,6 @@ import MorePurchaseButton from "../buttons/MorePurchaseButton";
 
 import {
   PurchaseItem,
-  Product,
-  Purchase,
   Inventory,
   InventoryItem,
 } from "../../interfaces/interfaces";
@@ -26,16 +24,14 @@ import AddIcon from "@mui/icons-material/Add";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
-import MoveToPurchaseOrder from "../buttons/MoveToPurchaseOrder";
 import RowSkeleton from "../skeletons/RowSkeleton";
 import { useEffect, useState } from "react";
-import NewPurchaseItem from "../rows/NewPurchaseItem";
+import NewInventoryItem from "../rows/NewInventoryItem";
 
-export default function PurchaseDetailDialog(props: {
+export default function InventoryDetailDialog(props: {
   open: boolean;
   setOpen: any;
-  purchase: Purchase;
-  refetch: any;
+  inventory: Inventory;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
@@ -44,19 +40,19 @@ export default function PurchaseDetailDialog(props: {
   const { control, handleSubmit, watch, setValue } = useForm();
   const { fields, append, prepend, update, remove } = useFieldArray({
     control,
-    name: "purchaseItems",
+    name: "inventoryItems",
   });
 
   // GET ITEMS
-  const getPurchaseItems = async () => {
+  const getInventoryItems = async () => {
     const response = await axios.get(
-      BACKEND_URL + `purchase-items?purchaseId=${props.purchase.id}`
+      BACKEND_URL + `inventory-items?inventoryId=${props.inventory.id}`
     );
     return response.data.data;
   };
-  const purchaseItemsQuery = useQuery({
-    queryKey: [`purchaseItems.${props.purchase.id}`],
-    queryFn: () => getPurchaseItems(),
+  const inventoryItemsQuery = useQuery({
+    queryKey: [`inventoryItems.${props.inventory.id}`],
+    queryFn: () => getInventoryItems(),
     refetchOnWindowFocus: false,
     enabled: props.open,
   });
@@ -72,74 +68,6 @@ export default function PurchaseDetailDialog(props: {
     queryFn: getProducts,
     refetchOnWindowFocus: false,
     enabled: fields?.length > 0,
-  });
-
-  // GET INVENTORIES
-  const getInventories = async () => {
-    const response = await axios.get(
-      BACKEND_URL + `inventories?purchaseId=${props.purchase.id}`
-    );
-
-    return response.data.data;
-  };
-  const inventoriesQuery = useQuery({
-    queryKey: ["inventories"],
-    queryFn: getInventories,
-    refetchOnWindowFocus: false,
-    enabled: props.open,
-  });
-
-  const getTotalArrived = (productId: any) => {
-    const inventoryItems = inventoriesQuery?.data?.map(
-      (inventory: Inventory) => inventory.inventoryItems
-    );
-    const filteredByProductId = [...inventoryItems.flat()]
-      .filter((inventoryItem: any) => inventoryItem.productId == productId)
-      .map((item: any) => item.quantity);
-
-    const total = filteredByProductId.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0
-    );
-    return total;
-  };
-
-  useEffect(() => {
-    // console.log(inventoryItems);
-  }, [inventoriesQuery.isLoading]);
-
-  // TOTAL PRICE
-  const calculateTotal = (
-    quantity: number,
-    price: number,
-    discount: number,
-    tax: number
-  ) => {
-    const priceTotal = quantity * price;
-    const discountTotal = priceTotal * (discount / 100);
-    const taxTotal = priceTotal * (tax / 100);
-
-    const result = priceTotal - discountTotal + taxTotal;
-    return result;
-  };
-
-  const calculateSum = (items: PurchaseItem[]) => {
-    if (!items) return 0;
-
-    const totals = items?.map((item: PurchaseItem) =>
-      calculateTotal(item.quantity, item.price, item.discount, item.tax)
-    );
-    let sum = 0;
-
-    totals.forEach((price: number) => {
-      sum += price;
-    });
-    return sum;
-  };
-
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
   });
 
   const clearFieldsArray = () => {
@@ -186,12 +114,12 @@ export default function PurchaseDetailDialog(props: {
 
   // POST
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const createItems = useMutation(
-    async (data: PurchaseItem[]) => {
+  const createInventoryItems = useMutation(
+    async (data: InventoryItem[]) => {
       setIsSubmitting(true);
       try {
         const response = await axios.post(
-          BACKEND_URL + "purchase-items/bulk",
+          BACKEND_URL + "inventory-items/bulk",
           data
         );
         setIsSubmitting(false);
@@ -203,18 +131,17 @@ export default function PurchaseDetailDialog(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(`purchaseItems.${props.purchase.id}`);
+        queryClient.invalidateQueries(`inventoryItems.${props.inventory.id}`);
       },
     }
   );
 
   const onSubmit: SubmitHandler<any> = async (
-    data: { purchaseItems: PurchaseItem[] },
+    data: { inventoryItems: InventoryItem[] },
     event
   ) => {
     try {
-      console.log(data.purchaseItems);
-      await createItems.mutateAsync(data.purchaseItems);
+      await createInventoryItems.mutateAsync(data.inventoryItems);
       clearFieldsArray();
     } catch (error) {
       console.log("Mutation Error:", error);
@@ -238,18 +165,12 @@ export default function PurchaseDetailDialog(props: {
         >
           {/* TITLE */}
           <Stack>
-            <Typography variant="h4">
-              {props.purchase.status == "PR"
-                ? props.purchase.prNumber
-                : props.purchase.poNumber}
+            <Typography variant="h4">{props.inventory.letterNumber}</Typography>
+            <Typography variant="body1">
+              {formatDate(props.inventory.date)}
             </Typography>
             <Typography variant="body1">
-              {props.purchase.status == "PR"
-                ? formatDate(props.purchase.prDate)
-                : formatDate(props.purchase.poDate)}
-            </Typography>
-            <Typography variant="body1">
-              {props.purchase.vendor.name}
+              {props.inventory.purchase.vendor.name}
             </Typography>
           </Stack>
           {/* BUTTONS */}
@@ -260,10 +181,8 @@ export default function PurchaseDetailDialog(props: {
               onClick={() => {
                 append({
                   quantity: 0,
-                  price: "",
-                  discount: "",
-                  tax: "",
-                  purchaseId: props.purchase.id,
+                  stockAfter: 0,
+                  inventoryId: props.inventory.id,
                   productId: "",
                 });
               }}
@@ -285,13 +204,6 @@ export default function PurchaseDetailDialog(props: {
               </Button>
             ) : (
               <>
-                {props.purchase.status == "PR" ? (
-                  <MoveToPurchaseOrder
-                    purchase={props.purchase}
-                    refetch={props.refetch}
-                  />
-                ) : null}
-
                 <MorePurchaseButton />
               </>
             )}
@@ -320,16 +232,7 @@ export default function PurchaseDetailDialog(props: {
               <TableRow>
                 <TableCell>Produk</TableCell>
                 <TableCell align="center">Quantity</TableCell>
-                <TableCell align="center">Unit</TableCell>
-                <TableCell align="right" width={100}>
-                  Harga
-                </TableCell>
-                <TableCell align="center">Diskon</TableCell>
-                <TableCell align="center">Pajak</TableCell>
-                <TableCell align="right">Total</TableCell>
-                {props.purchase.status == "PO" ? (
-                  <TableCell align="center">Status</TableCell>
-                ) : null}
+                <TableCell align="center">Stok Sekarang</TableCell>
                 <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -349,73 +252,27 @@ export default function PurchaseDetailDialog(props: {
               }}
             >
               {/* NEW ITEM */}
-              {purchaseItemsQuery.isLoading ? (
-                <RowSkeleton
-                  rows={15}
-                  columns={props.purchase.status == "PR" ? 8 : 9}
-                />
+              {inventoryItemsQuery.isLoading ? (
+                <RowSkeleton rows={15} columns={8} />
               ) : (
-                purchaseItemsQuery.data?.map(
-                  (item: PurchaseItem, index: number) => (
+                inventoryItemsQuery.data?.map(
+                  (item: InventoryItem, index: number) => (
                     <TableRow key={index}>
                       <TableCell>{item.product.name}</TableCell>
-
-                      <TableCell align="center">{item.quantity}</TableCell>
-                      <TableCell align="center">pcs</TableCell>
-                      <TableCell align="right">
-                        {currencyFormatter.format(item.price)}
-                      </TableCell>
-
-                      <TableCell align="center">{item.discount}%</TableCell>
-                      <TableCell align="center">{item.tax}%</TableCell>
-                      <TableCell align="right">
-                        {currencyFormatter.format(
-                          calculateTotal(
-                            item.quantity,
-                            item.price,
-                            item.discount,
-                            item.tax
-                          )
-                        )}
-                      </TableCell>
-
-                      {props.purchase.status == "PO" ? (
-                        <TableCell align="center">
-                          <Chip
-                            size="small"
-                            variant="filled"
-                            color={
-                              getTotalArrived(item.productId) == 0
-                                ? "error"
-                                : getTotalArrived(item.productId) >=
-                                  item.quantity
-                                ? "success"
-                                : "warning"
-                            }
-                            label={
-                              getTotalArrived(item.productId) == 0
-                                ? "Belum datang"
-                                : getTotalArrived(item.productId) >=
-                                  item.quantity
-                                ? "Lengkap"
-                                : `Kurang ${
-                                    item.quantity -
-                                    getTotalArrived(item.productId)
-                                  }`
-                            }
-                          />
-                        </TableCell>
-                      ) : null}
-
                       <TableCell align="center">
-                        <MoreVert fontSize="small" />
+                        {item.quantity} {item.product.unit}
                       </TableCell>
+                      <TableCell align="center">
+                        {item.stockAfter} {item.product.unit}
+                      </TableCell>
+                      <TableCell></TableCell>
                     </TableRow>
                   )
                 )
               )}
+
               {fields.map((field, index) => (
-                <NewPurchaseItem
+                <NewInventoryItem
                   key={field.id}
                   control={control}
                   update={update}
@@ -423,7 +280,7 @@ export default function PurchaseDetailDialog(props: {
                   value={field}
                   remove={remove}
                   products={productsQuery.data}
-                  purchase={props.purchase}
+                  inventory={props.inventory}
                   watch={watch}
                   fields={fields}
                   setValue={setValue}
@@ -434,7 +291,7 @@ export default function PurchaseDetailDialog(props: {
         </TableContainer>
 
         {/* FOOTER */}
-        <Stack
+        {/* <Stack
           position={"sticky"}
           bottom={0}
           direction={"row"}
@@ -452,7 +309,7 @@ export default function PurchaseDetailDialog(props: {
               calculateSum(purchaseItemsQuery.data as any)
             )}
           </Typography>
-        </Stack>
+        </Stack> */}
       </Stack>
     </Dialog>
   );

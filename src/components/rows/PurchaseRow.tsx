@@ -6,10 +6,11 @@ import MoreVertPurchaseButton from "../buttons/MoreVertPurchaseButton";
 
 import PurchaseDetailDialog from "../dialogs/PurchaseDetailDialog";
 
-export default function PurchaseRequisitionRow(props: {
+export default function PurchaseRow(props: {
   index: number;
   purchase: Purchase;
   refetch: any;
+  arrayLength: number;
 }) {
   const [open, setOpen] = useState(false);
 

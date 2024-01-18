@@ -43,7 +43,7 @@ export default function DeleteProductButton(props: { product: Product }) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("product");
+        queryClient.invalidateQueries("products");
       },
     }
   );

@@ -41,7 +41,7 @@ export default function SelectVendor(props: {
         id="outlined-basic"
         label="Vendor"
         variant="outlined"
-        sx={{ cursor: "pointer" }}
+        sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
         value={props.selectedVendor?.name || ""}
       />
