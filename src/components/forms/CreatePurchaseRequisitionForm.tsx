@@ -76,8 +76,6 @@ export default function CreatePurchaseRequisitionForm(props: {
     }
   );
 
-  const { isLoading } = createPurchase;
-
   const onSubmit: SubmitHandler<CreatePurchaseRequisition> = async (
     data,
     event
@@ -180,8 +178,12 @@ export default function CreatePurchaseRequisitionForm(props: {
             <Button onClick={() => props.setOpen(false)} type="button">
               Batal
             </Button>
-            <Button variant={"contained"} type="submit" disabled={isLoading}>
-              {isLoading
+            <Button
+              variant={"contained"}
+              type="submit"
+              disabled={createPurchase.isLoading}
+            >
+              {createPurchase.isLoading
                 ? // <CircularProgress color="inherit" size={15} />
                   "Menyimpan"
                 : "Simpan"}

@@ -38,6 +38,12 @@ export default function SelectProduct(props: {
     refetchOnWindowFocus: false,
     enabled: open,
   });
+  const [searchInput, setSearchInput] = useState("");
+  const filteredProductsQuery = productsQuery?.data?.filter(
+    (product: Product) =>
+      product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      product.code.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   const handleProductSelection = (selectedProduct: Product) => {
     props.setSelectedProduct(selectedProduct);
@@ -51,25 +57,30 @@ export default function SelectProduct(props: {
 
   return (
     <>
-      <Button size="small" onClick={() => setOpen(true)}>
+      {/* <Button size="small" onClick={() => setOpen(true)}>
         {props.selectedProduct ? props.selectedProduct?.name : "Pilih Produk"}
-      </Button>
-      {/* <TextField
-        id="outlined-basic"
-        variant="outlined"
-        size="small"
-        sx={{ input: { cursor: "pointer" } }}
+      </Button> */}
+
+      <Typography
+        color={"primary.main"}
+        sx={{ cursor: "pointer" }}
         onClick={() => setOpen(true)}
-        value={props.selectedProduct?.name || ""}
-      /> */}
+      >
+        {props.selectedProduct
+          ? props.selectedProduct?.name
+          : "Pilih Produk..."}
+      </Typography>
 
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         fullWidth
-        maxWidth={"md"}
+        maxWidth={"sm"}
       >
         <Stack padding={3}>
+          <Typography variant="h4" fontWeight={"bold"} marginBottom={2}>
+            Pilih Produk
+          </Typography>
           {/* HEADER */}
           <Stack
             direction={"row"}
@@ -77,7 +88,18 @@ export default function SelectProduct(props: {
             alignItems={"center"}
             marginBottom={2}
           >
-            <Typography variant="h4">Pilih Produk</Typography>
+            <TextField
+              id="outlined-basic"
+              placeholder="Cari produk"
+              variant="outlined"
+              size="small"
+              sx={{ width: 1 }}
+              value={searchInput}
+              onChange={(event) => {
+                setSearchInput(event.target.value);
+              }}
+            />
+            {/* <Typography variant="h4">Pilih Produk</Typography> */}
           </Stack>
 
           {/* TABLE */}
@@ -104,8 +126,8 @@ export default function SelectProduct(props: {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {productsQuery.data &&
-                  productsQuery.data.map((product: Product, index: number) => (
+                {filteredProductsQuery?.map(
+                  (product: Product, index: number) => (
                     <TableRow
                       key={index}
                       hover
@@ -120,7 +142,8 @@ export default function SelectProduct(props: {
                       <TableCell>{product.code}</TableCell>
                       <TableCell>{product.name}</TableCell>
                     </TableRow>
-                  ))}
+                  )
+                )}
               </TableBody>
             </Table>
           </TableContainer>

@@ -5,7 +5,6 @@ import {
   Box,
   Typography,
   TextField,
-  InputAdornment,
   IconButton,
 } from "@mui/material";
 import { ClearIcon } from "@mui/x-date-pickers";

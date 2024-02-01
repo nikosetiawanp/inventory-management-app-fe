@@ -16,9 +16,10 @@ import CreateProductButton from "../components/buttons/CreateProductButton";
 import { Settings } from "@mui/icons-material";
 import MoreVertProductButton from "../components/buttons/MoreVertProductButton";
 import { useQuery } from "react-query";
-import { Product } from "../interfaces/interfaces";
+import { Product, Vendor } from "../interfaces/interfaces";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import axios from "axios";
+import { useState } from "react";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
@@ -35,6 +36,13 @@ export default function ProductPage() {
     queryFn: () => getProducts(),
     refetchOnWindowFocus: false,
   });
+
+  const [searchInput, setSearchInput] = useState("");
+  const filteredProductsQuery = productsQuery?.data?.filter(
+    (product: Product) =>
+      product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      product.code.toLowerCase().includes(searchInput.toLowerCase())
+  );
   return (
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -49,10 +57,14 @@ export default function ProductPage() {
         <Stack direction={"row"} justifyContent={"space-between"} width={1}>
           <TextField
             id="outlined-basic"
-            label="Cari"
+            placeholder="Cari produk"
             variant="outlined"
             size="small"
             sx={{ width: "400px" }}
+            value={searchInput}
+            onChange={(event) => {
+              setSearchInput(event.target.value);
+            }}
           />
           {/* BUTTON */}
           <CreateProductButton />
@@ -90,7 +102,7 @@ export default function ProductPage() {
               {productsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={4} />
               ) : (
-                productsQuery.data.map((product: Product, index: number) => (
+                filteredProductsQuery.map((product: Product, index: number) => (
                   <TableRow key={index} hover>
                     <TableCell>{product.code}</TableCell>
                     <TableCell>{product.name}</TableCell>

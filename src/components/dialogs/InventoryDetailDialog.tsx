@@ -27,6 +27,7 @@ import axios from "axios";
 import RowSkeleton from "../skeletons/RowSkeleton";
 import { useEffect, useState } from "react";
 import NewInventoryItem from "../rows/NewInventoryItem";
+import CreateInvoice from "../buttons/CreateInvoice";
 
 export default function InventoryDetailDialog(props: {
   open: boolean;
@@ -175,6 +176,10 @@ export default function InventoryDetailDialog(props: {
           </Stack>
           {/* BUTTONS */}
           <Stack direction="row" alignItems={"center"} gap={2}>
+            {/* <Typography>{props.inventory.invoiceNumber}</Typography> */}
+            {/* <Button variant="contained" onClick={() => {}}>
+              Buat Faktur
+            </Button> */}
             <Button
               variant="outlined"
               startIcon={<AddIcon />}

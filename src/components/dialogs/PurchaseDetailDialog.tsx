@@ -30,6 +30,8 @@ import MoveToPurchaseOrder from "../buttons/MoveToPurchaseOrder";
 import RowSkeleton from "../skeletons/RowSkeleton";
 import { useEffect, useState } from "react";
 import NewPurchaseItem from "../rows/NewPurchaseItem";
+import CreateInvoice from "../buttons/CreateInvoice";
+import PurchaseDetailRow from "../rows/PurchaseDetailRow";
 
 export default function PurchaseDetailDialog(props: {
   open: boolean;
@@ -80,6 +82,8 @@ export default function PurchaseDetailDialog(props: {
       BACKEND_URL + `inventories?purchaseId=${props.purchase.id}`
     );
 
+    console.log(response.data.data);
+
     return response.data.data;
   };
   const inventoriesQuery = useQuery({
@@ -89,20 +93,20 @@ export default function PurchaseDetailDialog(props: {
     enabled: props.open,
   });
 
-  const getTotalArrived = (productId: any) => {
-    const inventoryItems = inventoriesQuery?.data?.map(
-      (inventory: Inventory) => inventory.inventoryItems
-    );
-    const filteredByProductId = [...inventoryItems.flat()]
-      .filter((inventoryItem: any) => inventoryItem.productId == productId)
-      .map((item: any) => item.quantity);
+  // const getTotalArrived = (productId: any) => {
+  //   const inventoryItems = inventoriesQuery?.data?.map(
+  //     (inventory: Inventory) => inventory.inventoryItems
+  //   );
+  //   const filteredByProductId = [...inventoryItems.flat()]
+  //     .filter((inventoryItem: any) => inventoryItem.productId == productId)
+  //     .map((item: any) => item.quantity);
 
-    const total = filteredByProductId.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0
-    );
-    return total;
-  };
+  //   const total = filteredByProductId.reduce(
+  //     (accumulator, currentValue) => accumulator + currentValue,
+  //     0
+  //   );
+  //   return total;
+  // };
 
   useEffect(() => {
     // console.log(inventoryItems);
@@ -125,9 +129,8 @@ export default function PurchaseDetailDialog(props: {
 
   const calculateSum = (items: PurchaseItem[]) => {
     if (!items) return 0;
-
     const totals = items?.map((item: PurchaseItem) =>
-      calculateTotal(item.quantity, item.price, item.discount, item.tax)
+      calculateTotal(item.quantity, item.prPrice, item.discount, item.tax)
     );
     let sum = 0;
 
@@ -157,7 +160,6 @@ export default function PurchaseDetailDialog(props: {
       month: "long",
       year: "numeric",
     };
-
     const formattedDate = date.toLocaleDateString("id-ID", options);
     const [day, month, year] = formattedDate.split(" ");
     const monthNames = [
@@ -252,8 +254,20 @@ export default function PurchaseDetailDialog(props: {
               {props.purchase.vendor.name}
             </Typography>
           </Stack>
+
           {/* BUTTONS */}
           <Stack direction="row" alignItems={"center"} gap={2}>
+            {props.purchase.status == "PR" && fields.length == 0 ? (
+              <MoveToPurchaseOrder
+                purchase={props.purchase}
+                refetch={props.refetch}
+              />
+            ) : null}
+
+            {props.purchase.status == "PO" && fields.length == 0 ? (
+              <CreateInvoice inventory={inventoriesQuery.data} />
+            ) : null}
+
             <Button
               variant="outlined"
               startIcon={<AddIcon />}
@@ -270,6 +284,9 @@ export default function PurchaseDetailDialog(props: {
             >
               Tambah Item
             </Button>
+
+            {/* SAVE BUTTON */}
+
             {fields.length > 0 ? (
               <Button
                 variant="contained"
@@ -285,13 +302,6 @@ export default function PurchaseDetailDialog(props: {
               </Button>
             ) : (
               <>
-                {props.purchase.status == "PR" ? (
-                  <MoveToPurchaseOrder
-                    purchase={props.purchase}
-                    refetch={props.refetch}
-                  />
-                ) : null}
-
                 <MorePurchaseButton />
               </>
             )}
@@ -320,10 +330,17 @@ export default function PurchaseDetailDialog(props: {
               <TableRow>
                 <TableCell>Produk</TableCell>
                 <TableCell align="center">Quantity</TableCell>
-                <TableCell align="center">Unit</TableCell>
+                {/* <TableCell align="center">Unit</TableCell> */}
                 <TableCell align="right" width={100}>
-                  Harga
+                  Harga PR
                 </TableCell>
+
+                {props.purchase.status == "PO" ? (
+                  <TableCell align="right" width={100}>
+                    Harga PO
+                  </TableCell>
+                ) : null}
+
                 <TableCell align="center">Diskon</TableCell>
                 <TableCell align="center">Pajak</TableCell>
                 <TableCell align="right">Total</TableCell>
@@ -356,61 +373,81 @@ export default function PurchaseDetailDialog(props: {
                 />
               ) : (
                 purchaseItemsQuery.data?.map(
-                  (item: PurchaseItem, index: number) => (
-                    <TableRow key={index}>
-                      <TableCell>{item.product.name}</TableCell>
+                  (purchaseItem: PurchaseItem, index: number) => (
+                    <PurchaseDetailRow
+                      key={index}
+                      purchaseItem={purchaseItem}
+                      index={index}
+                      purchase={props.purchase}
+                      inventories={inventoriesQuery.data}
+                    />
+                    // <TableRow key={index}>
+                    //   <TableCell>{item.product.name}</TableCell>
 
-                      <TableCell align="center">{item.quantity}</TableCell>
-                      <TableCell align="center">pcs</TableCell>
-                      <TableCell align="right">
-                        {currencyFormatter.format(item.price)}
-                      </TableCell>
+                    //   <TableCell align="center">
+                    //     {item.quantity} {item.product.unit}
+                    //   </TableCell>
+                    //   {/* <TableCell align="center">pcs</TableCell> */}
+                    //   <TableCell align="right">
+                    //     {currencyFormatter.format(item.prPrice)}
+                    //   </TableCell>
+                    //   <TableCell align="center">
+                    //     {item.poPrice
+                    //       ? currencyFormatter.format(item.poPrice)
+                    //       : currencyFormatter.format(item.prPrice)}
+                    //   </TableCell>
 
-                      <TableCell align="center">{item.discount}%</TableCell>
-                      <TableCell align="center">{item.tax}%</TableCell>
-                      <TableCell align="right">
-                        {currencyFormatter.format(
-                          calculateTotal(
-                            item.quantity,
-                            item.price,
-                            item.discount,
-                            item.tax
-                          )
-                        )}
-                      </TableCell>
+                    //   <TableCell align="center">{item.discount}%</TableCell>
+                    //   <TableCell align="center">{item.tax}%</TableCell>
+                    //   <TableCell align="right">
+                    //     {currencyFormatter.format(
+                    //       calculateTotal(
+                    //         item.quantity,
+                    //         item.prPrice,
+                    //         item.discount,
+                    //         item.tax
+                    //       )
+                    //     )}
+                    //   </TableCell>
 
-                      {props.purchase.status == "PO" ? (
-                        <TableCell align="center">
-                          <Chip
-                            size="small"
-                            variant="filled"
-                            color={
-                              getTotalArrived(item.productId) == 0
-                                ? "error"
-                                : getTotalArrived(item.productId) >=
-                                  item.quantity
-                                ? "success"
-                                : "warning"
-                            }
-                            label={
-                              getTotalArrived(item.productId) == 0
-                                ? "Belum datang"
-                                : getTotalArrived(item.productId) >=
-                                  item.quantity
-                                ? "Lengkap"
-                                : `Kurang ${
-                                    item.quantity -
-                                    getTotalArrived(item.productId)
-                                  }`
-                            }
-                          />
-                        </TableCell>
-                      ) : null}
+                    //   {props.purchase.status == "PO" ? (
+                    //     <TableCell align="center">
+                    //       <Chip
+                    //         size="small"
+                    //         variant="filled"
+                    //         color={
+                    //           getTotalArrived(item.productId) == 0
+                    //             ? "error"
+                    //             : getTotalArrived(item.productId) >=
+                    //               item.quantity
+                    //             ? "success"
+                    //             : "warning"
+                    //         }
+                    //         label={
+                    //           getTotalArrived(item.productId) == 0
+                    //             ? "Belum datang"
+                    //             : getTotalArrived(item.productId) ==
+                    //               item.quantity
+                    //             ? "Lengkap"
+                    //             : getTotalArrived(item.productId) >
+                    //               item.quantity
+                    //             ? `Kelebihan ${
+                    //                 getTotalArrived(item.productId) -
+                    //                 item.quantity
+                    //               }`
+                    //             : `Kurang ${
+                    //                 item.quantity -
+                    //                 getTotalArrived(item.productId)
+                    //               }`
+                    //         }
+                    //       />
+                    //     </TableCell>
+                    //   ) : null}
 
-                      <TableCell align="center">
-                        <MoreVert fontSize="small" />
-                      </TableCell>
-                    </TableRow>
+                    //   <TableCell align="center">
+                    //     <MoreVert fontSize="small" />
+                    //   </TableCell>
+                    // </TableRow>
                   )
                 )
               )}

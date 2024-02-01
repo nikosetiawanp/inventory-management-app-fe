@@ -50,6 +50,11 @@ export default function Drawer() {
       category: "Pembelian",
     },
     {
+      name: "Faktur",
+      param: "/invoices",
+      category: "Pembelian",
+    },
+    {
       name: "Stok Gudang",
       param: "/inventory",
       category: "Gudang",

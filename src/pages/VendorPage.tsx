@@ -1,4 +1,5 @@
 import {
+  Button,
   IconButton,
   Stack,
   Table,
@@ -20,6 +21,7 @@ import CreateVendorButton from "../components/buttons/CreateVendorButton";
 import MoreVertVendorButton from "../components/buttons/MoreVertVendorButton";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import axios from "axios";
+import { useState } from "react";
 
 export default function VendorPage() {
   // FETCHING DATA
@@ -29,11 +31,18 @@ export default function VendorPage() {
     return response.data.data;
   };
 
-  const { isLoading, error, data } = useQuery({
+  const vendorsQuery = useQuery({
     queryKey: ["vendors"],
     queryFn: () => getVendors(),
     refetchOnWindowFocus: false,
   });
+
+  const [searchInput, setSearchInput] = useState("");
+  const filteredVendorsQuery = vendorsQuery?.data?.filter(
+    (vendor: Vendor) =>
+      vendor.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      vendor.code.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   return (
     // PAGE
@@ -48,10 +57,14 @@ export default function VendorPage() {
         <Stack direction={"row"} justifyContent={"space-between"} width={1}>
           <TextField
             id="outlined-basic"
-            label="Cari"
+            placeholder="Cari vendor"
             variant="outlined"
             size="small"
             sx={{ width: "400px" }}
+            value={searchInput}
+            onChange={(event) => {
+              setSearchInput(event.target.value);
+            }}
           />
           {/* BUTTON */}
           <CreateVendorButton />
@@ -88,10 +101,10 @@ export default function VendorPage() {
 
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {isLoading ? (
+              {vendorsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={6} />
               ) : (
-                data?.map((vendor: Vendor) => (
+                filteredVendorsQuery?.map((vendor: Vendor) => (
                   <TableRow key={vendor.id} hover>
                     <TableCell>{vendor.code}</TableCell>
                     <TableCell>{vendor.name}</TableCell>

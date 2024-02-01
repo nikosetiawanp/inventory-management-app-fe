@@ -3,7 +3,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import CreateVendorForm from "../forms/CreateVendorForm";
 
-export default function CreateProduct() {
+export default function CreateVendorButton() {
   const [open, setOpen] = useState(false);
 
   return (

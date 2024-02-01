@@ -38,7 +38,6 @@ export default function InventoryArrivalPage() {
       BACKEND_URL +
         `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=A`
     );
-
     return response.data.data;
   };
 

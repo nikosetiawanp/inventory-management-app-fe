@@ -1,5 +1,7 @@
 import {
+  Button,
   Dialog,
+  InputBase,
   Stack,
   Table,
   TableBody,
@@ -14,6 +16,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Vendor } from "../../interfaces/interfaces";
+import CreateVendorButton from "../buttons/CreateVendorButton";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function SelectVendor(props: {
   selectedVendor: Vendor | null | undefined;
@@ -35,6 +39,13 @@ export default function SelectVendor(props: {
     enabled: open,
   });
 
+  const [searchInput, setSearchInput] = useState("");
+  const filteredVendorsQuery = vendorsQuery?.data?.filter(
+    (vendor: Vendor) =>
+      vendor.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      vendor.code.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
   return (
     <>
       <TextField
@@ -54,13 +65,41 @@ export default function SelectVendor(props: {
       >
         <Stack padding={3}>
           {/* HEADER */}
+          <Typography variant="h4" fontWeight={"bold"} marginBottom={2}>
+            Pilih Vendor
+          </Typography>
           <Stack
             direction={"row"}
             justifyContent={"space-between"}
             alignItems={"center"}
-            marginBottom={2}
+            // gap={2}
+            // borderBottom={1}
+            // paddingX={3}
+            // paddingY={2}
+            borderColor={"divider"}
           >
-            <Typography variant="h4">Pilih Vendor</Typography>
+            {/* <SearchIcon fontSize="medium" color="inherit" /> */}
+            {/* <InputBase
+              id="outlined-basic"
+              placeholder="Cari vendor"
+              size="small"
+              sx={{ width: 1 }}
+              value={searchInput}
+              onChange={(event) => {
+                setSearchInput(event.target.value);
+              }}
+            /> */}
+            <TextField
+              id="outlined-basic"
+              placeholder="Cari vendor"
+              variant="outlined"
+              size="small"
+              sx={{ width: 1 }}
+              value={searchInput}
+              onChange={(event) => {
+                setSearchInput(event.target.value);
+              }}
+            />
           </Stack>
 
           {/* TABLE */}
@@ -87,22 +126,21 @@ export default function SelectVendor(props: {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {vendorsQuery.data &&
-                  vendorsQuery.data.map((vendor: Vendor, index: number) => (
-                    <TableRow
-                      key={index}
-                      hover
-                      sx={{ cursor: "pointer" }}
-                      onClick={() => {
-                        props.setSelectedVendor(vendor);
-                        setOpen(false);
-                      }}
-                      selected={props.selectedVendor?.id == vendor.id}
-                    >
-                      <TableCell>{vendor.code}</TableCell>
-                      <TableCell>{vendor.name}</TableCell>
-                    </TableRow>
-                  ))}
+                {filteredVendorsQuery.map((vendor: Vendor, index: number) => (
+                  <TableRow
+                    key={index}
+                    hover
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => {
+                      props.setSelectedVendor(vendor);
+                      setOpen(false);
+                    }}
+                    selected={props.selectedVendor?.id == vendor.id}
+                  >
+                    <TableCell>{vendor.code}</TableCell>
+                    <TableCell>{vendor.name}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>

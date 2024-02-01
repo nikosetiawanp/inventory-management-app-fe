@@ -21,7 +21,8 @@ export interface PurchaseItem {
   items(items: any): unknown;
   id: string;
   quantity: number;
-  price: number;
+  prPrice: number;
+  poPrice: number;
   discount: number;
   tax: number;
   purchaseId: string | number;
@@ -49,6 +50,7 @@ export interface Inventory {
   id: number | string;
   date: any;
   letterNumber: string;
+  invoiceNumber: string;
   description: string | null;
   type: "A" | "D";
 
@@ -64,6 +66,20 @@ export interface InventoryItem {
   stockAfter: number;
   product: Product;
   productId: string | number;
+}
+
+export interface Invoice {
+  id: number | string;
+  date: string;
+  dueDate: string;
+  totalDebt: number;
+  invoiceNumber: string;
+
+  inventoryId: number | string;
+  purchaseId: number | string;
+
+  inventory: Inventory;
+  purchase: Purchase;
 }
 
 export interface CreatePurchaseRequisition {

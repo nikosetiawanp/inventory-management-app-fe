@@ -88,7 +88,7 @@ export default function NewPurchaseItem(props: {
       </TableCell>
 
       {/* QUANTITY */}
-      <TableCell width={75}>
+      <TableCell width={100}>
         <TextField
           id={`items[${props.index}].quantity`}
           variant="outlined"
@@ -97,14 +97,21 @@ export default function NewPurchaseItem(props: {
             required: "Tidak boleh kosong",
           })}
           sx={{ textAlign: "center" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {selectedProduct?.unit}
+              </InputAdornment>
+            ),
+          }}
         />
       </TableCell>
       {/* UNIT */}
-      <TableCell align="center">{selectedProduct?.unit}</TableCell>
+      {/* <TableCell align="center">{selectedProduct?.unit}</TableCell> */}
       {/* PRICE */}
       <TableCell width={200}>
         <TextField
-          id={`items[${props.index}].price`}
+          id={`purchaseItems[${props.index}].prPrice`}
           variant="outlined"
           size="small"
           InputProps={{
@@ -112,11 +119,28 @@ export default function NewPurchaseItem(props: {
               <InputAdornment position="start">Rp</InputAdornment>
             ),
           }}
-          {...register(`purchaseItems[${props.index}].price`, {
+          {...register(`purchaseItems[${props.index}].prPrice`, {
             required: "Tidak boleh kosong",
           })}
         />
       </TableCell>
+
+      {props.purchase.status == "PO" ? (
+        <TableCell width={200}>
+          <TextField
+            id={`purchaseItems[${props.index}].poPrice`}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">Rp</InputAdornment>
+              ),
+            }}
+            {...register(`purchaseItems[${props.index}].poPrice`)}
+          />
+        </TableCell>
+      ) : null}
+
       {/* DISCOUNT */}
       <TableCell width={80}>
         <TextField
@@ -145,6 +169,7 @@ export default function NewPurchaseItem(props: {
           })}
         />
       </TableCell>
+      <TableCell></TableCell>
 
       {/* REMOVE */}
       <TableCell></TableCell>

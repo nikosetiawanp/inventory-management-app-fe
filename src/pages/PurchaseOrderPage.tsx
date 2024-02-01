@@ -51,10 +51,6 @@ export default function PurchaseRequisitionPage() {
     refetchOnWindowFocus: false,
   });
 
-  // useEffect(() => {
-  //   purchasesQuery.refetch();
-  // }, [selectedDate]);
-
   return (
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -67,7 +63,6 @@ export default function PurchaseRequisitionPage() {
           Purchase Order
         </Typography>
 
-        {/* <Typography>{selectedDate?.toString()}</Typography> */}
         <Stack direction={"row"} gap={2} width={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker

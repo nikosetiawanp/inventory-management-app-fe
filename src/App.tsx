@@ -10,6 +10,7 @@ import PurchaseOrderPage from "./pages/PurchaseOrderPage";
 import InventoryArrivalPage from "./pages/InventoryArrivalPage";
 import InventoryPage from "./pages/InventoryPage";
 import InventoryDeparturePage from "./pages/InventoryDeparturePage";
+import InvoicePage from "./pages/InvoicePage";
 
 const queryClient = new QueryClient();
 const theme = createTheme({
@@ -45,6 +46,7 @@ function App() {
                 element={<PurchaseRequisitionPage />}
               />
               <Route path="/purchase-order" element={<PurchaseOrderPage />} />
+              <Route path="/invoices" element={<InvoicePage />} />
               <Route path="/inventory" element={<InventoryPage />} />
               <Route
                 path="/inventory-arrival"

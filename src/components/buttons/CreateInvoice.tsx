@@ -2,7 +2,6 @@ import {
   Button,
   CircularProgress,
   Dialog,
-  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -11,34 +10,36 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import axios from "axios";
 import dayjs from "dayjs";
-import { watch } from "fs";
-import { register } from "module";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { Purchase } from "../../interfaces/interfaces";
+import { Inventory } from "../../interfaces/interfaces";
 
-export default function MoveToPurchaseRequisition(props: {
-  purchase: Purchase;
-  refetch: any;
-}) {
+export default function CreateInvoice(props: { inventory: Inventory }) {
   const [open, setOpen] = useState(false);
 
   // DATE
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
 
-  // POST
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<any>();
+
+  // CREATE INVOICE
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
-  const moveToPurchaseOrder = useMutation(
+  const createInvoice = useMutation(
     async (data: any) => {
       try {
-        const response = await axios.put(
-          BACKEND_URL + "purchases/" + props.purchase.id,
+        const response = await axios.post(
+          BACKEND_URL + "inventories/" + props.inventory.id,
           data
         );
-        props.refetch();
+        // props.refetch();
         return response.data;
       } catch (error) {
         throw new Error("Network response was not ok");
@@ -51,26 +52,20 @@ export default function MoveToPurchaseRequisition(props: {
     }
   );
 
-  // const { isLoading } = moveToPurchaseOrder;
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<any>();
-
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     const dataToSubmit = {
-      vendorId: props.purchase.vendorId,
-      prNumber: props.purchase.prNumber,
-      prDate: props.purchase.prDate,
-      poNumber: data?.poNumber,
-      poDate: formattedDate,
-      status: "PO",
+      date: props.inventory.date,
+      letterNumber: props.inventory.letterNumber,
+      type: props.inventory.type,
+      description: props.inventory.description,
+      purchaseId: props.inventory.purchaseId,
+      invoiceNumber: data?.invoiceNumber,
+      dueDate: formattedDate,
     };
+
     try {
-      await moveToPurchaseOrder.mutateAsync(dataToSubmit);
+      await createInvoice.mutateAsync(dataToSubmit);
+      console.log(dataToSubmit);
       setOpen(false);
     } catch (error) {
       console.log("Mutation Error:", error);
@@ -78,11 +73,18 @@ export default function MoveToPurchaseRequisition(props: {
     event?.target.reset();
     setOpen(false);
   };
+
   return (
     <>
-      <Button variant="contained" type="button" onClick={() => setOpen(true)}>
-        Pindahkan ke PO
+      <Button
+        variant="contained"
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        Buat Faktur
       </Button>
+
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -91,11 +93,11 @@ export default function MoveToPurchaseRequisition(props: {
       >
         <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
           <Stack gap={3} padding={4}>
-            <Typography variant="h6">Pindahkan ke PO</Typography>
+            <Typography variant="h6">Buat Faktur</Typography>
             {/* DATE PICKER */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                label="Tanggal PR"
+                label="Tanggal Jatuh Tempo"
                 value={selectedDate}
                 onChange={(newValue: any) => setSelectedDate(newValue)}
                 format="DD/MM/YYYY"
@@ -106,12 +108,12 @@ export default function MoveToPurchaseRequisition(props: {
             </LocalizationProvider>
             {/* NOMOR PO */}
             <TextField
-              id="poNumber"
-              label="Nomor PO"
+              id="invoiceNumber"
+              label="Nomor Faktur"
               variant="outlined"
-              {...register("poNumber", { required: "Tidak boleh kosong" })}
-              error={!!errors.poNumber}
-              helperText={errors.poNumber?.message as any}
+              {...register("invoiceNumber", { required: "Tidak boleh kosong" })}
+              error={!!errors.invoiceNumber}
+              helperText={errors.invoiceNumber?.message as any}
               required
             />
 
@@ -127,9 +129,9 @@ export default function MoveToPurchaseRequisition(props: {
               <Button
                 variant={"contained"}
                 type="submit"
-                disabled={moveToPurchaseOrder.isLoading}
+                disabled={createInvoice.isLoading}
               >
-                {moveToPurchaseOrder.isLoading ? (
+                {createInvoice.isLoading ? (
                   <CircularProgress color="inherit" size={15} />
                 ) : (
                   "Simpan"

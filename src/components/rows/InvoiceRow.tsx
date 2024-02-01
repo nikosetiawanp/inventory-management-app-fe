@@ -1,14 +1,12 @@
 import { TableCell, TableRow } from "@mui/material";
 import ArrivalHistoryOptionButton from "../buttons/ArrivalHistoryOptionButton";
-import { Inventory } from "../../interfaces/interfaces";
+import { Inventory, Invoice } from "../../interfaces/interfaces";
 import { useState } from "react";
 import InventoryDetailDialog from "../dialogs/InventoryDetailDialog";
+import InvoiceOptionButton from "../buttons/InvoiceOptionButton";
 // import { useState } from "react";
 
-export default function InventoryRow(props: {
-  index: number;
-  inventory: Inventory;
-}) {
+export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
   const [open, setOpen] = useState(false);
   const formatDate = (inputDate: string) => {
     const date = new Date(inputDate);
@@ -55,24 +53,23 @@ export default function InventoryRow(props: {
         sx={{ cursor: "pointer" }}
         onClick={() => setOpen(true)}
       >
-        <TableCell>{formatDate(props.inventory?.date)}</TableCell>
+        <TableCell>{formatDate(props.invoice?.date)}</TableCell>
+        <TableCell>{props.invoice?.invoiceNumber}</TableCell>
+        <TableCell>{props.invoice?.purchase?.vendor?.name}</TableCell>
+        <TableCell>{formatDate(props.invoice?.dueDate)}</TableCell>
         <TableCell>
-          {props.inventory?.purchase?.poNumber &&
-            props.inventory?.purchase?.poNumber}
+          <InvoiceOptionButton invoice={props.invoice} />
         </TableCell>
-        <TableCell>{props.inventory?.letterNumber}</TableCell>
-        <TableCell>{props.inventory?.purchase?.vendor?.name}</TableCell>
-        <TableCell>{props.inventory?.description}</TableCell>
         <TableCell align="center" width={10}>
-          <ArrivalHistoryOptionButton inventory={props.inventory} />
+          {/* <ArrivalHistoryOptionButton inventory={props.inventory} /> */}
         </TableCell>
       </TableRow>
 
-      <InventoryDetailDialog
+      {/* <InventoryDetailDialog
         open={open}
         setOpen={setOpen}
         inventory={props.inventory}
-      />
+      /> */}
     </>
   );
 }
