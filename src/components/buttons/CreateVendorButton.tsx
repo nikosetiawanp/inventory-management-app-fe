@@ -12,6 +12,7 @@ export default function CreateVendorButton() {
         startIcon={<AddIcon />}
         variant="contained"
         onClick={() => setOpen(true)}
+        sx={{ height: "auto" }}
       >
         Tambah Vendor
       </Button>

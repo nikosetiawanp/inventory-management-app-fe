@@ -65,30 +65,24 @@ export default function SelectVendor(props: {
       >
         <Stack padding={3}>
           {/* HEADER */}
-          <Typography variant="h4" fontWeight={"bold"} marginBottom={2}>
-            Pilih Vendor
-          </Typography>
+          <Stack direction={"row"} alignItems={"start"}>
+            <Typography
+              variant="h4"
+              fontWeight={"bold"}
+              marginBottom={2}
+              marginRight={"auto"}
+            >
+              Pilih Vendor
+            </Typography>
+            <CreateVendorButton />
+          </Stack>
+
           <Stack
             direction={"row"}
             justifyContent={"space-between"}
             alignItems={"center"}
-            // gap={2}
-            // borderBottom={1}
-            // paddingX={3}
-            // paddingY={2}
             borderColor={"divider"}
           >
-            {/* <SearchIcon fontSize="medium" color="inherit" /> */}
-            {/* <InputBase
-              id="outlined-basic"
-              placeholder="Cari vendor"
-              size="small"
-              sx={{ width: 1 }}
-              value={searchInput}
-              onChange={(event) => {
-                setSearchInput(event.target.value);
-              }}
-            /> */}
             <TextField
               id="outlined-basic"
               placeholder="Cari vendor"

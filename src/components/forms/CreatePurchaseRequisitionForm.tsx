@@ -105,8 +105,6 @@ export default function CreatePurchaseRequisitionForm(props: {
       <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Stack gap={3} padding={4}>
           <Typography variant="h6">Buat Purchase Requisition</Typography>
-          {/* <SelectVendor /> */}
-
           {/* DATE PICKER */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -119,46 +117,13 @@ export default function CreatePurchaseRequisitionForm(props: {
               }}
             />
           </LocalizationProvider>
-
           {/* AUTOCOMPLETE */}
           <SelectVendor
             selectedVendor={selectedVendor}
             setSelectedVendor={setSelectedVendor}
             handleVendorChange={handleVendorChange}
           />
-          {/* <Autocomplete
-            id="vendor"
-            options={data ? data : []}
-            autoHighlight
-            getOptionLabel={(option) => `${option.code} - ${option.name}`}
-            value={selectedVendor}
-            onChange={handleVendorChange}
-            renderOption={(props, option) => (
-              <Box
-                component="li"
-                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                {...props}
-              >
-                {option.code} - {option.name}
-              </Box>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Vendor"
-                inputProps={{
-                  ...params.inputProps,
-                  autoComplete: "new-password",
-                }}
-                {...register("vendor", { required: "Tidak boleh kosong" })}
-                required
-                error={!!errors.vendor}
-                helperText={errors.vendor?.message}
-              />
-            )}
-          /> */}
-
-          {/* NOMOR SURAT */}
+          x{/* NOMOR SURAT */}
           <TextField
             id="prNumber"
             label="Nomor Surat"
@@ -168,7 +133,6 @@ export default function CreatePurchaseRequisitionForm(props: {
             helperText={errors.prNumber?.message}
             required
           />
-
           <Stack
             direction={"row"}
             width={1}

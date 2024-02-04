@@ -24,7 +24,6 @@ export default function CreateVendorForm(props: {
         return response.data;
       } catch (error: any) {
         console.log(error);
-
         if (error?.code == "ERR_BAD_RESPONSE")
           throw new Error("Network response was not ok");
       }
@@ -36,12 +35,10 @@ export default function CreateVendorForm(props: {
     }
   );
 
-  const { isLoading } = createVendor;
-
   const onSubmit: SubmitHandler<Vendor> = async (data, event) => {
     try {
       await createVendor.mutateAsync(data);
-      event?.target.reset();
+      // event?.target.reset();
       props.setOpen(false);
     } catch (error) {
       console.log(error);
@@ -121,8 +118,13 @@ export default function CreateVendorForm(props: {
             <Button onClick={() => props.setOpen(false)} type="button">
               Batal
             </Button>
-            <Button variant={"contained"} type="submit" disabled={isLoading}>
-              {isLoading
+            <Button
+              variant={"contained"}
+              disabled={createVendor.isLoading}
+              type="button"
+              onClick={handleSubmit(onSubmit)}
+            >
+              {createVendor.isLoading
                 ? // <CircularProgress color="inherit" size={15} />
                   "Menyimpan"
                 : "Simpan"}

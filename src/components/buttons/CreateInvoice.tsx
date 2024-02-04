@@ -13,14 +13,23 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { Inventory } from "../../interfaces/interfaces";
+import { Inventory, Purchase } from "../../interfaces/interfaces";
+import SelectInventory from "../select/SelectInventory";
 
-export default function CreateInvoice(props: { inventory: Inventory }) {
+export default function CreateInvoice(props: {
+  inventories: Inventory[];
+  purchase: Purchase;
+}) {
   const [open, setOpen] = useState(false);
+
+  // INVENTORY
+  const [selectedInventory, setSelectedInventory] = useState<Inventory>();
 
   // DATE
   const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedDueDate, setSelectedDueDate] = useState();
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
+  const formattedDueDate = dayjs(selectedDueDate).format("YYYY-MM-DD");
 
   const {
     register,
@@ -35,11 +44,7 @@ export default function CreateInvoice(props: { inventory: Inventory }) {
   const createInvoice = useMutation(
     async (data: any) => {
       try {
-        const response = await axios.post(
-          BACKEND_URL + "inventories/" + props.inventory.id,
-          data
-        );
-        // props.refetch();
+        const response = await axios.post(BACKEND_URL + "invoices/", data);
         return response.data;
       } catch (error) {
         throw new Error("Network response was not ok");
@@ -47,21 +52,29 @@ export default function CreateInvoice(props: { inventory: Inventory }) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("products");
+        queryClient.invalidateQueries("invoices");
       },
     }
   );
 
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     const dataToSubmit = {
-      date: props.inventory.date,
-      letterNumber: props.inventory.letterNumber,
-      type: props.inventory.type,
-      description: props.inventory.description,
-      purchaseId: props.inventory.purchaseId,
-      invoiceNumber: data?.invoiceNumber,
-      dueDate: formattedDate,
+      invoiceNumber: data.invoiceNumber,
+      date: formattedDate,
+      dueDate: formattedDueDate,
+      totalDebt: data?.invoiceNumber,
+      purchaseId: props.purchase.id,
+      inventoryId: selectedInventory?.id,
     };
+
+    // $table->string('invoice_number');
+    // $table->dateTime('date');
+    // $table->dateTime('due_date');
+    // $table->decimal('total_debt');
+    // $table->string('purchase_id');
+    // $table->string('inventory_id');
+
+    // console.log(dataToSubmit);
 
     try {
       await createInvoice.mutateAsync(dataToSubmit);
@@ -94,18 +107,19 @@ export default function CreateInvoice(props: { inventory: Inventory }) {
         <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
           <Stack gap={3} padding={4}>
             <Typography variant="h6">Buat Faktur</Typography>
-            {/* DATE PICKER */}
+            {/* TANGGAL JATUH TEMPO */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Tanggal Jatuh Tempo"
-                value={selectedDate}
-                onChange={(newValue: any) => setSelectedDate(newValue)}
+                value={selectedDueDate}
+                onChange={(newValue: any) => setSelectedDueDate(newValue)}
                 format="DD/MM/YYYY"
                 slotProps={{
                   field: { clearable: true },
                 }}
               />
             </LocalizationProvider>
+
             {/* NOMOR PO */}
             <TextField
               id="invoiceNumber"
@@ -115,6 +129,11 @@ export default function CreateInvoice(props: { inventory: Inventory }) {
               error={!!errors.invoiceNumber}
               helperText={errors.invoiceNumber?.message as any}
               required
+            />
+            <SelectInventory
+              selectedInventory={selectedInventory}
+              setSelectedInventory={setSelectedInventory}
+              inventories={props.inventories}
             />
 
             <Stack

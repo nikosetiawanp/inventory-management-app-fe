@@ -18,12 +18,10 @@ import { useQuery } from "react-query";
 import Drawer from "../components/Drawer";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import CreatePurchaseRequisitionButton from "../components/buttons/CreatePurchaseRequisitionButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { Settings } from "@mui/icons-material";
-import PurchaseRow from "../components/rows/PurchaseRow";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
-import { Invoice, Purchase } from "../interfaces/interfaces";
+import { Invoice } from "../interfaces/interfaces";
 import InvoiceRow from "../components/rows/InvoiceRow";
 
 export default function InvoicePage() {
@@ -39,6 +37,7 @@ export default function InvoicePage() {
       BACKEND_URL +
         `invoices?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
     );
+    console.log(response.data.data);
 
     return response.data.data;
   };

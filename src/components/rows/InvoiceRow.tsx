@@ -1,9 +1,10 @@
 import { TableCell, TableRow } from "@mui/material";
 import ArrivalHistoryOptionButton from "../buttons/ArrivalHistoryOptionButton";
-import { Inventory, Invoice } from "../../interfaces/interfaces";
+import { Inventory, Invoice, PurchaseItem } from "../../interfaces/interfaces";
 import { useState } from "react";
 import InventoryDetailDialog from "../dialogs/InventoryDetailDialog";
 import InvoiceOptionButton from "../buttons/InvoiceOptionButton";
+import InvoiceDetailDialog from "../dialogs/InvoiceDetailDialog";
 // import { useState } from "react";
 
 export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
@@ -15,11 +16,8 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
       month: "long",
       year: "numeric",
     };
-
     const formattedDate = date.toLocaleDateString("id-ID", options);
-
     const [day, month, year] = formattedDate.split(" ");
-
     const monthNames = [
       "Januari",
       "Februari",
@@ -36,12 +34,10 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
     ];
 
     const monthIndex = monthNames.indexOf(month);
-
     if (monthIndex !== -1) {
       const indonesianMonth = monthNames[monthIndex];
       return `${day} ${indonesianMonth} ${year}`;
     }
-
     return formattedDate;
   };
 
@@ -65,11 +61,11 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
         </TableCell>
       </TableRow>
 
-      {/* <InventoryDetailDialog
+      <InvoiceDetailDialog
         open={open}
         setOpen={setOpen}
-        inventory={props.inventory}
-      /> */}
+        invoice={props.invoice}
+      />
     </>
   );
 }

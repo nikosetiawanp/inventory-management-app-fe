@@ -87,7 +87,7 @@ export default function PurchaseRequisitionPage() {
           </Button>
 
           {/* BUTTON */}
-          <CreatePurchaseRequisitionButton />
+          {/* <CreatePurchaseRequisitionButton /> */}
         </Stack>
 
         <TableContainer

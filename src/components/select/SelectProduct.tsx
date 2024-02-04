@@ -47,20 +47,12 @@ export default function SelectProduct(props: {
 
   const handleProductSelection = (selectedProduct: Product) => {
     props.setSelectedProduct(selectedProduct);
-    // props.setValue(
-    //   `items[${props.index}].productId`,
-    //   props.selectedProduct?.id
-    // );
 
     setOpen(false);
   };
 
   return (
     <>
-      {/* <Button size="small" onClick={() => setOpen(true)}>
-        {props.selectedProduct ? props.selectedProduct?.name : "Pilih Produk"}
-      </Button> */}
-
       <Typography
         color={"primary.main"}
         sx={{ cursor: "pointer" }}
@@ -133,7 +125,6 @@ export default function SelectProduct(props: {
                       hover
                       sx={{ cursor: "pointer" }}
                       onClick={() => {
-                        // props.setSelectedProduct(product);
                         handleProductSelection(product);
                         setOpen(false);
                       }}

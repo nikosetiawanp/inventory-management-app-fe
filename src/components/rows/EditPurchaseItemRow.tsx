@@ -222,7 +222,7 @@ export default function EditPurchaseItemRow(props: {
         />
       </TableCell>
       <TableCell align="center">
-        <Stack direction="row">
+        <Stack direction="row" justifyContent="center">
           <IconButton
             size="small"
             color="primary"

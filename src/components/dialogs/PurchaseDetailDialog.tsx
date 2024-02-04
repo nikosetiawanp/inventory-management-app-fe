@@ -82,8 +82,6 @@ export default function PurchaseDetailDialog(props: {
       BACKEND_URL + `inventories?purchaseId=${props.purchase.id}`
     );
 
-    console.log(response.data.data);
-
     return response.data.data;
   };
   const inventoriesQuery = useQuery({
@@ -127,9 +125,9 @@ export default function PurchaseDetailDialog(props: {
     return result;
   };
 
-  const calculateSum = (items: PurchaseItem[]) => {
-    if (!items) return 0;
-    const totals = items?.map((item: PurchaseItem) =>
+  const calculateSum = (purchaseItems: PurchaseItem[]) => {
+    if (!purchaseItems) return 0;
+    const totals = purchaseItems?.map((item: PurchaseItem) =>
       calculateTotal(item.quantity, item.prPrice, item.discount, item.tax)
     );
     let sum = 0;
@@ -265,7 +263,10 @@ export default function PurchaseDetailDialog(props: {
             ) : null}
 
             {props.purchase.status == "PO" && fields.length == 0 ? (
-              <CreateInvoice inventory={inventoriesQuery.data} />
+              <CreateInvoice
+                inventories={inventoriesQuery.data}
+                purchase={props.purchase}
+              />
             ) : null}
 
             <Button
@@ -381,73 +382,6 @@ export default function PurchaseDetailDialog(props: {
                       purchase={props.purchase}
                       inventories={inventoriesQuery.data}
                     />
-                    // <TableRow key={index}>
-                    //   <TableCell>{item.product.name}</TableCell>
-
-                    //   <TableCell align="center">
-                    //     {item.quantity} {item.product.unit}
-                    //   </TableCell>
-                    //   {/* <TableCell align="center">pcs</TableCell> */}
-                    //   <TableCell align="right">
-                    //     {currencyFormatter.format(item.prPrice)}
-                    //   </TableCell>
-                    //   <TableCell align="center">
-                    //     {item.poPrice
-                    //       ? currencyFormatter.format(item.poPrice)
-                    //       : currencyFormatter.format(item.prPrice)}
-                    //   </TableCell>
-
-                    //   <TableCell align="center">{item.discount}%</TableCell>
-                    //   <TableCell align="center">{item.tax}%</TableCell>
-                    //   <TableCell align="right">
-                    //     {currencyFormatter.format(
-                    //       calculateTotal(
-                    //         item.quantity,
-                    //         item.prPrice,
-                    //         item.discount,
-                    //         item.tax
-                    //       )
-                    //     )}
-                    //   </TableCell>
-
-                    //   {props.purchase.status == "PO" ? (
-                    //     <TableCell align="center">
-                    //       <Chip
-                    //         size="small"
-                    //         variant="filled"
-                    //         color={
-                    //           getTotalArrived(item.productId) == 0
-                    //             ? "error"
-                    //             : getTotalArrived(item.productId) >=
-                    //               item.quantity
-                    //             ? "success"
-                    //             : "warning"
-                    //         }
-                    //         label={
-                    //           getTotalArrived(item.productId) == 0
-                    //             ? "Belum datang"
-                    //             : getTotalArrived(item.productId) ==
-                    //               item.quantity
-                    //             ? "Lengkap"
-                    //             : getTotalArrived(item.productId) >
-                    //               item.quantity
-                    //             ? `Kelebihan ${
-                    //                 getTotalArrived(item.productId) -
-                    //                 item.quantity
-                    //               }`
-                    //             : `Kurang ${
-                    //                 item.quantity -
-                    //                 getTotalArrived(item.productId)
-                    //               }`
-                    //         }
-                    //       />
-                    //     </TableCell>
-                    //   ) : null}
-
-                    //   <TableCell align="center">
-                    //     <MoreVert fontSize="small" />
-                    //   </TableCell>
-                    // </TableRow>
                   )
                 )
               )}
