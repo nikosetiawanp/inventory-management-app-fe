@@ -123,7 +123,7 @@ export default function CreatePurchaseRequisitionForm(props: {
             setSelectedVendor={setSelectedVendor}
             handleVendorChange={handleVendorChange}
           />
-          x{/* NOMOR SURAT */}
+          {/* NOMOR SURAT */}
           <TextField
             id="prNumber"
             label="Nomor Surat"

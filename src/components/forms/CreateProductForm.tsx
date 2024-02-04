@@ -123,7 +123,12 @@ export default function CreateProductForm(props: {
             <Button onClick={() => props.setOpen(false)} type="button">
               Batal
             </Button>
-            <Button variant={"contained"} type="submit" disabled={isLoading}>
+            <Button
+              variant={"contained"}
+              type="button"
+              disabled={isLoading}
+              onClick={handleSubmit(onSubmit)}
+            >
               {isLoading
                 ? "Menyimpan"
                 : // <CircularProgress color="inherit" size={15} />

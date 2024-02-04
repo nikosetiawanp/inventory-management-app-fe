@@ -15,6 +15,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Product } from "../../interfaces/interfaces";
+import CreateProductButton from "../buttons/CreateProductButton";
 
 export default function SelectProduct(props: {
   selectedProduct: Product | null;
@@ -70,9 +71,17 @@ export default function SelectProduct(props: {
         maxWidth={"sm"}
       >
         <Stack padding={3}>
-          <Typography variant="h4" fontWeight={"bold"} marginBottom={2}>
-            Pilih Produk
-          </Typography>
+          <Stack direction={"row"} alignItems={"start"}>
+            <Typography
+              variant="h4"
+              fontWeight={"bold"}
+              marginBottom={2}
+              marginRight={"auto"}
+            >
+              Pilih Produk
+            </Typography>
+            <CreateProductButton />
+          </Stack>
           {/* HEADER */}
           <Stack
             direction={"row"}
