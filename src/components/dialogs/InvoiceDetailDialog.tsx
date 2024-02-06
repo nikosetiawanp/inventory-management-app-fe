@@ -29,6 +29,7 @@ import RowSkeleton from "../skeletons/RowSkeleton";
 import { useEffect, useState } from "react";
 import NewInventoryItem from "../rows/NewInventoryItem";
 import CreateInvoice from "../buttons/CreateInvoice";
+import CreateDebt from "../buttons/CreateDebt";
 
 export default function InvoiceDetailDialog(props: {
   open: boolean;
@@ -51,8 +52,6 @@ export default function InvoiceDetailDialog(props: {
       BACKEND_URL + `inventory-items?inventoryId=${props.invoice.inventoryId}`
     );
 
-    console.log(response.data.data);
-
     return response.data.data;
   };
   const inventoryItemsQuery = useQuery({
@@ -67,7 +66,6 @@ export default function InvoiceDetailDialog(props: {
     const response = await axios.get(
       BACKEND_URL + `purchase-items?purchaseId=${props.invoice.purchaseId}`
     );
-    console.log(response.data.data);
 
     return response.data.data;
   };
@@ -188,9 +186,6 @@ export default function InvoiceDetailDialog(props: {
           <Stack>
             <Typography variant="h4">{props.invoice.invoiceNumber}</Typography>
             <Typography variant="body1">
-              {formatDate(props.invoice.date)}
-            </Typography>
-            <Typography variant="body1">
               {formatDate(props.invoice.inventory.date)}
             </Typography>
             <Typography variant="body1">
@@ -201,11 +196,16 @@ export default function InvoiceDetailDialog(props: {
             </Typography>
           </Stack>
           {/* BUTTONS */}
-          <Stack direction="row" alignItems={"center"} gap={2}>
+          <Stack direction="row" gap={2}>
             {/* <Typography>{props.inventory.invoiceNumber}</Typography> */}
+            <CreateDebt
+              debtAmount={calculateSum(inventoryItemsQuery.data)}
+              invoice={props.invoice}
+            />
             {/* <Button variant="contained" onClick={() => {}}>
-              Buat Faktur
+              Buat Hutang
             </Button> */}
+            <MorePurchaseButton />
           </Stack>
         </Stack>
 
@@ -236,11 +236,11 @@ export default function InvoiceDetailDialog(props: {
                 <TableCell align="center">Pajak</TableCell>
                 <TableCell align="right">Total</TableCell>
 
-                <TableCell width={10}>
+                {/* <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />
                   </IconButton>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             </TableHead>
 

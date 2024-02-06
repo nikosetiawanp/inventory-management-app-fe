@@ -26,7 +26,6 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 
 export default function InventoryArrivalPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
   const selectedYear = formattedDate.split("-")[0];

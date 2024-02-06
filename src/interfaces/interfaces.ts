@@ -82,6 +82,18 @@ export interface Invoice {
   purchase: Purchase;
 }
 
+export interface Debt {
+  id: number | string;
+  debtAmount: number;
+  status: "PAID" | "UNPAID";
+  paidDate: string;
+  receiptNumber: string;
+  paidAmount: number;
+  invoiceId: number | string;
+  invoice: Invoice;
+  balance: number;
+}
+
 export interface CreatePurchaseRequisition {
   vendorId: string | number | undefined;
   prDate: string;

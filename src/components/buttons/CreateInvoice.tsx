@@ -67,15 +67,6 @@ export default function CreateInvoice(props: {
       inventoryId: selectedInventory?.id,
     };
 
-    // $table->string('invoice_number');
-    // $table->dateTime('date');
-    // $table->dateTime('due_date');
-    // $table->decimal('total_debt');
-    // $table->string('purchase_id');
-    // $table->string('inventory_id');
-
-    // console.log(dataToSubmit);
-
     try {
       await createInvoice.mutateAsync(dataToSubmit);
       console.log(dataToSubmit);

@@ -11,6 +11,8 @@ import InventoryArrivalPage from "./pages/InventoryArrivalPage";
 import InventoryPage from "./pages/InventoryPage";
 import InventoryDeparturePage from "./pages/InventoryDeparturePage";
 import InvoicePage from "./pages/InvoicePage";
+import DebtPage from "./pages/DebtPage";
+import PaymentPage from "./pages/PaymentPage";
 
 const queryClient = new QueryClient();
 const theme = createTheme({
@@ -47,6 +49,9 @@ function App() {
               />
               <Route path="/purchase-order" element={<PurchaseOrderPage />} />
               <Route path="/invoices" element={<InvoicePage />} />
+              <Route path="/debt" element={<DebtPage />} />
+              <Route path="/payment" element={<PaymentPage />} />
+
               <Route path="/inventory" element={<InventoryPage />} />
               <Route
                 path="/inventory-arrival"

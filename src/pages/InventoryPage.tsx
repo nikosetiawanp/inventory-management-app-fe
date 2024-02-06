@@ -95,7 +95,6 @@ export default function InventoryPage() {
                   <TableRow key={index} hover>
                     <TableCell>{product.code}</TableCell>
                     <TableCell>{product.name}</TableCell>
-                    {/* <TableCell>{product.unit}</TableCell> */}
                     <TableCell align="center">
                       {product.quantity} {product.unit}
                     </TableCell>

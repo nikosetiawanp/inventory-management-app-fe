@@ -55,6 +55,16 @@ export default function Drawer() {
       category: "Pembelian",
     },
     {
+      name: "Hutang",
+      param: "/debt",
+      category: "Hutang",
+    },
+    {
+      name: "Pembayaran",
+      param: "/payment",
+      category: "Hutang",
+    },
+    {
       name: "Stok Gudang",
       param: "/inventory",
       category: "Gudang",

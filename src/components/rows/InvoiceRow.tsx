@@ -56,9 +56,6 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
         <TableCell>
           <InvoiceOptionButton invoice={props.invoice} />
         </TableCell>
-        <TableCell align="center" width={10}>
-          {/* <ArrivalHistoryOptionButton inventory={props.inventory} /> */}
-        </TableCell>
       </TableRow>
 
       <InvoiceDetailDialog

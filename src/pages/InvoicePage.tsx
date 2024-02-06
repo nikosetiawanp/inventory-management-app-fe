@@ -37,8 +37,6 @@ export default function InvoicePage() {
       BACKEND_URL +
         `invoices?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
     );
-    console.log(response.data.data);
-
     return response.data.data;
   };
 
