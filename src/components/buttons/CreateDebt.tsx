@@ -31,8 +31,6 @@ export default function CreateDebt(props: {
 
   const dataToSubmit = {
     debtAmount: props.debtAmount,
-    status: "UNPAID",
-    balance: 0,
     invoiceId: props.invoice.id,
   };
 

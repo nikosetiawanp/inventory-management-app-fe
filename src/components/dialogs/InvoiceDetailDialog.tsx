@@ -51,7 +51,6 @@ export default function InvoiceDetailDialog(props: {
     const response = await axios.get(
       BACKEND_URL + `inventory-items?inventoryId=${props.invoice.inventoryId}`
     );
-
     return response.data.data;
   };
   const inventoryItemsQuery = useQuery({

@@ -20,10 +20,10 @@ import { useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { CheckCircle, Settings, WatchLater } from "@mui/icons-material";
-import { Debt } from "../interfaces/interfaces";
+import { Debt, DebtPayment } from "../interfaces/interfaces";
+import RowSkeleton from "../components/skeletons/RowSkeleton";
 
-export default function PaymentPage() {
+export default function DebtPaymentPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
@@ -31,19 +31,19 @@ export default function PaymentPage() {
   const selectedMonth = formattedDate.split("-")[1];
 
   // GET DEBTS
-  const getDebts = async () => {
+  const getDebtPayments = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `debts?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PAID`
+        `debt-payments?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
     );
-    // console.log(response.data.data);
+    console.log(response.data.data);
 
     return response.data.data;
   };
 
-  const debtsQuery = useQuery({
-    queryKey: ["debts"],
-    queryFn: getDebts,
+  const debtPaymentsQuery = useQuery({
+    queryKey: ["debtPayments"],
+    queryFn: getDebtPayments,
     refetchOnWindowFocus: false,
     enabled: true,
   });
@@ -57,9 +57,7 @@ export default function PaymentPage() {
     };
 
     const formattedDate = date.toLocaleDateString("id-ID", options);
-
     const [day, month, year] = formattedDate.split(" ");
-
     const monthNames = [
       "Januari",
       "Februari",
@@ -113,10 +111,12 @@ export default function PaymentPage() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => debtsQuery.refetch()}
-            disabled={debtsQuery.isRefetching || debtsQuery.isLoading}
+            onClick={() => debtPaymentsQuery.refetch()}
+            disabled={
+              debtPaymentsQuery.isRefetching || debtPaymentsQuery.isLoading
+            }
           >
-            {debtsQuery.isRefetching || debtsQuery.isLoading ? (
+            {debtPaymentsQuery.isRefetching || debtPaymentsQuery.isLoading ? (
               <CircularProgress size={15} color="inherit" />
             ) : (
               <RefreshIcon fontSize="small" />
@@ -141,28 +141,39 @@ export default function PaymentPage() {
               <TableRow>
                 <TableCell>Tanggal Bayar</TableCell>
                 <TableCell>Nomor Bukti</TableCell>
-                <TableCell>Jumlah Dibayar</TableCell>
                 <TableCell>Nomor Faktur</TableCell>
                 <TableCell>Tanggal Jatuh Tempo</TableCell>
+                <TableCell>Jumlah Dibayar</TableCell>
                 <TableCell>Saldo Sekarang</TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {debtsQuery?.data?.map((debt: Debt, index: number) => (
-                <TableRow key={index} hover>
-                  <TableCell>{formatDate(debt?.paidDate)}</TableCell>
-                  <TableCell>{debt?.receiptNumber}</TableCell>
-                  <TableCell>
-                    {currencyFormatter.format(debt?.paidAmount)}
-                  </TableCell>
-                  <TableCell>{debt?.invoice.invoiceNumber}</TableCell>
-                  <TableCell>{formatDate(debt?.invoice.dueDate)}</TableCell>
-                  <TableCell>
-                    {currencyFormatter.format(debt?.balance)}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {debtPaymentsQuery.isLoading ? (
+                <RowSkeleton rows={15} columns={6} />
+              ) : (
+                debtPaymentsQuery?.data?.map(
+                  (debtPayment: DebtPayment, index: number) => (
+                    <TableRow key={index} hover>
+                      <TableCell>{formatDate(debtPayment?.paidDate)}</TableCell>
+                      <TableCell>{debtPayment?.receiptNumber}</TableCell>
+
+                      <TableCell>
+                        {debtPayment?.debt.invoice.invoiceNumber}
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(debtPayment?.debt.invoice.dueDate)}
+                      </TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(debtPayment?.paidAmount)}
+                      </TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(debtPayment?.balance)}
+                      </TableCell>
+                    </TableRow>
+                  )
+                )
+              )}
             </TableBody>
           </Table>
         </TableContainer>

@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Button,
   Dialog,
@@ -15,7 +14,7 @@ import {
   Inventory,
   Product,
   Purchase,
-  Vendor,
+  Contact,
 } from "../../interfaces/interfaces";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -52,12 +51,6 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createInventoryHistory = useMutation(
     async (data: Inventory) => {
-      // const dataToSubmit = {
-      //   date: formattedDate,
-      //   type: "A",
-      //   letterNumber: data.letterNumber,
-      //   purchaseId: data.purchaseId,
-      // };
       setIsSubmitting(true);
 
       try {

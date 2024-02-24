@@ -14,32 +14,36 @@ import {
 
 import { useQuery } from "react-query";
 import { Settings } from "@mui/icons-material";
-import { Vendor } from "../interfaces/interfaces";
+import { Contact } from "../interfaces/interfaces";
 
 import Drawer from "../components/Drawer";
 import CreateVendorButton from "../components/buttons/CreateVendorButton";
 import MoreVertVendorButton from "../components/buttons/MoreVertVendorButton";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CreateContact from "../components/forms/CreateContact";
+import { provinceData } from "../public/ProvinceData";
 
-export default function VendorPage() {
+export default function ContactPage() {
   // FETCHING DATA
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const getVendors = async () => {
-    const response = await axios.get(BACKEND_URL + "vendors/");
+  const getContacts = async () => {
+    const response = await axios.get(BACKEND_URL + "contacts/");
+    console.log(response.data);
+
     return response.data.data;
   };
 
-  const vendorsQuery = useQuery({
-    queryKey: ["vendors"],
-    queryFn: () => getVendors(),
+  const contactsQuery = useQuery({
+    queryKey: ["contacts"],
+    queryFn: () => getContacts(),
     refetchOnWindowFocus: false,
   });
 
   const [searchInput, setSearchInput] = useState("");
-  const filteredVendorsQuery = vendorsQuery?.data?.filter(
-    (vendor: Vendor) =>
+  const filteredContactsQuery = contactsQuery?.data?.filter(
+    (vendor: Contact) =>
       vendor.name.toLowerCase().includes(searchInput.toLowerCase()) ||
       vendor.code.toLowerCase().includes(searchInput.toLowerCase())
   );
@@ -52,12 +56,12 @@ export default function VendorPage() {
       {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Daftar Vendor
+          Contacts
         </Typography>
         <Stack direction={"row"} justifyContent={"space-between"} width={1}>
           <TextField
             id="outlined-basic"
-            placeholder="Cari vendor"
+            placeholder="Cari"
             variant="outlined"
             size="small"
             sx={{ width: "400px" }}
@@ -67,7 +71,7 @@ export default function VendorPage() {
             }}
           />
           {/* BUTTON */}
-          <CreateVendorButton />
+          <CreateContact />
         </Stack>
 
         <TableContainer
@@ -101,33 +105,27 @@ export default function VendorPage() {
 
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {vendorsQuery.isLoading ? (
+              {contactsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={6} />
               ) : (
-                filteredVendorsQuery?.map((vendor: Vendor) => (
-                  <TableRow key={vendor.id} hover>
-                    <TableCell>{vendor.code}</TableCell>
-                    <TableCell>{vendor.name}</TableCell>
-                    <TableCell>{vendor.address}</TableCell>
-                    <TableCell>{vendor.phone}</TableCell>
-                    <TableCell>{vendor.email}</TableCell>
-                    <TableCell>
-                      <MoreVertVendorButton vendor={vendor} />
-                    </TableCell>
-                  </TableRow>
-                ))
+                filteredContactsQuery?.map(
+                  (contact: Contact, index: number) => (
+                    <TableRow key={index} hover>
+                      <TableCell>{contact.code}</TableCell>
+                      <TableCell>{contact.name}</TableCell>
+                      <TableCell>{contact.address}</TableCell>
+                      <TableCell>{contact.phone}</TableCell>
+                      <TableCell>{contact.email}</TableCell>
+                      <TableCell>
+                        <MoreVertVendorButton contact={contact} />
+                      </TableCell>
+                    </TableRow>
+                  )
+                )
               )}
             </TableBody>
           </Table>
         </TableContainer>
-        {/* BOTTOM */}
-        {/* <Stack direction={"row"} gap={2}>
-          <Typography variant="body1">Halaman 1 dari 5</Typography>
-          <Button variant="outlined" sx={{ marginLeft: "auto" }}>
-            Previous
-          </Button>
-          <Button variant="outlined">Next</Button>
-        </Stack> */}
       </Stack>
     </Stack>
   );

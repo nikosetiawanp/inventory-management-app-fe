@@ -8,13 +8,16 @@ export interface Product {
   quantity: number;
 }
 
-export interface Vendor {
+export interface Contact {
   id: number;
   code: string;
   name: string;
-  address: string;
-  phone: string;
   email: string;
+  phone: string;
+  province: string;
+  city: string;
+  address: string;
+  is_supplier: boolean;
 }
 
 export interface PurchaseItem {
@@ -92,6 +95,17 @@ export interface Debt {
   invoiceId: number | string;
   invoice: Invoice;
   balance: number;
+  debtPayments: DebtPayment[];
+}
+
+export interface DebtPayment {
+  id: number | string;
+  receiptNumber: string;
+  paidDate: string;
+  paidAmount: number;
+  balance: number;
+  debtId: number;
+  debt: Debt;
 }
 
 export interface CreatePurchaseRequisition {

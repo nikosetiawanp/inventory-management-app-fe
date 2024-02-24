@@ -28,8 +28,8 @@ export default function Drawer() {
 
   const links = [
     {
-      name: "Daftar Vendor",
-      param: "/vendor",
+      name: "Contacts",
+      param: "/contacts",
       category: "Daftar",
       icon: <StorefrontIcon />,
     },
@@ -60,8 +60,8 @@ export default function Drawer() {
       category: "Hutang",
     },
     {
-      name: "Pembayaran",
-      param: "/payment",
+      name: "Pembayaran Hutang",
+      param: "/debt-payment",
       category: "Hutang",
     },
     {
@@ -98,7 +98,7 @@ export default function Drawer() {
           <Divider sx={{ marginY: 1 }} />
           {/* BUTTON */}
           <ListItem>
-            <CreateGlobalButton />
+            {/* <CreateGlobalButton /> */}
             {/* <Button startIcon={<AddIcon />} variant="contained" size="large">
               Tambah
             </Button> */}

@@ -10,10 +10,10 @@ import { useState } from "react";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Vendor } from "../../interfaces/interfaces";
+import { Contact } from "../../interfaces/interfaces";
 import DeleteVendorButton from "./DeleteVendorButton";
 
-export default function MoreVertVendorButton(props: { vendor: Vendor }) {
+export default function MoreVertVendorButton(props: { contact: Contact }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -59,7 +59,7 @@ export default function MoreVertVendorButton(props: { vendor: Vendor }) {
           </ListItemIcon>
           <ListItemText>Ubah</ListItemText>
         </MenuItem>
-        <DeleteVendorButton vendor={props.vendor} />
+        <DeleteVendorButton vendor={props.contact} />
         {/* <MenuItem>
           <ListItemIcon>
             <DeleteIcon fontSize="small" color="error" />

@@ -12,7 +12,7 @@ import {
 import {
   CreatePurchaseRequisition,
   Purchase,
-  Vendor,
+  Contact,
 } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -47,7 +47,7 @@ export default function CreatePurchaseRequisitionForm(props: {
   });
 
   // VENDOR
-  const [selectedVendor, setSelectedVendor] = useState<Vendor>();
+  const [selectedVendor, setSelectedVendor] = useState<Contact>();
   const handleVendorChange = (event: any, value: any) => {
     setSelectedVendor(value);
     setValue("vendor", value ? value.id : "");

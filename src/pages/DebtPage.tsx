@@ -21,7 +21,9 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { CheckCircle, Settings, WatchLater } from "@mui/icons-material";
-import { Debt } from "../interfaces/interfaces";
+import { Debt, DebtPayment } from "../interfaces/interfaces";
+import PayDebt from "../components/buttons/PayDebt";
+import RowSkeleton from "../components/skeletons/RowSkeleton";
 
 export default function DebtPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -36,8 +38,6 @@ export default function DebtPage() {
       BACKEND_URL +
         `debts?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=UNPAID`
     );
-    // console.log(response.data.data);
-
     return response.data.data;
   };
 
@@ -90,6 +90,17 @@ export default function DebtPage() {
     style: "currency",
     currency: "IDR",
   });
+
+  const sumDebtPayments = (debtPayments: DebtPayment[]) => {
+    if (debtPayments.length < 1) return 0;
+
+    let totalPaidDebt = 0;
+
+    for (let i = 0; i < debtPayments.length; i++) {
+      totalPaidDebt += debtPayments[i].paidAmount;
+    }
+    return totalPaidDebt;
+  };
 
   return (
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -145,43 +156,67 @@ export default function DebtPage() {
                 <TableCell>Tanggal Jatuh Tempo</TableCell>
                 <TableCell>Jumlah Tagihan</TableCell>
                 <TableCell>Status</TableCell>
-                {/* <TableCell width={10} align="center">
+                <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />
                   </IconButton>
-                </TableCell> */}
+                </TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {debtsQuery?.data?.map((debt: Debt, index: number) => (
-                <TableRow key={index} hover>
-                  <TableCell>{formatDate(debt?.invoice.date)}</TableCell>
-                  <TableCell>{debt?.invoice.invoiceNumber}</TableCell>
-                  <TableCell>{debt?.invoice.purchase.vendor.name}</TableCell>
-                  <TableCell>{formatDate(debt?.invoice.dueDate)}</TableCell>
-                  <TableCell>
-                    {currencyFormatter.format(debt?.debtAmount)}
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={
-                        debt?.status == "PAID" ? "Lunas" : "Menunggu Pembayaran"
-                      }
-                      color={debt?.status == "PAID" ? "success" : "warning"}
-                      variant="outlined"
-                      size="small"
-                      clickable={debt?.status == "UNPAID"}
-                      icon={
-                        debt.status == "PAID" ? <CheckCircle /> : <WatchLater />
-                      }
-                    />
-                  </TableCell>
-                  {/* <TableCell>
-                    <Button variant="contained">Bayar</Button>
-                  </TableCell> */}
-                </TableRow>
-              ))}
+              {debtsQuery.isLoading ? (
+                <RowSkeleton rows={15} columns={6} />
+              ) : (
+                debtsQuery?.data?.map((debt: Debt, index: number) => (
+                  <TableRow key={index} hover>
+                    <TableCell>{formatDate(debt?.invoice.date)}</TableCell>
+                    <TableCell>{debt?.invoice.invoiceNumber}</TableCell>
+                    <TableCell>{debt?.invoice.purchase.vendor.name}</TableCell>
+                    <TableCell>{formatDate(debt?.invoice.dueDate)}</TableCell>
+                    <TableCell>
+                      {currencyFormatter.format(debt?.debtAmount)}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={
+                          // sumDebtPayments(debt.debtPayments)
+                          sumDebtPayments(debt.debtPayments) == 0
+                            ? "Belum dibayar"
+                            : sumDebtPayments(debt.debtPayments) >
+                              debt?.debtAmount
+                            ? `Kelebihan ${currencyFormatter.format(
+                                sumDebtPayments(debt.debtPayments) -
+                                  debt?.debtAmount
+                              )}`
+                            : sumDebtPayments(debt.debtPayments) <
+                              debt?.debtAmount
+                            ? `Kurang ${currencyFormatter.format(
+                                debt.debtAmount -
+                                  sumDebtPayments(debt.debtPayments)
+                              )}`
+                            : "Lunas"
+                        }
+                        variant="outlined"
+                        color={
+                          sumDebtPayments(debt.debtPayments) == 0
+                            ? "error"
+                            : sumDebtPayments(debt.debtPayments) <
+                              debt?.debtAmount
+                            ? "warning"
+                            : "success"
+                        }
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {sumDebtPayments(debt.debtPayments) < debt?.debtAmount ? (
+                        <PayDebt debt={debt} />
+                      ) : null}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
