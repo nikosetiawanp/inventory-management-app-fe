@@ -77,7 +77,7 @@ export const provinceData: Province[] = [
     kota: [
       "Kota Padang",
       "Kota Solok",
-      "Kota Sawhlunto",
+      "Kota Sawahlunto",
       "Kota Padang Panjang",
       "Kota Bukittinggi",
       "Kota Payakumbuh",

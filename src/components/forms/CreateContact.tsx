@@ -5,7 +5,11 @@ import {
   Button,
   Checkbox,
   Dialog,
+  FormControl,
   FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
   Typography,
@@ -31,22 +35,39 @@ export default function CreateContact() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
 
+  const [selectedProvince, setSelectedProvince] = useState<any>();
+  const [selectedCity, setSelectedCity] = useState<any>();
+  const [isSupplier, setIsSupplier] = useState<boolean>(true);
+
   const createContact = useMutation(
     async (data: Contact) => {
-      console.log(data);
+      const dataToSubmit = {
+        code: data.code,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        province: selectedProvince.provinsi,
+        city: selectedCity,
+        address: data.address,
+        isSupplier: isSupplier,
+      };
+      console.log(dataToSubmit);
 
-      //   try {
-      //     const response = await axios.post(BACKEND_URL + "vendors/", data);
-      //     return response.data;
-      //   } catch (error: any) {
-      //     console.log(error);
-      //     if (error?.code == "ERR_BAD_RESPONSE")
-      //       throw new Error("Network response was not ok");
-      //   }
+      try {
+        const response = await axios.post(
+          BACKEND_URL + "contacts/",
+          dataToSubmit
+        );
+        return response.data;
+      } catch (error: any) {
+        console.log(error);
+        if (error?.code == "ERR_BAD_RESPONSE")
+          throw new Error("Network response was not ok");
+      }
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("vendors");
+        queryClient.invalidateQueries("contacts");
       },
     }
   );
@@ -59,9 +80,6 @@ export default function CreateContact() {
       console.log(error);
     }
   };
-
-  const [selectedProvince, setSelectedProvince] = useState<any>();
-  const [selectedCity, setSelectedCity] = useState<any>();
 
   useEffect(() => {
     setSelectedCity("");
@@ -126,53 +144,53 @@ export default function CreateContact() {
               error={!!errors.phone}
               helperText={errors.phone?.message}
             />
-
             {/* PROVINSI */}
-            <Autocomplete
-              options={provinceData}
-              getOptionLabel={(option) => option.provinsi}
-              renderInput={(params) => (
-                <TextField {...params} label="Provinsi" />
-              )}
-              defaultValue={provinceData[0]}
-              value={selectedProvince?.kota}
-              onChange={(_, newValue) => setSelectedProvince(newValue as any)}
-              ListboxProps={{
-                style: {
-                  maxHeight: "150px",
-                },
-              }}
-            />
+            <Stack direction={"row"} width={1} gap={2}>
+              <Autocomplete
+                options={provinceData}
+                getOptionLabel={(option) => option.provinsi}
+                renderInput={(params) => (
+                  <TextField {...params} label="Provinsi" />
+                )}
+                value={selectedProvince || null} // Ensure value is either a defined value or null
+                onChange={(_, newValue) => setSelectedProvince(newValue as any)}
+                ListboxProps={{
+                  style: {
+                    maxHeight: "150px",
+                  },
+                }}
+                fullWidth
+              />
 
-            {/* KOTA */}
-            <Controller
-              name="city"
-              control={control}
-              defaultValue={selectedCity}
-              disabled={selectedProvince?.kota.length == 0}
-              render={({ field }) => (
-                <Autocomplete
-                  {...field}
-                  defaultValue={selectedCity}
-                  options={
-                    selectedProvince?.kota
-                      ? selectedProvince?.kota
-                      : provinceData[0]?.kota
-                  }
-                  value={selectedCity as any}
-                  getOptionLabel={(option) => option}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Kota/Kabupaten" />
-                  )}
-                  onChange={(_, newValue) => setSelectedCity(newValue as any)}
-                  ListboxProps={{
-                    style: {
-                      maxHeight: "150px",
-                    },
-                  }}
-                />
-              )}
-            />
+              {/* KOTA */}
+              <Controller
+                name="city"
+                control={control}
+                defaultValue={selectedCity}
+                disabled={selectedProvince?.kota.length == 0}
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    fullWidth
+                    defaultValue={selectedCity}
+                    options={
+                      selectedProvince?.kota ? selectedProvince?.kota : []
+                    }
+                    value={selectedCity as any}
+                    getOptionLabel={(option) => option}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Kota/Kabupaten" />
+                    )}
+                    onChange={(_, newValue) => setSelectedCity(newValue as any)}
+                    ListboxProps={{
+                      style: {
+                        maxHeight: "150px",
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Stack>
             {/* ALAMAT */}
             <TextField
               id="address"
@@ -181,9 +199,34 @@ export default function CreateContact() {
               {...register("address")}
               error={!!errors.address}
               helperText={errors.address?.message}
+              rows={3}
             />
             {/* SUPPLIER? */}
-            <FormControlLabel control={<Checkbox />} label="Supplier" />
+            <FormControl>
+              {/* <FormLabel id="demo-row-radio-buttons-group-label">
+                Jenis
+              </FormLabel> */}
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={isSupplier}
+                onChange={(event) =>
+                  setIsSupplier(event.target.value === "true")
+                }
+              >
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label="Supplier"
+                />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="Customer"
+                />
+              </RadioGroup>
+            </FormControl>
             {/* ACTIONS */}
             <Stack
               direction={"row"}
