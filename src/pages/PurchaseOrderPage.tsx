@@ -28,6 +28,7 @@ import RowSkeleton from "../components/skeletons/RowSkeleton";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import CreatePurchase from "../components/forms/CreatePurchase";
 
 export default function PurchaseRequisitionPage() {
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -40,7 +41,7 @@ export default function PurchaseRequisitionPage() {
   const getPurchases = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PO`
+        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
     );
     return response.data.data;
   };
@@ -87,13 +88,13 @@ export default function PurchaseRequisitionPage() {
           </Button>
 
           {/* BUTTON */}
-          {/* <CreatePurchaseRequisitionButton /> */}
+          <CreatePurchase />
         </Stack>
 
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table sx={{ borderCollapse: "separate" }}>
+          <Table sx={{ borderCollapse: "separate" }} size="small">
             {/* HEAD */}
             <TableHead
               sx={{
@@ -106,10 +107,11 @@ export default function PurchaseRequisitionPage() {
               }}
             >
               <TableRow>
-                <TableCell>Tanggal Surat</TableCell>
-                <TableCell>Kode Vendor</TableCell>
-                <TableCell>Nama Vendor</TableCell>
-                <TableCell>Nomor Surat</TableCell>
+                <TableCell>Nomor</TableCell>
+                <TableCell>Vendor</TableCell>
+                <TableCell>Tanggal</TableCell>
+                <TableCell>Status Approval</TableCell>
+                <TableCell>Status Selesai</TableCell>
                 <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />

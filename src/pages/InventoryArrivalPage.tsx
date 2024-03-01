@@ -35,7 +35,7 @@ export default function InventoryArrivalPage() {
   const getInventories = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=A`
+        `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&isArrival=1`
     );
     return response.data.data;
   };
@@ -69,7 +69,7 @@ export default function InventoryArrivalPage() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => inventoriesQuery.refetch()}
+            onClick={() => inventoriesQuery?.refetch()}
             disabled={
               inventoriesQuery.isRefetching || inventoriesQuery.isLoading
             }
@@ -88,7 +88,7 @@ export default function InventoryArrivalPage() {
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table sx={{ borderCollapse: "separate" }}>
+          <Table sx={{ borderCollapse: "separate" }} size="small">
             <TableHead
               sx={{
                 position: "sticky",
@@ -100,11 +100,11 @@ export default function InventoryArrivalPage() {
               }}
             >
               <TableRow>
-                <TableCell>Tanggal Masuk</TableCell>
-                <TableCell>Nomor PO</TableCell>
-                <TableCell>Nomor Surat Jalan</TableCell>
+                <TableCell>Nomor</TableCell>
                 <TableCell>Vendor</TableCell>
-                <TableCell>Keterangan</TableCell>
+                <TableCell>Tanggal Masuk</TableCell>
+                <TableCell>Purchase Order</TableCell>
+                <TableCell>Deskripsi</TableCell>
                 <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />

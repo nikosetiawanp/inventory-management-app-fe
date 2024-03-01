@@ -15,46 +15,46 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { Vendor } from "../../interfaces/interfaces";
+import { Contact } from "../../interfaces/interfaces";
 import CreateVendorButton from "../buttons/CreateVendorButton";
 import SearchIcon from "@mui/icons-material/Search";
 
-export default function SelectVendor(props: {
-  selectedVendor: Vendor | null | undefined;
-  setSelectedVendor: any;
-  handleVendorChange: any;
+export default function SelectContact(props: {
+  selectedContact: Contact | null | undefined;
+  setSelectedContact: any;
+  handleContactChange: any;
 }) {
   const [open, setOpen] = useState(false);
 
   // GET PURCHASES
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const getVendors = async () => {
-    const response = await axios.get(BACKEND_URL + "vendors");
+  const getContacts = async () => {
+    const response = await axios.get(BACKEND_URL + "contacts");
     return response.data.data;
   };
-  const vendorsQuery = useQuery({
-    queryKey: ["vendors"],
-    queryFn: getVendors,
+  const contactsQuery = useQuery({
+    queryKey: ["contacts"],
+    queryFn: getContacts,
     refetchOnWindowFocus: false,
     enabled: open,
   });
 
   const [searchInput, setSearchInput] = useState("");
-  const filteredVendorsQuery = vendorsQuery?.data?.filter(
-    (vendor: Vendor) =>
-      vendor.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      vendor.code.toLowerCase().includes(searchInput.toLowerCase())
+  const filteredContactsQuery = contactsQuery?.data?.filter(
+    (contact: Contact) =>
+      contact.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      contact.code.toLowerCase().includes(searchInput.toLowerCase())
   );
 
   return (
     <>
       <TextField
         id="outlined-basic"
-        label="Vendor"
+        label="Contact"
         variant="outlined"
         sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
-        value={props.selectedVendor?.name || ""}
+        value={props.selectedContact?.name || ""}
       />
 
       <Dialog
@@ -120,21 +120,23 @@ export default function SelectVendor(props: {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredVendorsQuery.map((vendor: Vendor, index: number) => (
-                  <TableRow
-                    key={index}
-                    hover
-                    sx={{ cursor: "pointer" }}
-                    onClick={() => {
-                      props.setSelectedVendor(vendor);
-                      setOpen(false);
-                    }}
-                    selected={props.selectedVendor?.id == vendor.id}
-                  >
-                    <TableCell>{vendor.code}</TableCell>
-                    <TableCell>{vendor.name}</TableCell>
-                  </TableRow>
-                ))}
+                {filteredContactsQuery?.map(
+                  (contact: Contact, index: number) => (
+                    <TableRow
+                      key={index}
+                      hover
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => {
+                        props.setSelectedContact(contact);
+                        setOpen(false);
+                      }}
+                      selected={props.selectedContact?.id == contact.id}
+                    >
+                      <TableCell>{contact.code}</TableCell>
+                      <TableCell>{contact.name}</TableCell>
+                    </TableRow>
+                  )
+                )}
               </TableBody>
             </Table>
           </TableContainer>

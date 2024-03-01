@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 export interface Product {
   id: string;
   code: string;
@@ -24,51 +22,51 @@ export interface PurchaseItem {
   items(items: any): unknown;
   id: string;
   quantity: number;
-  prPrice: number;
-  poPrice: number;
+  price: number;
   discount: number;
   tax: number;
   purchaseId: string | number;
   productId: string | number;
 
+  purchase: Purchase;
   product: Product;
 }
 
 export interface Purchase {
-  id: string | any;
-  vendorId: string | number | undefined;
-  status: "PR" | "PO";
+  id: string | number;
+  number: string;
+  date: string;
+  expectedArrival: string;
+  isApproved: boolean;
+  isDone: boolean;
+  contactId: string | number;
 
-  prDate: any;
-  prNumber: string;
-
-  poDate: any | null;
-  poNumber: string | null;
-
-  vendor: Vendor;
+  contact: Contact;
+  contacts: Contact[];
   purchaseItems: PurchaseItem[];
+  inventories: Inventory[];
 }
 
 export interface Inventory {
   id: number | string;
+  number: string;
   date: any;
-  letterNumber: string;
-  invoiceNumber: string;
+  isArrival: boolean;
+  receiptNumber: string;
   description: string | null;
-  type: "A" | "D";
-
   purchaseId: string | number;
+
   purchase: Purchase;
-  vendor: Vendor;
+  contact: Contact;
   inventoryItems: InventoryItem[];
 }
 
 export interface InventoryItem {
   id: number | string;
   quantity: number;
-  stockAfter: number;
-  product: Product;
   productId: string | number;
+  inventoryId: string | number;
+  product: Product;
 }
 
 export interface Invoice {
@@ -108,8 +106,10 @@ export interface DebtPayment {
   debt: Debt;
 }
 
-export interface CreatePurchaseRequisition {
-  vendorId: string | number | undefined;
-  prDate: string;
-  prNumber: string;
-}
+// export interface CreatePurchase {
+//   number: data.number,
+//   date: formattedDate,
+//   expectedArrival: null,
+//   isApproved: false,
+//   contactId: selectedContact?.id,
+// }

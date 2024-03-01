@@ -66,7 +66,7 @@ export default function DeletePurchaseButton(props: { purchase: Purchase }) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          Hapus {props.purchase.prNumber}?
+          Hapus {props.purchase.number}?
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">

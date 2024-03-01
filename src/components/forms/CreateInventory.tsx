@@ -39,7 +39,7 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
   );
   const handlePurchaseChange = (event: any, value: any) => {
     setSelectedPurchase(value);
-    setValue("vendor", value ? value.id : "");
+    setValue("contact", value ? value.id : "");
   };
 
   // DATE
@@ -75,9 +75,11 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
     event: any
   ) => {
     const dataToSubmit = {
+      number: data.number,
       date: formattedDate,
-      letterNumber: data.letterNumber,
-      type: props.type,
+      receiptNumber: data.receiptNumber,
+      isArrival: true,
+      description: data.description,
       purchaseId: selectedPurchase?.id,
     };
     try {
@@ -109,6 +111,12 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
         <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
           <Stack gap={3} padding={4}>
             <Typography variant="h6">Catat Gudang Masuk</Typography>
+            {/* PURCHASE */}
+            <SelectPurchase
+              selectedPurchase={selectedPurchase}
+              setSelectedPurchase={setSelectedPurchase}
+              handlePurchaseChange={handlePurchaseChange}
+            />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Tanggal masuk"
@@ -121,19 +129,30 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
               />
             </LocalizationProvider>
             <TextField
-              id="letterNumber"
+              id="number"
               label="Nomor Surat"
               variant="outlined"
-              {...register("letterNumber", { required: "Tidak boleh kosong" })}
-              error={!!errors.letterNumber}
-              helperText={errors.letterNumber?.message}
+              {...register("number", { required: "Tidak boleh kosong" })}
+              error={!!errors.number}
+              helperText={errors.number?.message}
               required
             />
-            {/* PURCHASE */}
-            <SelectPurchase
-              selectedPurchase={selectedPurchase}
-              setSelectedPurchase={setSelectedPurchase}
-              handlePurchaseChange={handlePurchaseChange}
+            <TextField
+              id="receiptNumber"
+              label="Nomor Bukti"
+              variant="outlined"
+              {...register("receiptNumber", { required: "Tidak boleh kosong" })}
+              error={!!errors.receiptNumber}
+              helperText={errors.receiptNumber?.message}
+              required
+            />
+            <TextField
+              id="description"
+              label="Deskripsi"
+              variant="outlined"
+              {...register("description")}
+              error={!!errors.description}
+              helperText={errors.description?.message}
             />
 
             {/* ACTIONS */}

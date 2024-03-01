@@ -16,7 +16,7 @@ import CreateProductButton from "../components/buttons/CreateProductButton";
 import { Settings } from "@mui/icons-material";
 import MoreVertProductButton from "../components/buttons/MoreVertProductButton";
 import { useQuery } from "react-query";
-import { Product, Vendor } from "../interfaces/interfaces";
+import { Product } from "../interfaces/interfaces";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import axios from "axios";
 import { useState } from "react";
@@ -73,7 +73,7 @@ export default function ProductPage() {
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table size="medium" sx={{ borderCollapse: "separate" }}>
+          <Table size="small" sx={{ borderCollapse: "separate" }}>
             {/* HEAD */}
             <TableHead
               sx={{
@@ -117,14 +117,6 @@ export default function ProductPage() {
             </TableBody>
           </Table>
         </TableContainer>
-        {/* BOTTOM */}
-        {/* <Stack direction={"row"} gap={2}>
-          <Typography variant="body1">Halaman 1 dari 5</Typography>
-          <Button variant="outlined" sx={{ marginLeft: "auto" }}>
-            Previous
-          </Button>
-          <Button variant="outlined">Next</Button>
-        </Stack> */}
       </Stack>
     </Stack>
   );

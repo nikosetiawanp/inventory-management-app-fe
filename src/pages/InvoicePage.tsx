@@ -80,7 +80,7 @@ export default function InvoicePage() {
           <TableContainer
             sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
           >
-            <Table sx={{ borderCollapse: "separate" }}>
+            <Table sx={{ borderCollapse: "separate" }} size="small">
               {/* HEAD */}
               <TableHead
                 sx={{

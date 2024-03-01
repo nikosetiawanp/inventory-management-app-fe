@@ -40,11 +40,6 @@ export default function Drawer() {
       icon: <InventoryIcon />,
     },
     {
-      name: "Purchase Requisition",
-      param: "/purchase-requisition",
-      category: "Pembelian",
-    },
-    {
       name: "Purchase Order",
       param: "/purchase-order",
       category: "Pembelian",
@@ -63,11 +58,6 @@ export default function Drawer() {
       name: "Pembayaran Hutang",
       param: "/debt-payment",
       category: "Hutang",
-    },
-    {
-      name: "Stok Gudang",
-      param: "/inventory",
-      category: "Gudang",
     },
     {
       name: "Gudang Masuk",

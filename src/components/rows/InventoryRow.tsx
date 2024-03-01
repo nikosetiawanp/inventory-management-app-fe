@@ -55,13 +55,10 @@ export default function InventoryRow(props: {
         sx={{ cursor: "pointer" }}
         onClick={() => setOpen(true)}
       >
+        <TableCell>{props.inventory?.number}</TableCell>
+        <TableCell>{props.inventory?.purchase?.contact?.name}</TableCell>
         <TableCell>{formatDate(props.inventory?.date)}</TableCell>
-        <TableCell>
-          {props.inventory?.purchase?.poNumber &&
-            props.inventory?.purchase?.poNumber}
-        </TableCell>
-        <TableCell>{props.inventory?.letterNumber}</TableCell>
-        <TableCell>{props.inventory?.purchase?.vendor?.name}</TableCell>
+        <TableCell>{props.inventory?.purchase?.number}</TableCell>
         <TableCell>{props.inventory?.description}</TableCell>
         <TableCell align="center" width={10}>
           <ArrivalHistoryOptionButton inventory={props.inventory} />
@@ -72,6 +69,7 @@ export default function InventoryRow(props: {
         open={open}
         setOpen={setOpen}
         inventory={props.inventory}
+        purchaseItems={props.inventory.purchase.purchaseItems}
       />
     </>
   );

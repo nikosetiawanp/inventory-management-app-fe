@@ -39,8 +39,7 @@ export default function EditPurchaseItemRow(props: {
     async (data: PurchaseItem) => {
       const dataToSubmit = {
         quantity: data.quantity,
-        prPrice: data.prPrice ? data.prPrice : props.purchaseItem.prPrice,
-        poPrice: data.poPrice ? data.poPrice : null,
+        price: data.price,
         discount: data.discount,
         tax: data.tax,
         purchaseId: props.purchaseItem.purchaseId,
@@ -100,7 +99,7 @@ export default function EditPurchaseItemRow(props: {
   return (
     <TableRow>
       <TableCell>{props.purchaseItem?.product?.name}</TableCell>
-      <TableCell>
+      <TableCell width={100}>
         <TextField
           id={`quantity`}
           variant="outlined"
@@ -119,38 +118,14 @@ export default function EditPurchaseItemRow(props: {
           }}
         />
       </TableCell>
-      <TableCell align="center">
-        {props.purchase.status == "PO" ? (
-          currencyFormatter.format(props.purchaseItem.prPrice)
-        ) : (
-          <TextField
-            id={`prPrice`}
-            variant="outlined"
-            size="small"
-            defaultValue={props.purchaseItem.prPrice}
-            {...register(`prPrice`, {
-              required: "Tidak boleh kosong",
-            })}
-            sx={{ textAlign: "center" }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">Rp</InputAdornment>
-              ),
-            }}
-          />
-        )}
-      </TableCell>
-      <TableCell>
+      <TableCell width={50}></TableCell>
+      <TableCell align="center" width={200}>
         <TextField
-          id={`poPrice`}
+          id={`price`}
           variant="outlined"
           size="small"
-          defaultValue={
-            props.purchaseItem.poPrice
-              ? props.purchaseItem.poPrice
-              : props.purchaseItem.prPrice
-          }
-          {...register(`poPrice`, {
+          defaultValue={props.purchaseItem.price}
+          {...register(`price`, {
             required: "Tidak boleh kosong",
           })}
           sx={{ textAlign: "center" }}
@@ -161,7 +136,8 @@ export default function EditPurchaseItemRow(props: {
           }}
         />
       </TableCell>
-      <TableCell>
+
+      <TableCell width={80}>
         <TextField
           id={`discount`}
           variant="outlined"
@@ -175,7 +151,7 @@ export default function EditPurchaseItemRow(props: {
           })}
         />
       </TableCell>
-      <TableCell>
+      <TableCell width={80}>
         <TextField
           id={`tax`}
           variant="outlined"
@@ -190,37 +166,6 @@ export default function EditPurchaseItemRow(props: {
         />
       </TableCell>
       <TableCell></TableCell>
-      <TableCell>
-        <Chip
-          size="small"
-          variant="filled"
-          color={
-            getTotalArrived(props.purchaseItem.productId) == 0
-              ? "error"
-              : getTotalArrived(props.purchaseItem.productId) >=
-                props.purchaseItem.quantity
-              ? "success"
-              : "warning"
-          }
-          label={
-            getTotalArrived(props.purchaseItem.productId) == 0
-              ? "Belum datang"
-              : getTotalArrived(props.purchaseItem.productId) ==
-                props.purchaseItem.quantity
-              ? "Lengkap"
-              : getTotalArrived(props.purchaseItem.productId) >
-                props.purchaseItem.quantity
-              ? `Kelebihan ${
-                  getTotalArrived(props.purchaseItem.productId) -
-                  props.purchaseItem.quantity
-                }`
-              : `Kurang ${
-                  props.purchaseItem.quantity -
-                  getTotalArrived(props.purchaseItem.productId)
-                }`
-          }
-        />
-      </TableCell>
       <TableCell align="center">
         <Stack direction="row" justifyContent="center">
           <IconButton

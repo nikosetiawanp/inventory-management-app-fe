@@ -47,44 +47,6 @@ export default function NewPurchaseItem(props: {
           update={props.update}
           setValue={props.setValue}
         />
-        {/* <Autocomplete
-          id={`items[${props.index}].productId`}
-          autoHighlight
-          options={props.products ? props.products : []}
-          getOptionLabel={(option: Product) => `${option.name}`}
-          value={selectedProduct}
-          onChange={(event, value) => {
-            setSelectedProduct(value);
-            props.setValue(
-              `items[${props.index}.productId]`,
-              selectedProduct?.id
-            );
-          }}
-          renderOption={(props, option) => (
-            <Box
-              component="li"
-              sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-              {...props}
-            >
-              <Typography variant="body2">
-                {option.code} - {option.name}
-              </Typography>
-            </Box>
-          )}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              inputProps={{
-                ...params.inputProps,
-              }}
-              {...register(`items[${props.index}].productId`, {
-                required: "Tidak boleh kosong",
-              })}
-              required
-              size="small"
-            />
-          )}
-        /> */}
       </TableCell>
 
       {/* QUANTITY */}
@@ -107,11 +69,11 @@ export default function NewPurchaseItem(props: {
         />
       </TableCell>
       {/* UNIT */}
-      {/* <TableCell align="center">{selectedProduct?.unit}</TableCell> */}
-      {/* PRICE */}
+      <TableCell></TableCell>
+
       <TableCell width={200}>
         <TextField
-          id={`purchaseItems[${props.index}].prPrice`}
+          id={`purchaseItems[${props.index}].price`}
           variant="outlined"
           size="small"
           InputProps={{
@@ -119,27 +81,9 @@ export default function NewPurchaseItem(props: {
               <InputAdornment position="start">Rp</InputAdornment>
             ),
           }}
-          {...register(`purchaseItems[${props.index}].prPrice`, {
-            required: "Tidak boleh kosong",
-          })}
+          {...register(`purchaseItems[${props.index}].price`)}
         />
       </TableCell>
-
-      {props.purchase.status == "PO" ? (
-        <TableCell width={200}>
-          <TextField
-            id={`purchaseItems[${props.index}].poPrice`}
-            variant="outlined"
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">Rp</InputAdornment>
-              ),
-            }}
-            {...register(`purchaseItems[${props.index}].poPrice`)}
-          />
-        </TableCell>
-      ) : null}
 
       {/* DISCOUNT */}
       <TableCell width={80}>
@@ -169,7 +113,6 @@ export default function NewPurchaseItem(props: {
           })}
         />
       </TableCell>
-      <TableCell></TableCell>
 
       {/* REMOVE */}
       <TableCell></TableCell>

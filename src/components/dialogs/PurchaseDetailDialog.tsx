@@ -26,12 +26,12 @@ import AddIcon from "@mui/icons-material/Add";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
-import MoveToPurchaseOrder from "../buttons/MoveToPurchaseOrder";
 import RowSkeleton from "../skeletons/RowSkeleton";
 import { useEffect, useState } from "react";
 import NewPurchaseItem from "../rows/NewPurchaseItem";
 import CreateInvoice from "../buttons/CreateInvoice";
 import PurchaseDetailRow from "../rows/PurchaseDetailRow";
+import ApprovePurchase from "../buttons/ApprovePurchase";
 
 export default function PurchaseDetailDialog(props: {
   open: boolean;
@@ -128,7 +128,7 @@ export default function PurchaseDetailDialog(props: {
   const calculateSum = (purchaseItems: PurchaseItem[]) => {
     if (!purchaseItems) return 0;
     const totals = purchaseItems?.map((item: PurchaseItem) =>
-      calculateTotal(item.quantity, item.prPrice, item.discount, item.tax)
+      calculateTotal(item.quantity, item.price, item.discount, item.tax)
     );
     let sum = 0;
 
@@ -238,56 +238,25 @@ export default function PurchaseDetailDialog(props: {
         >
           {/* TITLE */}
           <Stack>
-            <Typography variant="h4">
-              {props.purchase.status == "PR"
-                ? props.purchase.prNumber
-                : props.purchase.poNumber}
+            <Typography variant="body1">Purchase Order</Typography>
+            <Typography variant="h3" fontWeight="bold">
+              {props.purchase.number}
+            </Typography>
+            <Stack direction={"row"} gap={0.5}>
+              <Typography variant="body1">Vendor :</Typography>
+              <Typography>{props.purchase.contact.name}</Typography>
+            </Stack>
+            <Typography variant="body1">
+              Tanggal : {formatDate(props.purchase.date)}
             </Typography>
             <Typography variant="body1">
-              {props.purchase.status == "PR"
-                ? formatDate(props.purchase.prDate)
-                : formatDate(props.purchase.poDate)}
-            </Typography>
-            <Typography variant="body1">
-              {props.purchase.vendor.name}
+              Estimasi Kedatangan : {formatDate(props.purchase.expectedArrival)}
             </Typography>
           </Stack>
 
           {/* BUTTONS */}
           <Stack direction="row" alignItems={"center"} gap={2}>
-            {props.purchase.status == "PR" && fields.length == 0 ? (
-              <MoveToPurchaseOrder
-                purchase={props.purchase}
-                refetch={props.refetch}
-              />
-            ) : null}
-
-            {props.purchase.status == "PO" && fields.length == 0 ? (
-              <CreateInvoice
-                inventories={inventoriesQuery.data}
-                purchase={props.purchase}
-              />
-            ) : null}
-
-            <Button
-              variant="outlined"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                append({
-                  quantity: 0,
-                  price: "",
-                  discount: "",
-                  tax: "",
-                  purchaseId: props.purchase.id,
-                  productId: "",
-                });
-              }}
-            >
-              Tambah Item
-            </Button>
-
             {/* SAVE BUTTON */}
-
             {fields.length > 0 ? (
               <Button
                 variant="contained"
@@ -303,7 +272,18 @@ export default function PurchaseDetailDialog(props: {
               </Button>
             ) : (
               <>
-                <MorePurchaseButton />
+                {props.purchase.isApproved ? (
+                  <CreateInvoice
+                    inventories={inventoriesQuery.data}
+                    purchase={props.purchase}
+                  />
+                ) : (
+                  <ApprovePurchase
+                    refetch={props.refetch}
+                    purchase={props.purchase}
+                  />
+                )}
+                {/* <MorePurchaseButton /> */}
               </>
             )}
           </Stack>
@@ -316,7 +296,7 @@ export default function PurchaseDetailDialog(props: {
             height: 500,
           }}
         >
-          <Table stickyHeader>
+          <Table stickyHeader size="small">
             {/* TABLE HEAD */}
             <TableHead
               sx={{
@@ -331,23 +311,16 @@ export default function PurchaseDetailDialog(props: {
               <TableRow>
                 <TableCell>Produk</TableCell>
                 <TableCell align="center">Quantity</TableCell>
-                {/* <TableCell align="center">Unit</TableCell> */}
-                <TableCell align="right" width={100}>
-                  Harga PR
-                </TableCell>
+                <TableCell align="center">Datang</TableCell>
 
-                {props.purchase.status == "PO" ? (
-                  <TableCell align="right" width={100}>
-                    Harga PO
-                  </TableCell>
-                ) : null}
+                <TableCell align="right" width={100}>
+                  Harga
+                </TableCell>
 
                 <TableCell align="center">Diskon</TableCell>
                 <TableCell align="center">Pajak</TableCell>
                 <TableCell align="right">Total</TableCell>
-                {props.purchase.status == "PO" ? (
-                  <TableCell align="center">Status</TableCell>
-                ) : null}
+
                 <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -368,10 +341,7 @@ export default function PurchaseDetailDialog(props: {
             >
               {/* NEW ITEM */}
               {purchaseItemsQuery.isLoading ? (
-                <RowSkeleton
-                  rows={15}
-                  columns={props.purchase.status == "PR" ? 8 : 9}
-                />
+                <RowSkeleton rows={15} columns={8} />
               ) : (
                 purchaseItemsQuery.data?.map(
                   (purchaseItem: PurchaseItem, index: number) => (
@@ -400,6 +370,24 @@ export default function PurchaseDetailDialog(props: {
                   setValue={setValue}
                 />
               ))}
+              {/* <TableRow> */}
+              <Button
+                variant="text"
+                // startIcon={<AddIcon />}
+                onClick={() => {
+                  append({
+                    quantity: 0,
+                    price: "",
+                    discount: "",
+                    tax: "",
+                    purchaseId: props.purchase.id,
+                    productId: "",
+                  });
+                }}
+              >
+                Tambah Produk
+              </Button>
+              {/* </TableRow> */}
             </TableBody>
           </Table>
         </TableContainer>

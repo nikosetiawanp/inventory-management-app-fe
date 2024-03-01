@@ -27,7 +27,6 @@ export default function NewPurchaseItem(props: {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    console.log(selectedProduct);
     props.setValue(
       `inventoryItems[${props.index}].productId`,
       selectedProduct?.id

@@ -1,4 +1,5 @@
 import {
+  Chip,
   Dialog,
   Stack,
   Table,
@@ -34,8 +35,10 @@ export default function SelectPurchase(props: {
   const getPurchases = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PO`
+        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&isApproved=1&isDone=0`
     );
+    console.log(response.data.data);
+
     return response.data.data;
   };
   const purchasesQuery = useQuery({
@@ -53,12 +56,12 @@ export default function SelectPurchase(props: {
     <>
       <TextField
         id="outlined-basic"
-        label="Nomor PO"
+        label="Purchase Order"
         variant="outlined"
         sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
-        value={props.selectedPurchase?.poNumber || ""}
-        placeholder="Nomor PO"
+        value={props.selectedPurchase?.number || ""}
+        placeholder="Purchase Order"
       />
 
       <Dialog
@@ -94,7 +97,7 @@ export default function SelectPurchase(props: {
               height: 500,
             }}
           >
-            <Table stickyHeader>
+            <Table stickyHeader size="small">
               <TableHead
                 sx={{
                   position: "sticky",
@@ -109,6 +112,7 @@ export default function SelectPurchase(props: {
                   <TableCell>Tanggal PO</TableCell>
                   <TableCell>Vendor</TableCell>
                   <TableCell>Nomor PO</TableCell>
+                  <TableCell align="center">Jumlah Gudang Masuk</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -125,9 +129,21 @@ export default function SelectPurchase(props: {
                         }}
                         selected={props.selectedPurchase?.id == purchase.id}
                       >
-                        <TableCell>{purchase.poDate}</TableCell>
-                        <TableCell>{purchase.vendor.name}</TableCell>
-                        <TableCell>{purchase.poNumber}</TableCell>
+                        <TableCell>{purchase.date}</TableCell>
+                        <TableCell>{purchase.contact.name}</TableCell>
+                        <TableCell>{purchase.number}</TableCell>
+                        <TableCell align="center">
+                          <Chip
+                            size="small"
+                            variant="filled"
+                            color={
+                              purchase.inventories.length > 0
+                                ? "primary"
+                                : "error"
+                            }
+                            label={`${purchase.inventories.length} LPB`}
+                          />
+                        </TableCell>
                       </TableRow>
                     )
                   )}

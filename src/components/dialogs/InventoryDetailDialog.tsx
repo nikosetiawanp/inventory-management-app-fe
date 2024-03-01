@@ -12,8 +12,13 @@ import {
   IconButton,
   TableBody,
   Chip,
+  TextField,
+  InputAdornment,
+  Menu,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
 } from "@mui/material";
-import MorePurchaseButton from "../buttons/MorePurchaseButton";
 
 import {
   PurchaseItem,
@@ -26,31 +31,35 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import RowSkeleton from "../skeletons/RowSkeleton";
 import { useEffect, useState } from "react";
-import NewInventoryItem from "../rows/NewInventoryItem";
-import CreateInvoice from "../buttons/CreateInvoice";
+import EditIcon from "@mui/icons-material/Edit";
+import InventoryDetailRow from "../rows/InventoryDetailRow";
 
 export default function InventoryDetailDialog(props: {
   open: boolean;
   setOpen: any;
   inventory: Inventory;
+  purchaseItems: PurchaseItem[];
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
 
   //   FORM
   const { control, handleSubmit, watch, setValue } = useForm();
-  const { fields, append, prepend, update, remove } = useFieldArray({
+  const { fields, prepend, update, remove } = useFieldArray({
     control,
     name: "inventoryItems",
   });
+  const { register } = control;
 
   // GET ITEMS
   const getInventoryItems = async () => {
     const response = await axios.get(
       BACKEND_URL + `inventory-items?inventoryId=${props.inventory.id}`
     );
+
     return response.data.data;
   };
+
   const inventoryItemsQuery = useQuery({
     queryKey: [`inventoryItems.${props.inventory.id}`],
     queryFn: () => getInventoryItems(),
@@ -71,13 +80,6 @@ export default function InventoryDetailDialog(props: {
     enabled: fields?.length > 0,
   });
 
-  const clearFieldsArray = () => {
-    for (let i = 0; i < fields.length; i++) {
-      if (fields.length > 0) {
-        remove(0);
-      } else return;
-    }
-  };
   // FORMAT DATE
   const formatDate = (inputDate: string) => {
     const date = new Date(inputDate);
@@ -118,10 +120,19 @@ export default function InventoryDetailDialog(props: {
   const createInventoryItems = useMutation(
     async (data: InventoryItem[]) => {
       setIsSubmitting(true);
+
+      const dataToSubmit = await data.map((data, index) => {
+        return {
+          quantity: data.quantity ? data.quantity : 0,
+          productId: props.purchaseItems[index].productId,
+          inventoryId: props.inventory.id,
+        };
+      });
+
       try {
         const response = await axios.post(
           BACKEND_URL + "inventory-items/bulk",
-          data
+          dataToSubmit
         );
         setIsSubmitting(false);
         return response.data;
@@ -143,7 +154,6 @@ export default function InventoryDetailDialog(props: {
   ) => {
     try {
       await createInventoryItems.mutateAsync(data.inventoryItems);
-      clearFieldsArray();
     } catch (error) {
       console.log("Mutation Error:", error);
     }
@@ -156,108 +166,153 @@ export default function InventoryDetailDialog(props: {
       fullWidth
       maxWidth={"lg"}
     >
-      <Stack padding={3}>
-        {/* HEADER */}
-        <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          marginBottom={2}
-        >
-          {/* TITLE */}
-          <Stack>
-            <Typography variant="h4">{props.inventory.letterNumber}</Typography>
-            <Typography variant="body1">
-              {formatDate(props.inventory.date)}
-            </Typography>
-            <Typography variant="body1">
-              {props.inventory.purchase.vendor.name}
-            </Typography>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack padding={3}>
+          {/* HEADER */}
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            marginBottom={2}
+          >
+            {/* TITLE */}
+            <Stack>
+              <Typography variant="h4">{props.inventory.number}</Typography>
+              <Typography variant="body1">
+                {formatDate(props.inventory.date)}
+              </Typography>
+              <Typography variant="body1">
+                {props.inventory.purchase.contact.name}
+              </Typography>
+            </Stack>
+            {/* BUTTONS */}
+            <Stack direction="row" alignItems={"center"} gap={2}>
+              {inventoryItemsQuery?.data?.length == 0 && (
+                <Button
+                  variant="contained"
+                  onClick={() => handleSubmit(onSubmit as any)}
+                  type="submit"
+                  disabled={isSubmitting}
+                  sx={{ minHeight: "100%" }}
+                >
+                  {isSubmitting ? "Memvalidasi" : "Validasi"}
+                </Button>
+              )}
+            </Stack>
           </Stack>
-          {/* BUTTONS */}
-          <Stack direction="row" alignItems={"center"} gap={2}>
-            {/* <Typography>{props.inventory.invoiceNumber}</Typography> */}
-            {/* <Button variant="contained" onClick={() => {}}>
-              Buat Faktur
-            </Button> */}
-            <Button
-              variant="outlined"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                append({
-                  quantity: 0,
-                  stockAfter: 0,
-                  inventoryId: props.inventory.id,
-                  productId: "",
-                });
-              }}
-            >
-              Tambah Item
-            </Button>
-            {fields.length > 0 ? (
-              <Button
-                variant="contained"
-                onClick={handleSubmit(onSubmit as any)}
-                type="submit"
-                disabled={isSubmitting}
-                sx={{ minHeight: "100%" }}
+
+          {/* TABLE */}
+          <TableContainer
+            sx={{
+              backgroundColor: "white",
+              height: 500,
+            }}
+          >
+            <Table stickyHeader size="small">
+              {/* TABLE HEAD */}
+              <TableHead
+                sx={{
+                  position: "sticky",
+                  backgroundColor: "white",
+                  top: 0,
+                  borderBottom: 1,
+                  borderColor: "divider",
+                  zIndex: 50,
+                }}
               >
-                {isSubmitting
-                  ? "Menyimpan"
-                  : // <CircularProgress color="inherit" size={15} />
-                    "Simpan"}
-              </Button>
-            ) : (
-              <>
-                <MorePurchaseButton />
-              </>
-            )}
-          </Stack>
-        </Stack>
+                <TableRow>
+                  <TableCell>Produk</TableCell>
+                  <TableCell align="center">Quantity</TableCell>
+                  <TableCell align="center">Masuk</TableCell>
+                  <TableCell width={10}>
+                    <IconButton size="small">
+                      <Settings fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
 
-        {/* TABLE */}
-        <TableContainer
-          sx={{
-            backgroundColor: "white",
-            height: 500,
-          }}
-        >
-          <Table stickyHeader>
-            {/* TABLE HEAD */}
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                borderBottom: 1,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              <TableRow>
-                <TableCell>Produk</TableCell>
-                <TableCell align="center">Quantity</TableCell>
-                <TableCell align="center">Stok Sekarang</TableCell>
-                <TableCell width={10}>
-                  <IconButton size="small">
-                    <Settings fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                borderColor: "divider",
-                width: 1,
-                overflowY: "scroll",
-                maxHeight: 100,
-              }}
-            >
-              {/* NEW ITEM */}
-              {inventoryItemsQuery.isLoading ? (
+              <TableBody
+                sx={{
+                  position: "sticky",
+                  backgroundColor: "white",
+                  borderColor: "divider",
+                  width: 1,
+                  overflowY: "scroll",
+                  maxHeight: 100,
+                }}
+              >
+                {/* NEW ITEM */}
+                {inventoryItemsQuery?.data?.length == 0
+                  ? props.purchaseItems?.map(
+                      (purchaseItem: any, index: number) => (
+                        <TableRow key={index}>
+                          {/* {index} */}
+                          <TableCell>{purchaseItem?.product?.name}</TableCell>
+                          <TableCell align="center">
+                            {purchaseItem?.quantity}{" "}
+                            {purchaseItem.product?.unit}
+                          </TableCell>
+                          {/* QUANTITY */}
+                          <TableCell align="center" width={100}>
+                            <TextField
+                              id={`items[${index}].quantity`}
+                              size="small"
+                              {...register(`inventoryItems[${index}].quantity`)}
+                              InputProps={{
+                                endAdornment: (
+                                  <InputAdornment position="end">
+                                    {purchaseItem?.product?.unit}
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell width={10}></TableCell>
+                        </TableRow>
+                      )
+                    )
+                  : inventoryItemsQuery?.data?.map(
+                      (inventoryItem: InventoryItem, index: number) => (
+                        <InventoryDetailRow
+                          key={index}
+                          index={index}
+                          inventory={props.inventory}
+                          inventoryItem={inventoryItem}
+                          purchaseItems={props.purchaseItems}
+                        />
+                        // <TableRow key={index}>
+                        //   {/* {index} */}
+                        //   <TableCell>{inventoryItem?.product?.name}</TableCell>
+                        //   <TableCell align="center">
+                        //     {props.purchaseItems[index].quantity}{" "}
+                        //     {props.purchaseItems[index].product.unit}
+                        //   </TableCell>
+                        //   {/* QUANTITY */}
+                        //   <TableCell align="center" width={100}>
+                        //     <Chip
+                        //       size="small"
+                        //       variant="filled"
+                        //       color={
+                        //         inventoryItem.quantity == 0
+                        //           ? "error"
+                        //           : inventoryItem.quantity >=
+                        //             props.purchaseItems[index].quantity
+                        //           ? "success"
+                        //           : "warning"
+                        //       }
+                        //       label={
+                        //         inventoryItem.quantity +
+                        //         " " +
+                        //         inventoryItem.product.unit
+                        //       }
+                        //     />
+                        //   </TableCell>
+                        //   <TableCell width={10}></TableCell>
+                        // </TableRow>
+                      )
+                    )}
+                {/* {inventoryItemsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={8} />
               ) : (
                 inventoryItemsQuery.data?.map(
@@ -274,29 +329,13 @@ export default function InventoryDetailDialog(props: {
                     </TableRow>
                   )
                 )
-              )}
+              )} */}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-              {fields.map((field, index) => (
-                <NewInventoryItem
-                  key={field.id}
-                  control={control}
-                  update={update}
-                  index={index}
-                  value={field}
-                  remove={remove}
-                  products={productsQuery.data}
-                  inventory={props.inventory}
-                  watch={watch}
-                  fields={fields}
-                  setValue={setValue}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {/* FOOTER */}
-        {/* <Stack
+          {/* FOOTER */}
+          {/* <Stack
           position={"sticky"}
           bottom={0}
           direction={"row"}
@@ -315,7 +354,8 @@ export default function InventoryDetailDialog(props: {
             )}
           </Typography>
         </Stack> */}
-      </Stack>
+        </Stack>
+      </form>
     </Dialog>
   );
 }

@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { TableRow, TableCell } from "@mui/material";
+import { TableRow, TableCell, Chip } from "@mui/material";
 
 import { Purchase } from "../../interfaces/interfaces";
 import MoreVertPurchaseButton from "../buttons/MoreVertPurchaseButton";
+import WatchLaterIcon from "@mui/icons-material/WatchLater";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import PurchaseDetailDialog from "../dialogs/PurchaseDetailDialog";
 
@@ -59,18 +61,40 @@ export default function PurchaseRow(props: {
         sx={{ cursor: "pointer" }}
         onClick={() => setOpen(true)}
       >
+        <TableCell>{props.purchase.number}</TableCell>
+        <TableCell>{props.purchase.contact.name}</TableCell>
+        <TableCell>{formatDate(props.purchase.date)}</TableCell>
         <TableCell>
-          {props.purchase.status == "PR"
-            ? formatDate(props.purchase.prDate)
-            : formatDate(props.purchase.poDate)}
+          <Chip
+            size="small"
+            variant="filled"
+            icon={
+              props.purchase.isApproved ? (
+                <CheckCircleIcon fontSize="small" />
+              ) : (
+                <WatchLaterIcon fontSize="small" />
+              )
+            }
+            label={props.purchase.isApproved ? "Approved" : "Pending"}
+            color={props.purchase.isApproved ? "success" : "warning"}
+          />
         </TableCell>
-        <TableCell>{props.purchase.vendor.code}</TableCell>
-        <TableCell>{props.purchase.vendor.name}</TableCell>
         <TableCell>
-          {props.purchase.status == "PR"
-            ? props.purchase.prNumber
-            : props.purchase.poNumber}
+          <Chip
+            size="small"
+            variant="filled"
+            icon={
+              props.purchase.isDone ? (
+                <CheckCircleIcon fontSize="small" />
+              ) : (
+                <WatchLaterIcon fontSize="small" />
+              )
+            }
+            label={props.purchase.isDone ? "Selesai" : "Belum Selesai"}
+            color={props.purchase.isDone ? "success" : "warning"}
+          />
         </TableCell>
+
         <TableCell>
           <MoreVertPurchaseButton purchase={props.purchase} />
         </TableCell>

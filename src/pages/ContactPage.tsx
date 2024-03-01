@@ -77,7 +77,7 @@ export default function ContactPage() {
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table size="medium" sx={{ borderCollapse: "separate" }}>
+          <Table size="small" sx={{ borderCollapse: "separate" }}>
             {/* HEAD */}
             <TableHead
               sx={{

@@ -15,6 +15,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { Inventory, Purchase } from "../../interfaces/interfaces";
 import SelectInventory from "../select/SelectInventory";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 
 export default function CreateInvoice(props: {
   inventories: Inventory[];
@@ -85,6 +86,7 @@ export default function CreateInvoice(props: {
         onClick={() => {
           setOpen(true);
         }}
+        startIcon={<ReceiptIcon />}
       >
         Buat Faktur
       </Button>

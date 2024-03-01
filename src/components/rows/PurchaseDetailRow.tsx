@@ -12,6 +12,7 @@ import {
   Stack,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Inventory, Purchase, PurchaseItem } from "../../interfaces/interfaces";
 import EditIcon from "@mui/icons-material/Edit";
@@ -63,7 +64,7 @@ export default function PurchaseDetailRow(props: {
   const calculateSum = (items: PurchaseItem[]) => {
     if (!items) return 0;
     const totals = items?.map((item: PurchaseItem) =>
-      calculateTotal(item.quantity, item.prPrice, item.discount, item.tax)
+      calculateTotal(item.quantity, item.price, item.discount, item.tax)
     );
     let sum = 0;
 
@@ -141,14 +142,55 @@ export default function PurchaseDetailRow(props: {
         <TableCell align="center">
           {props.purchaseItem.quantity} {props.purchaseItem.product.unit}
         </TableCell>
-        {/* <TableCell align="center">pcs</TableCell> */}
-        <TableCell align="right">
-          {currencyFormatter.format(props.purchaseItem.prPrice)}
-        </TableCell>
+
         <TableCell align="center">
-          {props.purchaseItem.poPrice
-            ? currencyFormatter.format(props.purchaseItem.poPrice)
-            : currencyFormatter.format(props.purchaseItem.prPrice)}
+          <Chip
+            size="small"
+            variant="filled"
+            color={
+              getTotalArrived(props.purchaseItem.productId) == 0
+                ? "error"
+                : getTotalArrived(props.purchaseItem.productId) >=
+                  props.purchaseItem.quantity
+                ? "success"
+                : "warning"
+            }
+            label={
+              getTotalArrived(props.purchaseItem.productId) +
+              " " +
+              props.purchaseItem.product.unit
+            }
+          />
+          {/* <Typography
+            color={
+              getTotalArrived(props.purchaseItem.productId) == 0
+                ? "error"
+                : getTotalArrived(props.purchaseItem.productId) >=
+                  props.purchaseItem.quantity
+                ? "success.main"
+                : "warning.main"
+            }
+          >
+            {getTotalArrived(props.purchaseItem.productId)}{" "}
+            {props.purchaseItem.product.unit}
+          </Typography> */}
+
+          {/* <Chip
+            size="small"
+            variant="filled"
+            color={
+              getTotalArrived(props.purchaseItem.productId) == 0
+                ? "error"
+                : getTotalArrived(props.purchaseItem.productId) >=
+                  props.purchaseItem.quantity
+                ? "success"
+                : "warning"
+            }
+            label={getTotalArrived(props.purchaseItem.productId)}
+          /> */}
+        </TableCell>
+        <TableCell align="right">
+          {currencyFormatter.format(props.purchaseItem.price)}
         </TableCell>
 
         <TableCell align="center">{props.purchaseItem.discount}%</TableCell>
@@ -157,46 +199,12 @@ export default function PurchaseDetailRow(props: {
           {currencyFormatter.format(
             calculateTotal(
               props.purchaseItem.quantity,
-              props.purchaseItem.prPrice,
+              props.purchaseItem.price,
               props.purchaseItem.discount,
               props.purchaseItem.tax
             )
           )}
         </TableCell>
-
-        {props.purchase.status == "PO" ? (
-          <TableCell align="center">
-            <Chip
-              size="small"
-              variant="filled"
-              color={
-                getTotalArrived(props.purchaseItem.productId) == 0
-                  ? "error"
-                  : getTotalArrived(props.purchaseItem.productId) >=
-                    props.purchaseItem.quantity
-                  ? "success"
-                  : "warning"
-              }
-              label={
-                getTotalArrived(props.purchaseItem.productId) == 0
-                  ? "Belum datang"
-                  : getTotalArrived(props.purchaseItem.productId) ==
-                    props.purchaseItem.quantity
-                  ? "Lengkap"
-                  : getTotalArrived(props.purchaseItem.productId) >
-                    props.purchaseItem.quantity
-                  ? `Kelebihan ${
-                      getTotalArrived(props.purchaseItem.productId) -
-                      props.purchaseItem.quantity
-                    }`
-                  : `Kurang ${
-                      props.purchaseItem.quantity -
-                      getTotalArrived(props.purchaseItem.productId)
-                    }`
-              }
-            />
-          </TableCell>
-        ) : null}
 
         <TableCell align="center">
           <OptionButton />
