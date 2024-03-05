@@ -6,85 +6,79 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import axios from "axios";
 import { useState } from "react";
-import { SubmitHandler } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { Debt, Invoice } from "../../interfaces/interfaces";
+import { Debt } from "../../interfaces/interfaces";
+import axios from "axios";
 
-export default function CreateDebt(props: {
-  debtAmount: number;
-  invoice: Invoice;
-}) {
+export default function CompleteDebt(props: { debt: Debt }) {
   const [open, setOpen] = useState(false);
   const handleClickOpen = (event: any) => {
     event.stopPropagation();
     setOpen(true);
   };
   const handleClose = (event: any) => {
-    event?.stopPropagation();
+    event.stopPropagation();
     setOpen(false);
   };
-  // CREATE INVOICE
+
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
 
-  const dataToSubmit = {
-    amount: props.debtAmount,
-    isPaid: false,
-    invoiceId: props.invoice.id,
-    contactId: props.invoice.purchase.contactId,
-  };
-
-  const createDebt = useMutation(
+  const completeDebt = useMutation(
     async (data: Debt) => {
+      const dataToSubmit = {
+        id: props.debt.id,
+        amount: props.debt.amount,
+        isPaid: true,
+        invoiceId: props.debt.invoiceId,
+        contactId: props.debt.contactId,
+      };
       try {
-        const response = await axios.post(BACKEND_URL + "debts/", data);
-        setOpen(false);
+        const response = await axios.put(
+          BACKEND_URL + "debts/" + props.debt.id,
+          dataToSubmit
+        );
+        // props.refetch();
         return response.data;
       } catch (error) {
-        console.log(error);
-
-        // throw new Error("Network response was not ok");
+        throw new Error("Network response was not ok");
       }
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("debts");
+        queryClient.invalidateQueries("products");
       },
     }
   );
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)}>
-        Buat Hutang
-      </Button>
-
+      <Button onClick={handleClickOpen}>Selesaikan Hutang</Button>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Buat Hutang?</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Selesaikan Hutang?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Anda yakin ingin membuat hutang dari faktur ini?
+            Anda yakin ingin menyelesaikan hutang ini?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Batal</Button>
           <Button
-            color={createDebt.isLoading ? "inherit" : "primary"}
+            variant="contained"
+            color={completeDebt.isLoading ? "inherit" : "primary"}
             onClick={() => {
-              createDebt.mutateAsync(dataToSubmit as any);
+              completeDebt.mutateAsync(props.debt);
             }}
             autoFocus
-            disabled={createDebt.isLoading}
-            variant="contained"
+            disabled={completeDebt.isLoading}
           >
-            {createDebt.isLoading ? "Membuat Hutang" : "Buat Hutang"}
+            {completeDebt.isLoading ? "Menunggu" : "Selesaikan"}
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,10 +1,11 @@
-import { TableCell, TableRow } from "@mui/material";
+import { Chip, TableCell, TableRow } from "@mui/material";
 import ArrivalHistoryOptionButton from "../buttons/ArrivalHistoryOptionButton";
 import { Inventory, Invoice, PurchaseItem } from "../../interfaces/interfaces";
 import { useState } from "react";
 import InventoryDetailDialog from "../dialogs/InventoryDetailDialog";
 import InvoiceOptionButton from "../buttons/InvoiceOptionButton";
 import InvoiceDetailDialog from "../dialogs/InvoiceDetailDialog";
+import ErrorIcon from "@mui/icons-material/Error";
 // import { useState } from "react";
 
 export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
@@ -41,6 +42,9 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
     return formattedDate;
   };
 
+  const today = new Date();
+  const dueDate = new Date(props.invoice.dueDate);
+
   return (
     <>
       <TableRow
@@ -50,9 +54,23 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
         onClick={() => setOpen(true)}
       >
         <TableCell>{formatDate(props.invoice?.date)}</TableCell>
-        <TableCell>{props.invoice?.invoiceNumber}</TableCell>
-        <TableCell>{props.invoice?.purchase?.vendor?.name}</TableCell>
-        <TableCell>{formatDate(props.invoice?.dueDate)}</TableCell>
+        <TableCell>{props.invoice?.number}</TableCell>
+        <TableCell>{props.invoice?.purchase?.contact?.name}</TableCell>
+        <TableCell>
+          <Chip
+            size="small"
+            label={formatDate(props.invoice?.dueDate)}
+            color={today <= dueDate ? "primary" : "error"}
+            icon={today >= dueDate ? <ErrorIcon fontSize="small" /> : undefined}
+          />
+        </TableCell>
+        <TableCell>
+          <Chip
+            size="small"
+            label={`${props.invoice?.debts.length} hutang`}
+            color={props.invoice?.debts?.length == 0 ? "error" : "success"}
+          />
+        </TableCell>
         <TableCell>
           <InvoiceOptionButton invoice={props.invoice} />
         </TableCell>

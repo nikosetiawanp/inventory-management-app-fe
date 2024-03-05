@@ -143,7 +143,7 @@ export default function InventoryDetailDialog(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(`inventoryItems.${props.inventory.id}`);
+        queryClient.invalidateQueries(`inventoryItems.${props.inventory?.id}`);
       },
     }
   );
@@ -177,12 +177,12 @@ export default function InventoryDetailDialog(props: {
           >
             {/* TITLE */}
             <Stack>
-              <Typography variant="h4">{props.inventory.number}</Typography>
+              <Typography variant="h4">{props.inventory?.number}</Typography>
               <Typography variant="body1">
-                {formatDate(props.inventory.date)}
+                {formatDate(props.inventory?.date)}
               </Typography>
               <Typography variant="body1">
-                {props.inventory.purchase.contact.name}
+                {props.inventory?.purchase?.contact?.name}
               </Typography>
             </Stack>
             {/* BUTTONS */}

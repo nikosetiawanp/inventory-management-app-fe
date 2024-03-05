@@ -37,6 +37,8 @@ export default function InvoicePage() {
       BACKEND_URL +
         `invoices?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
     );
+    console.log(response.data.data);
+
     return response.data.data;
   };
 
@@ -97,6 +99,8 @@ export default function InvoicePage() {
                   <TableCell>Nomor Faktur</TableCell>
                   <TableCell>Nama Vendor</TableCell>
                   <TableCell>Tanggal Jatuh Tempo</TableCell>
+                  <TableCell>Status Hutang</TableCell>
+
                   <TableCell width={10}>
                     <IconButton size="small">
                       <Settings fontSize="small" />

@@ -60,10 +60,9 @@ export default function CreateInvoice(props: {
 
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     const dataToSubmit = {
-      invoiceNumber: data.invoiceNumber,
+      number: data.number,
       date: formattedDate,
       dueDate: formattedDueDate,
-      totalDebt: data?.invoiceNumber,
       purchaseId: props.purchase.id,
       inventoryId: selectedInventory?.id,
     };
@@ -118,9 +117,9 @@ export default function CreateInvoice(props: {
               id="invoiceNumber"
               label="Nomor Faktur"
               variant="outlined"
-              {...register("invoiceNumber", { required: "Tidak boleh kosong" })}
-              error={!!errors.invoiceNumber}
-              helperText={errors.invoiceNumber?.message as any}
+              {...register("number", { required: "Tidak boleh kosong" })}
+              error={!!errors.number}
+              helperText={errors.number?.message as any}
               required
             />
             <SelectInventory

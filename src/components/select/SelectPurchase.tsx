@@ -116,8 +116,8 @@ export default function SelectPurchase(props: {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {purchasesQuery.data &&
-                  purchasesQuery.data.map(
+                {purchasesQuery?.data &&
+                  purchasesQuery?.data.map(
                     (purchase: Purchase, index: number) => (
                       <TableRow
                         key={index}
@@ -137,11 +137,11 @@ export default function SelectPurchase(props: {
                             size="small"
                             variant="filled"
                             color={
-                              purchase.inventories.length > 0
+                              purchase?.inventories?.length > 0
                                 ? "primary"
                                 : "error"
                             }
-                            label={`${purchase.inventories.length} LPB`}
+                            label={`${purchase?.inventories?.length} LPB`}
                           />
                         </TableCell>
                       </TableRow>

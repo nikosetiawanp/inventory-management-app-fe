@@ -4,6 +4,7 @@ import { TableRow, TableCell, Chip } from "@mui/material";
 import { Purchase } from "../../interfaces/interfaces";
 import MoreVertPurchaseButton from "../buttons/MoreVertPurchaseButton";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
+import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import PurchaseDetailDialog from "../dialogs/PurchaseDetailDialog";

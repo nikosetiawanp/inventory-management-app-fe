@@ -11,10 +11,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { register } from "module";
 import { useState } from "react";
-import { Debt, DebtPayment } from "../../interfaces/interfaces";
+import { Debt } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
+import CompleteDebt from "./CompleteDebt";
 
 export default function PayDebt(props: { debt: Debt }) {
   const [open, setOpen] = useState(false);
@@ -34,7 +35,7 @@ export default function PayDebt(props: { debt: Debt }) {
   const updateDebt = useMutation(
     async (data: Debt) => {
       try {
-        const response = await axios.post(BACKEND_URL + "debt-payments/", data);
+        const response = await axios.post(BACKEND_URL + "payments/", data);
         setOpen(false);
         return response.data;
       } catch (error) {
@@ -50,10 +51,8 @@ export default function PayDebt(props: { debt: Debt }) {
 
   const onSubmit: SubmitHandler<any> = async (data: any, event: any) => {
     const dataToSubmit = {
-      receiptNumber: data.receiptNumber,
-      paidDate: formattedDate,
-      paidAmount: data.paidAmount,
-      balance: 0,
+      date: formattedDate,
+      amount: data.amount,
       debtId: props.debt.id,
     };
     try {
@@ -90,17 +89,17 @@ export default function PayDebt(props: { debt: Debt }) {
                 }}
               />
             </LocalizationProvider>
-            <TextField
+            {/* <TextField
               id="receiptNumber"
               label="Nomor Bukti"
               variant="outlined"
-              {...register("receiptNumber", { required: "Tidak boleh kosong" })}
-              error={!!errors.receiptNumber}
-              helperText={errors.receiptNumber?.message}
+              // {...register("receiptNumber", { required: "Tidak boleh kosong" })}
+              // error={!!errors.receiptNumber}
+              // helperText={errors.receiptNumber?.message}
               required
-            />
+            /> */}
             <TextField
-              id="paidAmount"
+              id="amount"
               label="Jumlah Pembayaran"
               variant="outlined"
               InputProps={{
@@ -108,9 +107,9 @@ export default function PayDebt(props: { debt: Debt }) {
                   <InputAdornment position="start">Rp</InputAdornment>
                 ),
               }}
-              {...register("paidAmount", { required: "Tidak boleh kosong" })}
-              error={!!errors.paidAmount}
-              helperText={errors.paidAmount?.message}
+              {...register("amount", { required: "Tidak boleh kosong" })}
+              error={!!errors.amount}
+              helperText={errors.amount?.message}
               required
             />
 
@@ -121,7 +120,12 @@ export default function PayDebt(props: { debt: Debt }) {
               justifyContent={"flex-end"}
               gap={1}
             >
-              <Button onClick={() => setOpen(false)} type="button">
+              <CompleteDebt debt={props.debt} />
+              <Button
+                onClick={() => setOpen(false)}
+                type="button"
+                sx={{ marginLeft: "auto" }}
+              >
                 Batal
               </Button>
               <Button
@@ -129,7 +133,7 @@ export default function PayDebt(props: { debt: Debt }) {
                 type="submit"
                 disabled={updateDebt.isLoading}
               >
-                {updateDebt.isLoading ? "Menyimpan" : "Simpan"}
+                {updateDebt.isLoading ? "Menunggu" : "Bayar"}
               </Button>
             </Stack>
           </Stack>

@@ -25,7 +25,6 @@ export default function ApprovePurchase(props: {
     setOpen(false);
   };
 
-  // POST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
   const approvePurchase = useMutation(

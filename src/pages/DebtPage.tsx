@@ -21,9 +21,10 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { CheckCircle, Settings, WatchLater } from "@mui/icons-material";
-import { Debt, DebtPayment } from "../interfaces/interfaces";
+import { Debt, Payment } from "../interfaces/interfaces";
 import PayDebt from "../components/buttons/PayDebt";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
+import DebtRow from "../components/rows/DebtRow";
 
 export default function DebtPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -34,10 +35,9 @@ export default function DebtPage() {
 
   // GET DEBTS
   const getDebts = async () => {
-    const response = await axios.get(
-      BACKEND_URL +
-        `debts?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=UNPAID`
-    );
+    const response = await axios.get(BACKEND_URL + `debts/`);
+    console.log(response.data.data);
+
     return response.data.data;
   };
 
@@ -91,17 +91,6 @@ export default function DebtPage() {
     currency: "IDR",
   });
 
-  const sumDebtPayments = (debtPayments: DebtPayment[]) => {
-    if (debtPayments.length < 1) return 0;
-
-    let totalPaidDebt = 0;
-
-    for (let i = 0; i < debtPayments.length; i++) {
-      totalPaidDebt += debtPayments[i].paidAmount;
-    }
-    return totalPaidDebt;
-  };
-
   return (
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
       <Drawer />
@@ -138,7 +127,7 @@ export default function DebtPage() {
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table sx={{ borderCollapse: "separate" }}>
+          <Table sx={{ borderCollapse: "separate" }} size="small">
             <TableHead
               sx={{
                 position: "sticky",
@@ -152,10 +141,11 @@ export default function DebtPage() {
               <TableRow>
                 <TableCell>Tanggal Faktur</TableCell>
                 <TableCell>Nomor Faktur</TableCell>
-                <TableCell>Nama Vendor</TableCell>
+                <TableCell>Vendor</TableCell>
                 <TableCell>Tanggal Jatuh Tempo</TableCell>
                 <TableCell>Jumlah Tagihan</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell>Jumlah Dibayar</TableCell>
+                <TableCell align="center">Status</TableCell>
                 <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -169,52 +159,37 @@ export default function DebtPage() {
                 <RowSkeleton rows={15} columns={6} />
               ) : (
                 debtsQuery?.data?.map((debt: Debt, index: number) => (
-                  <TableRow key={index} hover>
-                    <TableCell>{formatDate(debt?.invoice.date)}</TableCell>
-                    <TableCell>{debt?.invoice.invoiceNumber}</TableCell>
-                    <TableCell>{debt?.invoice.purchase.vendor.name}</TableCell>
-                    <TableCell>{formatDate(debt?.invoice.dueDate)}</TableCell>
-                    <TableCell>
-                      {currencyFormatter.format(debt?.debtAmount)}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={
-                          // sumDebtPayments(debt.debtPayments)
-                          sumDebtPayments(debt.debtPayments) == 0
-                            ? "Belum dibayar"
-                            : sumDebtPayments(debt.debtPayments) >
-                              debt?.debtAmount
-                            ? `Kelebihan ${currencyFormatter.format(
-                                sumDebtPayments(debt.debtPayments) -
-                                  debt?.debtAmount
-                              )}`
-                            : sumDebtPayments(debt.debtPayments) <
-                              debt?.debtAmount
-                            ? `Kurang ${currencyFormatter.format(
-                                debt.debtAmount -
-                                  sumDebtPayments(debt.debtPayments)
-                              )}`
-                            : "Lunas"
-                        }
-                        variant="outlined"
-                        color={
-                          sumDebtPayments(debt.debtPayments) == 0
-                            ? "error"
-                            : sumDebtPayments(debt.debtPayments) <
-                              debt?.debtAmount
-                            ? "warning"
-                            : "success"
-                        }
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {sumDebtPayments(debt.debtPayments) < debt?.debtAmount ? (
-                        <PayDebt debt={debt} />
-                      ) : null}
-                    </TableCell>
-                  </TableRow>
+                  <DebtRow key={index} index={index} debt={debt} />
+                  // <TableRow key={index} hover>
+                  //   <TableCell>{formatDate(debt?.invoice.date)}</TableCell>
+                  //   <TableCell>{debt?.invoice.number}</TableCell>
+                  //   <TableCell>
+                  //     {debt?.invoice?.purchase?.contact?.name}
+                  //   </TableCell>
+                  //   <TableCell>
+                  //     <Chip
+                  //       variant="filled"
+                  //       size="small"
+                  //       label={formatDate(debt?.invoice?.dueDate)}
+                  //     />
+                  //   </TableCell>
+                  //   <TableCell>
+                  //     {currencyFormatter.format(debt?.amount)}
+                  //   </TableCell>
+                  //   <TableCell align="center">
+                  //     <Chip
+                  //       label={debt?.isPaid ? "Lunas" : "Belum lunas"}
+                  //       variant="filled"
+                  //       color={debt?.isPaid ? "success" : "error"}
+                  //       size="small"
+                  //     />
+                  //   </TableCell>
+                  //   <TableCell>
+                  //     {/* {sumDebtPayments(debt.debtPayments) < debt?.debtAmount ? (
+                  //       <PayDebt debt={debt} />
+                  //     ) : null} */}
+                  //   </TableCell>
+                  // </TableRow>
                 ))
               )}
             </TableBody>

@@ -37,7 +37,7 @@ export default function SelectInventory(props: {
         variant="outlined"
         sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
-        value={props.selectedInventory?.letterNumber || ""}
+        value={props.selectedInventory?.number || ""}
         placeholder="Nomor PO"
       />
 
@@ -105,7 +105,7 @@ export default function SelectInventory(props: {
                         selected={props.selectedInventory?.id == inventory.id}
                       >
                         <TableCell>{inventory.date}</TableCell>
-                        <TableCell>{inventory.letterNumber}</TableCell>
+                        <TableCell>{inventory.number}</TableCell>
                       </TableRow>
                     )
                   )}

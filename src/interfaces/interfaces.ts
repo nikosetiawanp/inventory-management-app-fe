@@ -71,38 +71,34 @@ export interface InventoryItem {
 
 export interface Invoice {
   id: number | string;
+  number: string;
   date: string;
   dueDate: string;
-  totalDebt: number;
-  invoiceNumber: string;
-
   inventoryId: number | string;
   purchaseId: number | string;
 
   inventory: Inventory;
   purchase: Purchase;
+  debts: Debt[];
 }
 
 export interface Debt {
   id: number | string;
-  debtAmount: number;
-  status: "PAID" | "UNPAID";
-  paidDate: string;
-  receiptNumber: string;
-  paidAmount: number;
-  invoiceId: number | string;
+  amount: number;
+  isPaid: boolean;
+  invoiceId: string | number;
+  contactId: string | number;
+
   invoice: Invoice;
-  balance: number;
-  debtPayments: DebtPayment[];
+  payments: Payment[];
 }
 
-export interface DebtPayment {
+export interface Payment {
   id: number | string;
-  receiptNumber: string;
-  paidDate: string;
-  paidAmount: number;
-  balance: number;
-  debtId: number;
+  date: string;
+  amount: number;
+  debtId: number | string;
+
   debt: Debt;
 }
 

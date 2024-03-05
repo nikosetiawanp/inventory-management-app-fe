@@ -152,8 +152,7 @@ export default function InvoiceDetailDialog(props: {
     const totals = inventoryItems?.map((inventoryItem: InventoryItem) =>
       calculateTotal(
         inventoryItem.quantity,
-        findPurchaseItem(inventoryItem).poPrice ||
-          findPurchaseItem(inventoryItem).prPrice,
+        findPurchaseItem(inventoryItem).price,
         findPurchaseItem(inventoryItem).discount,
         findPurchaseItem(inventoryItem).tax
       )
@@ -183,7 +182,7 @@ export default function InvoiceDetailDialog(props: {
         >
           {/* TITLE */}
           <Stack>
-            <Typography variant="h4">{props.invoice.invoiceNumber}</Typography>
+            <Typography variant="h4">{props.invoice.number}</Typography>
             <Typography variant="body1">
               {formatDate(props.invoice.inventory.date)}
             </Typography>
@@ -191,7 +190,7 @@ export default function InvoiceDetailDialog(props: {
               Jatuh tempo : {formatDate(props.invoice.dueDate)}
             </Typography>
             <Typography variant="body1">
-              {props.invoice.inventory.letterNumber}
+              {props.invoice.inventory.number}
             </Typography>
           </Stack>
           {/* BUTTONS */}
@@ -215,7 +214,7 @@ export default function InvoiceDetailDialog(props: {
             height: 500,
           }}
         >
-          <Table stickyHeader>
+          <Table stickyHeader size="small">
             {/* TABLE HEAD */}
             <TableHead
               sx={{
@@ -230,16 +229,11 @@ export default function InvoiceDetailDialog(props: {
               <TableRow>
                 <TableCell>Produk</TableCell>
                 <TableCell align="center">Quantity</TableCell>
+
                 <TableCell align="right">Harga</TableCell>
                 <TableCell align="center">Diskon</TableCell>
                 <TableCell align="center">Pajak</TableCell>
                 <TableCell align="right">Total</TableCell>
-
-                {/* <TableCell width={10}>
-                  <IconButton size="small">
-                    <Settings fontSize="small" />
-                  </IconButton>
-                </TableCell> */}
               </TableRow>
             </TableHead>
 
@@ -260,18 +254,25 @@ export default function InvoiceDetailDialog(props: {
                 inventoryItemsQuery.data?.map(
                   (inventoryItem: InventoryItem, index: number) => (
                     <TableRow key={index}>
+                      {/* PRODUK */}
                       <TableCell>{inventoryItem.product.name}</TableCell>
+                      {/* QUANTITY */}
                       <TableCell align="center">
                         {inventoryItem.quantity} {inventoryItem.product.unit}
                       </TableCell>
+
+                      {/* HARGA */}
                       <TableCell align="right">
-                        {findPurchaseItem(inventoryItem).poPrice
+                        {currencyFormatter.format(
+                          findPurchaseItem(inventoryItem).price
+                        )}
+                        {/* {findPurchaseItem(inventoryItem).price
                           ? currencyFormatter.format(
-                              findPurchaseItem(inventoryItem).poPrice
+                              findPurchaseItem(inventoryItem).price
                             )
                           : currencyFormatter.format(
-                              findPurchaseItem(inventoryItem).prPrice
-                            )}
+                              findPurchaseItem(inventoryItem).price
+                            )} */}
                       </TableCell>
 
                       <TableCell align="center">
@@ -284,8 +285,7 @@ export default function InvoiceDetailDialog(props: {
                         {currencyFormatter.format(
                           calculateTotal(
                             inventoryItem.quantity,
-                            findPurchaseItem(inventoryItem).poPrice ||
-                              findPurchaseItem(inventoryItem).prPrice,
+                            findPurchaseItem(inventoryItem).price,
                             findPurchaseItem(inventoryItem).discount,
                             findPurchaseItem(inventoryItem).tax
                           )

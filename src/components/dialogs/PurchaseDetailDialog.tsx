@@ -273,10 +273,13 @@ export default function PurchaseDetailDialog(props: {
             ) : (
               <>
                 {props.purchase.isApproved ? (
-                  <CreateInvoice
-                    inventories={inventoriesQuery.data}
-                    purchase={props.purchase}
-                  />
+                  <>
+                    {/* <Button variant="outlined">2 Faktur</Button> */}
+                    <CreateInvoice
+                      inventories={inventoriesQuery.data}
+                      purchase={props.purchase}
+                    />
+                  </>
                 ) : (
                   <ApprovePurchase
                     refetch={props.refetch}

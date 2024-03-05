@@ -14,10 +14,13 @@ import {
 } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import StorefrontIcon from "@mui/icons-material/Storefront";
-import InventoryIcon from "@mui/icons-material/Inventory";
-
-import CreateGlobalButton from "./buttons/CreateGlobalButton";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import CategoryIcon from "@mui/icons-material/Category";
+import InputIcon from "@mui/icons-material/Input";
+import OutputIcon from "@mui/icons-material/Output";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import PaidIcon from "@mui/icons-material/Paid";
 
 export default function Drawer() {
   // const urlParams = new URLSearchParams(window.location.search);
@@ -28,31 +31,34 @@ export default function Drawer() {
 
   const links = [
     {
-      name: "Contacts",
+      name: "Kontak",
       param: "/contacts",
       category: "Daftar",
-      icon: <StorefrontIcon />,
+      icon: <AccountCircleIcon />,
     },
     {
-      name: "Daftar Produk",
+      name: "Produk",
       param: "/product",
       category: "Daftar",
-      icon: <InventoryIcon />,
+      icon: <CategoryIcon />,
     },
     {
       name: "Purchase Order",
       param: "/purchase-order",
       category: "Pembelian",
+      icon: <ShoppingCartIcon />,
     },
     {
       name: "Faktur",
       param: "/invoices",
       category: "Pembelian",
+      icon: <ReceiptIcon />,
     },
     {
       name: "Hutang",
       param: "/debt",
       category: "Hutang",
+      icon: <PaidIcon />,
     },
     {
       name: "Pembayaran Hutang",
@@ -63,11 +69,13 @@ export default function Drawer() {
       name: "Gudang Masuk",
       param: "/inventory-arrival",
       category: "Gudang",
+      icon: <InputIcon />,
     },
     {
       name: "Gudang Keluar",
       param: "/inventory-departure",
       category: "Gudang",
+      icon: <OutputIcon />,
     },
   ];
   return (

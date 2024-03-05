@@ -69,7 +69,7 @@ export default function InventoryRow(props: {
         open={open}
         setOpen={setOpen}
         inventory={props.inventory}
-        purchaseItems={props.inventory.purchase.purchaseItems}
+        purchaseItems={props.inventory?.purchase?.purchaseItems}
       />
     </>
   );

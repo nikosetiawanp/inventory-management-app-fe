@@ -20,7 +20,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { Debt, DebtPayment } from "../interfaces/interfaces";
+import { Debt, Payment } from "../interfaces/interfaces";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 
 export default function DebtPaymentPage() {
@@ -32,17 +32,14 @@ export default function DebtPaymentPage() {
 
   // GET DEBTS
   const getDebtPayments = async () => {
-    const response = await axios.get(
-      BACKEND_URL +
-        `debt-payments?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
-    );
+    const response = await axios.get(BACKEND_URL + "payments");
     console.log(response.data.data);
 
     return response.data.data;
   };
 
   const debtPaymentsQuery = useQuery({
-    queryKey: ["debtPayments"],
+    queryKey: ["payments"],
     queryFn: getDebtPayments,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -74,7 +71,6 @@ export default function DebtPaymentPage() {
     ];
 
     const monthIndex = monthNames.indexOf(month);
-
     if (monthIndex !== -1) {
       const indonesianMonth = monthNames[monthIndex];
       return `${day} ${indonesianMonth} ${year}`;
@@ -127,7 +123,7 @@ export default function DebtPaymentPage() {
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table sx={{ borderCollapse: "separate" }}>
+          <Table sx={{ borderCollapse: "separate" }} size="small">
             <TableHead
               sx={{
                 position: "sticky",
@@ -140,11 +136,8 @@ export default function DebtPaymentPage() {
             >
               <TableRow>
                 <TableCell>Tanggal Bayar</TableCell>
-                <TableCell>Nomor Bukti</TableCell>
-                <TableCell>Nomor Faktur</TableCell>
                 <TableCell>Tanggal Jatuh Tempo</TableCell>
                 <TableCell>Jumlah Dibayar</TableCell>
-                <TableCell>Saldo Sekarang</TableCell>
               </TableRow>
             </TableHead>
 
@@ -153,22 +146,16 @@ export default function DebtPaymentPage() {
                 <RowSkeleton rows={15} columns={6} />
               ) : (
                 debtPaymentsQuery?.data?.map(
-                  (debtPayment: DebtPayment, index: number) => (
+                  (payment: Payment, index: number) => (
                     <TableRow key={index} hover>
-                      <TableCell>{formatDate(debtPayment?.paidDate)}</TableCell>
-                      <TableCell>{debtPayment?.receiptNumber}</TableCell>
+                      <TableCell>{formatDate(payment?.date)}</TableCell>
 
                       <TableCell>
-                        {debtPayment?.debt.invoice.invoiceNumber}
+                        {formatDate(payment?.debt?.invoice?.dueDate)}
                       </TableCell>
+
                       <TableCell>
-                        {formatDate(debtPayment?.debt.invoice.dueDate)}
-                      </TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(debtPayment?.paidAmount)}
-                      </TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(debtPayment?.balance)}
+                        {currencyFormatter.format(payment?.amount)}
                       </TableCell>
                     </TableRow>
                   )
