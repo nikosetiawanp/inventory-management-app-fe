@@ -1,63 +1,55 @@
 import {
-  IconButton,
   Stack,
+  Typography,
+  TextField,
   Table,
-  TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
-  Typography,
+  IconButton,
+  TableBody,
 } from "@mui/material";
-import Drawer from "../components/Drawer";
-
-import CreateProductButton from "../components/buttons/CreateProductButton";
-import { Settings } from "@mui/icons-material";
-import MoreVertProductButton from "../components/buttons/MoreVertProductButton";
-import { useQuery } from "react-query";
-import { Product } from "../interfaces/interfaces";
-import RowSkeleton from "../components/skeletons/RowSkeleton";
-import axios from "axios";
+import CreateContact from "../components/forms/CreateContact";
 import { useState } from "react";
+import { Settings } from "@mui/icons-material";
+import Drawer from "../components/Drawer";
+import CreateAccount from "../components/forms/CreateAccount";
+import axios from "axios";
+import { useQuery } from "react-query";
+import RowSkeleton from "../components/skeletons/RowSkeleton";
+import { Account } from "../interfaces/interfaces";
 
-const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-
-export default function ProductPage() {
-  // FETCHING PRODUCTS
+export default function AccountPage() {
+  const [searchInput, setSearchInput] = useState("");
+  // FETCHING DATA
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const getProducts = async () => {
-    const response = await axios.get(BACKEND_URL + "products/");
+  const getAccounts = async () => {
+    const response = await axios.get(BACKEND_URL + "accounts/");
+    console.log(response.data.data);
+
     return response.data.data;
   };
 
-  const productsQuery = useQuery({
-    queryKey: ["products"],
-    queryFn: () => getProducts(),
+  const accountsQuery = useQuery({
+    queryKey: ["accounts"],
+    queryFn: () => getAccounts(),
     refetchOnWindowFocus: false,
   });
-
-  const [searchInput, setSearchInput] = useState("");
-  const filteredProductsQuery = productsQuery?.data?.filter(
-    (product: Product) =>
-      product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      product.code.toLowerCase().includes(searchInput.toLowerCase())
-  );
   return (
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
-      {/* DRAWER */}
       <Drawer />
 
-      {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Produk
+          Akun
         </Typography>
+
         <Stack direction={"row"} justifyContent={"space-between"} width={1}>
           <TextField
             id="outlined-basic"
-            placeholder="Cari produk"
+            placeholder="Cari"
             variant="outlined"
             size="small"
             sx={{ width: "400px" }}
@@ -67,14 +59,13 @@ export default function ProductPage() {
             }}
           />
           {/* BUTTON */}
-          <CreateProductButton />
+          <CreateAccount />
         </Stack>
 
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
           <Table size="small" sx={{ borderCollapse: "separate" }}>
-            {/* HEAD */}
             <TableHead
               sx={{
                 position: "sticky",
@@ -86,9 +77,8 @@ export default function ProductPage() {
               }}
             >
               <TableRow>
-                <TableCell width={80}>Kode</TableCell>
+                <TableCell>Kode</TableCell>
                 <TableCell>Nama</TableCell>
-                <TableCell width={160}>Unit</TableCell>
                 <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -97,20 +87,14 @@ export default function ProductPage() {
               </TableRow>
             </TableHead>
 
-            {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {productsQuery.isLoading ? (
-                <RowSkeleton rows={15} columns={4} />
+              {accountsQuery.isLoading ? (
+                <RowSkeleton rows={15} columns={6} />
               ) : (
-                filteredProductsQuery.map((product: Product, index: number) => (
+                accountsQuery.data.map((account: Account, index: number) => (
                   <TableRow key={index} hover>
-                    <TableCell>{product.code}</TableCell>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.unit}</TableCell>
-
-                    <TableCell>
-                      <MoreVertProductButton product={product} />
-                    </TableCell>
+                    <TableCell>{account.number}</TableCell>
+                    <TableCell>{account.name}</TableCell>
                   </TableRow>
                 ))
               )}

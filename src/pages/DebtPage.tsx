@@ -96,7 +96,7 @@ export default function DebtPage() {
       <Drawer />
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Daftar Hutang
+          Hutang
         </Typography>
 
         {/* NAVS */}

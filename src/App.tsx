@@ -14,6 +14,8 @@ import InvoicePage from "./pages/InvoicePage";
 import DebtPage from "./pages/DebtPage";
 import DebtPaymentPage from "./pages/DebtPaymentPage";
 import HomePage from "./pages/HomePage";
+import CashPage from "./pages/CashPage";
+import AccountPage from "./pages/AccountPage";
 
 const queryClient = new QueryClient();
 const theme = createTheme({
@@ -45,7 +47,7 @@ function App() {
               <Route path="/home" element={<HomePage />} />
 
               <Route path="/contacts" element={<ContactPage />} />
-              <Route path="/product" element={<ProductPage />} />
+              <Route path="/products" element={<ProductPage />} />
               <Route
                 path="/purchase-requisition"
                 element={<PurchaseRequisitionPage />}
@@ -64,6 +66,8 @@ function App() {
                 path="/inventory-departure"
                 element={<InventoryDeparturePage />}
               />
+              <Route path="/cash" element={<CashPage />} />
+              <Route path="/accounts" element={<AccountPage />} />
             </Routes>
           </Router>
         </ThemeProvider>

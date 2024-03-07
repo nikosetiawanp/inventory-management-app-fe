@@ -21,14 +21,13 @@ import OutputIcon from "@mui/icons-material/Output";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PaidIcon from "@mui/icons-material/Paid";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import BalanceIcon from "@mui/icons-material/Balance";
 
 export default function Drawer() {
-  // const urlParams = new URLSearchParams(window.location.search);
-  // const param = urlParams.get('');
   const endpoint = window.location.pathname;
-
   const navigate = useNavigate();
-
   const links = [
     {
       name: "Kontak",
@@ -38,9 +37,15 @@ export default function Drawer() {
     },
     {
       name: "Produk",
-      param: "/product",
+      param: "/products",
       category: "Daftar",
       icon: <CategoryIcon />,
+    },
+    {
+      name: "Akun",
+      param: "/accounts",
+      category: "Daftar",
+      icon: <AccountBalanceIcon />,
     },
     {
       name: "Purchase Order",
@@ -77,6 +82,18 @@ export default function Drawer() {
       category: "Gudang",
       icon: <OutputIcon />,
     },
+    {
+      name: "Kas",
+      param: "/cash",
+      category: "Kas",
+      icon: <AccountBalanceWalletIcon />,
+    },
+    {
+      name: "General",
+      param: "/general",
+      category: "Kas",
+      icon: <BalanceIcon />,
+    },
   ];
   return (
     <Box
@@ -87,7 +104,7 @@ export default function Drawer() {
         borderColor: "divider",
       }}
     >
-      <Stack height={1}>
+      <Stack height={1} overflow={"scroll"}>
         <List>
           {/* LOGO */}
           <ListItem>

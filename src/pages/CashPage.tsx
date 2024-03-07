@@ -2,7 +2,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  IconButton,
   Stack,
   Table,
   TableBody,
@@ -17,32 +16,34 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { useState } from "react";
-import axios from "axios";
 import { useQuery } from "react-query";
+import axios from "axios";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { Debt, Payment } from "../interfaces/interfaces";
+import PurchaseRow from "../components/rows/PurchaseRow";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
+import { Cash, Purchase } from "../interfaces/interfaces";
+import CreateCash from "../components/forms/CreateCash";
 
-export default function DebtPaymentPage() {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+export default function CashPage() {
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
   const selectedYear = formattedDate.split("-")[0];
   const selectedMonth = formattedDate.split("-")[1];
 
-  // GET DEBTS
-  const getDebtPayments = async () => {
-    const response = await axios.get(BACKEND_URL + "payments");
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const getCashes = async () => {
+    const response = await axios.get(
+      BACKEND_URL +
+        `cashes?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
+    );
     console.log(response.data.data);
 
     return response.data.data;
   };
-
-  const debtPaymentsQuery = useQuery({
-    queryKey: ["payments"],
-    queryFn: getDebtPayments,
+  const cashesQuery = useQuery({
+    queryKey: ["cashes"],
+    queryFn: () => getCashes(),
     refetchOnWindowFocus: false,
-    enabled: true,
   });
 
   const formatDate = (inputDate: string) => {
@@ -54,7 +55,9 @@ export default function DebtPaymentPage() {
     };
 
     const formattedDate = date.toLocaleDateString("id-ID", options);
+
     const [day, month, year] = formattedDate.split(" ");
+
     const monthNames = [
       "Januari",
       "Februari",
@@ -71,6 +74,7 @@ export default function DebtPaymentPage() {
     ];
 
     const monthIndex = monthNames.indexOf(month);
+
     if (monthIndex !== -1) {
       const indonesianMonth = monthNames[monthIndex];
       return `${day} ${indonesianMonth} ${year}`;
@@ -79,7 +83,6 @@ export default function DebtPaymentPage() {
     return formattedDate;
   };
 
-  // FORMAT CURRENCY
   const currencyFormatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -90,11 +93,15 @@ export default function DebtPaymentPage() {
       <Drawer />
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Pembayaran
+          Kas
         </Typography>
 
-        {/* NAVS */}
-        <Stack direction={"row"} gap={2} width={1}>
+        <Stack
+          direction={"row"}
+          justifyContent={"justify-between"}
+          width={1}
+          gap={2}
+        >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               views={["month", "year"]}
@@ -107,19 +114,20 @@ export default function DebtPaymentPage() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => debtPaymentsQuery.refetch()}
-            disabled={
-              debtPaymentsQuery.isRefetching || debtPaymentsQuery.isLoading
-            }
+            onClick={() => cashesQuery.refetch()}
+            disabled={cashesQuery.isRefetching || cashesQuery.isLoading}
+            sx={{ marginRight: "auto" }}
           >
-            {debtPaymentsQuery.isRefetching || debtPaymentsQuery.isLoading ? (
+            {cashesQuery.isRefetching || cashesQuery.isLoading ? (
               <CircularProgress size={15} color="inherit" />
             ) : (
               <RefreshIcon fontSize="small" />
             )}
           </Button>
+          <CreateCash />
         </Stack>
 
+        {/* TABLE */}
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
@@ -135,31 +143,42 @@ export default function DebtPaymentPage() {
               }}
             >
               <TableRow>
-                <TableCell>Tanggal Bayar</TableCell>
-                <TableCell>Tanggal Jatuh Tempo</TableCell>
-                <TableCell>Jumlah Dibayar</TableCell>
+                <TableCell>Tanggal</TableCell>
+                <TableCell>Nomor</TableCell>
+                <TableCell>Deskripsi</TableCell>
+                <TableCell>Akun</TableCell>
+                <TableCell>Jumlah</TableCell>
               </TableRow>
             </TableHead>
-
-            <TableBody>
-              {debtPaymentsQuery.isLoading ? (
-                <RowSkeleton rows={15} columns={6} />
+            <TableBody sx={{ overflowY: "scroll" }}>
+              {cashesQuery?.isLoading ? (
+                <RowSkeleton rows={15} columns={5} />
               ) : (
-                debtPaymentsQuery?.data?.map(
-                  (payment: Payment, index: number) => (
-                    <TableRow key={index} hover>
-                      <TableCell>{formatDate(payment?.date)}</TableCell>
-
-                      <TableCell>
-                        {formatDate(payment?.debt?.invoice?.dueDate)}
-                      </TableCell>
-
-                      <TableCell>
-                        {currencyFormatter.format(payment?.amount)}
-                      </TableCell>
-                    </TableRow>
-                  )
-                )
+                cashesQuery?.data?.map((cash: Cash, index: number) => (
+                  <TableRow key={index}>
+                    <TableCell>{formatDate(cash?.date)}</TableCell>
+                    <TableCell>{cash?.number}</TableCell>
+                    <TableCell>{cash?.description}</TableCell>
+                    <TableCell>
+                      <Chip label={cash?.account?.name} size="small" />
+                    </TableCell>
+                    <TableCell>
+                      <Typography
+                        variant="body2"
+                        color={
+                          cash?.amount == 0
+                            ? "inherit"
+                            : cash?.amount > 0
+                            ? "success.main"
+                            : "error.main"
+                        }
+                      >
+                        {cash?.amount < 0 ? "-" : "+"}{" "}
+                        {currencyFormatter.format(cash?.amount)}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>

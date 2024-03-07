@@ -102,6 +102,21 @@ export interface Payment {
   debt: Debt;
 }
 
+export interface Account {
+  id: number | string;
+  number: string;
+  name: string;
+}
+export interface Cash {
+  id: number | string;
+  date: string;
+  number: string;
+  description: string;
+  amount: number;
+  accountId: number | string;
+
+  account: Account;
+}
 // export interface CreatePurchase {
 //   number: data.number,
 //   date: formattedDate,

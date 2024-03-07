@@ -20,19 +20,7 @@ export default function CreatePurchase() {
 
   const [open, setOpen] = useState(false);
 
-  // GET CONTACT LIST
-  // const getContacts = async () => {
-  //   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  //   const response = await axios.get(BACKEND_URL + "contacts/");
-  //   return response.data.data;
-  // };
-  // const contactsQuery = useQuery({
-  //   queryKey: ["contacts"],
-  //   queryFn: () => getContacts(),
-  //   refetchOnWindowFocus: false,
-  // });
-
-  // VENDOR
+  // CONTACT
   const [selectedContact, setSelectedContact] = useState<Contact>();
   const handleContactChange = (event: any, value: Contact) => {
     setSelectedContact(value);
