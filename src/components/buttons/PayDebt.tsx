@@ -54,6 +54,10 @@ export default function PayDebt(props: { debt: Debt }) {
       date: formattedDate,
       amount: data.amount,
       debtId: props.debt.id,
+
+      number: "0000",
+      description: null,
+      accountId: 1,
     };
     try {
       console.log(dataToSubmit);
@@ -89,15 +93,7 @@ export default function PayDebt(props: { debt: Debt }) {
                 }}
               />
             </LocalizationProvider>
-            {/* <TextField
-              id="receiptNumber"
-              label="Nomor Bukti"
-              variant="outlined"
-              // {...register("receiptNumber", { required: "Tidak boleh kosong" })}
-              // error={!!errors.receiptNumber}
-              // helperText={errors.receiptNumber?.message}
-              required
-            /> */}
+
             <TextField
               id="amount"
               label="Jumlah Pembayaran"

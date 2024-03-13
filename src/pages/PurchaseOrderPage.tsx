@@ -107,9 +107,9 @@ export default function PurchaseRequisitionPage() {
               }}
             >
               <TableRow>
-                <TableCell>Nomor</TableCell>
+                <TableCell>Nomor PO</TableCell>
                 <TableCell>Vendor</TableCell>
-                <TableCell>Tanggal</TableCell>
+                <TableCell>Tanggal PO</TableCell>
                 <TableCell>Status Approval</TableCell>
                 <TableCell>Status Selesai</TableCell>
                 <TableCell width={10}>

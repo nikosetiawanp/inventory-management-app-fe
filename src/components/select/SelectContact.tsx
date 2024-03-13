@@ -18,6 +18,7 @@ import { useQuery } from "react-query";
 import { Contact } from "../../interfaces/interfaces";
 import CreateVendorButton from "../buttons/CreateVendorButton";
 import SearchIcon from "@mui/icons-material/Search";
+import CreateContact from "../forms/CreateContact";
 
 export default function SelectContact(props: {
   selectedContact: Contact | null | undefined;
@@ -74,7 +75,8 @@ export default function SelectContact(props: {
             >
               Pilih Vendor
             </Typography>
-            <CreateVendorButton />
+            <CreateContact />
+            {/* <CreateVendorButton /> */}
           </Stack>
 
           <Stack

@@ -47,7 +47,7 @@ export default function CompleteDebt(props: { debt: Debt }) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("products");
+        queryClient.invalidateQueries("debts");
       },
     }
   );

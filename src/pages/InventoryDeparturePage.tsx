@@ -103,11 +103,12 @@ export default function InventoryDeparturePage() {
               }}
             >
               <TableRow>
-                <TableCell>Tanggal Masuk</TableCell>
-                <TableCell>Nomor PO</TableCell>
                 <TableCell>Nomor Surat Jalan</TableCell>
+                <TableCell>Nomor Faktur</TableCell>
                 <TableCell>Vendor</TableCell>
-                <TableCell>Keterangan</TableCell>
+                <TableCell>Tanggal Keluar</TableCell>
+                <TableCell>Sales Order</TableCell>
+                <TableCell>Deskripsi</TableCell>
                 <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />

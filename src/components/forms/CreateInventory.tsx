@@ -130,7 +130,7 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
             </LocalizationProvider>
             <TextField
               id="number"
-              label="Nomor Surat"
+              label="Nomor LPB"
               variant="outlined"
               {...register("number", { required: "Tidak boleh kosong" })}
               error={!!errors.number}
@@ -139,7 +139,7 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
             />
             <TextField
               id="receiptNumber"
-              label="Nomor Bukti"
+              label="Nomor Faktur"
               variant="outlined"
               {...register("receiptNumber", { required: "Tidak boleh kosong" })}
               error={!!errors.receiptNumber}

@@ -100,7 +100,8 @@ export default function InventoryArrivalPage() {
               }}
             >
               <TableRow>
-                <TableCell>Nomor</TableCell>
+                <TableCell>Nomor LPB</TableCell>
+                <TableCell>Nomor Faktur</TableCell>
                 <TableCell>Vendor</TableCell>
                 <TableCell>Tanggal Masuk</TableCell>
                 <TableCell>Purchase Order</TableCell>

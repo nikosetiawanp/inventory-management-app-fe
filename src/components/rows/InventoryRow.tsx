@@ -56,6 +56,7 @@ export default function InventoryRow(props: {
         onClick={() => setOpen(true)}
       >
         <TableCell>{props.inventory?.number}</TableCell>
+        <TableCell>{props.inventory?.receiptNumber}</TableCell>
         <TableCell>{props.inventory?.purchase?.contact?.name}</TableCell>
         <TableCell>{formatDate(props.inventory?.date)}</TableCell>
         <TableCell>{props.inventory?.purchase?.number}</TableCell>

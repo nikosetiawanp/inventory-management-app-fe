@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useQuery } from "react-query";
+import CreateAccount from "../forms/CreateAccount";
 
 export default function SelectAccount(props: {
   selectedAccount: Account | null | undefined;
@@ -26,10 +27,12 @@ export default function SelectAccount(props: {
   // GET PURCHASES
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getAccounts = async () => {
-    const response = await axios.get(BACKEND_URL + "accounts");
+    const response = await axios.get(BACKEND_URL + "accounts/");
+    console.log(response.data.data);
+
     return response.data.data;
   };
-  const accounts = useQuery({
+  const accountsQuery = useQuery({
     queryKey: ["accounts"],
     queryFn: getAccounts,
     refetchOnWindowFocus: false,
@@ -38,12 +41,17 @@ export default function SelectAccount(props: {
 
   //   SEARCH
   const [searchInput, setSearchInput] = useState("");
+  const filteredAccountsQuery = accountsQuery?.data?.filter(
+    (account: Account) =>
+      account.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      account.number.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   return (
     <>
       <TextField
         id="outlined-basic"
-        label="Contact"
+        label="Akun"
         variant="outlined"
         sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
@@ -67,8 +75,7 @@ export default function SelectAccount(props: {
             >
               Pilih Akun
             </Typography>
-
-            <Button variant="contained">Buat Akun</Button>
+            <CreateAccount />
           </Stack>
 
           <Stack
@@ -113,7 +120,25 @@ export default function SelectAccount(props: {
                   <TableCell>Nama</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>{/* map */}</TableBody>
+              <TableBody>
+                {filteredAccountsQuery?.map(
+                  (account: Account, index: number) => (
+                    <TableRow
+                      key={index}
+                      hover
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => {
+                        props.setSelectedAccount(account);
+                        setOpen(false);
+                      }}
+                      selected={props.selectedAccount?.id == account.id}
+                    >
+                      <TableCell>{account.number}</TableCell>
+                      <TableCell>{account.name}</TableCell>
+                    </TableRow>
+                  )
+                )}
+              </TableBody>
             </Table>
           </TableContainer>
         </Stack>
