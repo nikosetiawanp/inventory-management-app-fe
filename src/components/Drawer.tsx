@@ -31,22 +31,23 @@ export default function Drawer() {
   const links = [
     {
       name: "Kontak",
-      param: "/contacts",
+      param: "/contact",
       category: "Daftar",
       icon: <AccountCircleIcon />,
     },
     {
       name: "Produk",
-      param: "/products",
+      param: "/product",
       category: "Daftar",
       icon: <CategoryIcon />,
     },
     {
       name: "Akun",
-      param: "/accounts",
+      param: "/account",
       category: "Daftar",
       icon: <AccountBalanceIcon />,
     },
+    // PURCHASE
     {
       name: "Purchase Order",
       param: "/purchase-order",
@@ -55,10 +56,24 @@ export default function Drawer() {
     },
     {
       name: "Faktur",
-      param: "/invoices",
+      param: "purchase-invoice",
       category: "Pembelian",
       icon: <ReceiptIcon />,
     },
+    // SALES
+    {
+      name: "Penjualan",
+      param: "/sales-order",
+      category: "Penjualan",
+      icon: <ShoppingCartIcon />,
+    },
+    {
+      name: "Faktur",
+      param: "/sales-invoice",
+      category: "Penjualan",
+      icon: <ReceiptIcon />,
+    },
+    // DEBT
     {
       name: "Hutang",
       param: "/debt",
@@ -70,6 +85,7 @@ export default function Drawer() {
       param: "/debt-payment",
       category: "Hutang",
     },
+    // INVENTORY
     {
       name: "Gudang Masuk",
       param: "/inventory-arrival",

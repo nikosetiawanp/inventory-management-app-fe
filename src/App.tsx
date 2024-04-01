@@ -46,17 +46,13 @@ function App() {
               <Route path="/" element={<App />} />
               <Route path="/home" element={<HomePage />} />
 
-              <Route path="/contacts" element={<ContactPage />} />
-              <Route path="/products" element={<ProductPage />} />
-              <Route
-                path="/purchase-requisition"
-                element={<PurchaseRequisitionPage />}
-              />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/product" element={<ProductPage />} />
+
               <Route path="/purchase-order" element={<PurchaseOrderPage />} />
-              <Route path="/invoices" element={<InvoicePage />} />
+              <Route path="/purchase-invoice" element={<InvoicePage />} />
               <Route path="/debt" element={<DebtPage />} />
               <Route path="/debt-payment" element={<DebtPaymentPage />} />
-
               <Route path="/inventory" element={<InventoryPage />} />
               <Route
                 path="/inventory-arrival"
@@ -67,7 +63,7 @@ function App() {
                 element={<InventoryDeparturePage />}
               />
               <Route path="/cash" element={<CashPage />} />
-              <Route path="/accounts" element={<AccountPage />} />
+              <Route path="/account" element={<AccountPage />} />
             </Routes>
           </Router>
         </ThemeProvider>
