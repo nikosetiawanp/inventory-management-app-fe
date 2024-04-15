@@ -56,7 +56,7 @@ export default function Drawer() {
     },
     {
       name: "Faktur",
-      param: "purchase-invoice",
+      param: "/purchase-invoice",
       category: "Pembelian",
       icon: <ReceiptIcon />,
     },

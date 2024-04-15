@@ -9,13 +9,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import Drawer from "../components/Drawer";
-
 import { Settings } from "@mui/icons-material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-
 import { useState } from "react";
 import PurchaseRow from "../components/rows/PurchaseRow";
 import axios from "axios";
@@ -27,7 +26,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import CreatePurchase from "../components/forms/CreatePurchase";
 
-export default function PurchaseOrderPage() {
+export default function PurchaseRequisitionPage() {
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
   const selectedYear = formattedDate.split("-")[0];
@@ -58,7 +57,7 @@ export default function PurchaseOrderPage() {
       {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Purchase Order
+          Sales Order
         </Typography>
 
         <Stack direction={"row"} gap={2} width={1}>
@@ -106,9 +105,9 @@ export default function PurchaseOrderPage() {
               }}
             >
               <TableRow>
-                <TableCell>Nomor PO</TableCell>
+                <TableCell>Nomor SO</TableCell>
                 <TableCell>Vendor</TableCell>
-                <TableCell>Tanggal PO</TableCell>
+                <TableCell>Tanggal SO</TableCell>
                 <TableCell>Status Approval</TableCell>
                 <TableCell>Status Selesai</TableCell>
                 <TableCell width={10}>

@@ -32,24 +32,24 @@ export default function SelectPurchase(props: {
 
   // GET PURCHASES
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const getPurchases = async () => {
+  const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&isApproved=1&isDone=0`
+        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&isApproved=1&isDone=0`
     );
     console.log(response.data.data);
 
     return response.data.data;
   };
-  const purchasesQuery = useQuery({
-    queryKey: ["purchases"],
-    queryFn: getPurchases,
+  const transactionsQuery = useQuery({
+    queryKey: ["transactions"],
+    queryFn: getTransactions,
     refetchOnWindowFocus: false,
     enabled: open,
   });
 
   useEffect(() => {
-    purchasesQuery.refetch();
+    transactionsQuery.refetch();
   }, [selectedDate]);
 
   return (
@@ -116,8 +116,8 @@ export default function SelectPurchase(props: {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {purchasesQuery?.data &&
-                  purchasesQuery?.data.map(
+                {transactionsQuery?.data &&
+                  transactionsQuery?.data.map(
                     (purchase: Purchase, index: number) => (
                       <TableRow
                         key={index}

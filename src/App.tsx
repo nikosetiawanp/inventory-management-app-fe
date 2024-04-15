@@ -4,7 +4,6 @@ import { createTheme, ThemeProvider } from "@mui/material";
 
 import ProductPage from "./pages/ProductPage";
 import ContactPage from "./pages/ContactPage";
-import PurchaseRequisitionPage from "./pages/PurchaseRequisitionPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import PurchaseOrderPage from "./pages/PurchaseOrderPage";
 import InventoryArrivalPage from "./pages/InventoryArrivalPage";
@@ -16,6 +15,7 @@ import DebtPaymentPage from "./pages/DebtPaymentPage";
 import HomePage from "./pages/HomePage";
 import CashPage from "./pages/CashPage";
 import AccountPage from "./pages/AccountPage";
+import SalesOrderPage from "./pages/SalesOrderPage";
 
 const queryClient = new QueryClient();
 const theme = createTheme({
@@ -45,12 +45,12 @@ function App() {
             <Routes>
               <Route path="/" element={<App />} />
               <Route path="/home" element={<HomePage />} />
-
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/product" element={<ProductPage />} />
-
               <Route path="/purchase-order" element={<PurchaseOrderPage />} />
               <Route path="/purchase-invoice" element={<InvoicePage />} />
+              <Route path="/sales-order" element={<SalesOrderPage />} />
+
               <Route path="/debt" element={<DebtPage />} />
               <Route path="/debt-payment" element={<DebtPaymentPage />} />
               <Route path="/inventory" element={<InventoryPage />} />

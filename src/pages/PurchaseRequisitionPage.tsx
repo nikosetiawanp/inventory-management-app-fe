@@ -42,22 +42,22 @@ export default function PurchaseRequisitionPage() {
 
   // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const getPurchases = async () => {
+  const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `purchases?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PR`
+        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&status=PR`
     );
     return response.data.data;
   };
 
-  const purchasesQuery = useQuery({
-    queryKey: ["purchases"],
-    queryFn: () => getPurchases(),
+  const transactionsQuery = useQuery({
+    queryKey: ["transactions"],
+    queryFn: () => getTransactions(),
     refetchOnWindowFocus: false,
   });
 
   // useEffect(() => {
-  //   purchasesQuery.refetch();
+  //   transactionsQuery.refetch();
   // }, [selectedDate]);
 
   return (
@@ -85,10 +85,12 @@ export default function PurchaseRequisitionPage() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => purchasesQuery.refetch()}
-            disabled={purchasesQuery.isRefetching || purchasesQuery.isLoading}
+            onClick={() => transactionsQuery.refetch()}
+            disabled={
+              transactionsQuery.isRefetching || transactionsQuery.isLoading
+            }
           >
-            {purchasesQuery.isRefetching || purchasesQuery.isLoading ? (
+            {transactionsQuery.isRefetching || transactionsQuery.isLoading ? (
               <CircularProgress size={15} color="inherit" />
             ) : (
               <RefreshIcon fontSize="small" />
@@ -129,17 +131,17 @@ export default function PurchaseRequisitionPage() {
 
             {/* ROWS */}
             <TableBody sx={{ overflowY: "scroll" }}>
-              {purchasesQuery.isLoading ? (
+              {transactionsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={5} />
               ) : (
-                purchasesQuery.data?.map(
+                transactionsQuery.data?.map(
                   (purchase: Purchase, index: number) => (
                     <PurchaseRow
                       index={index}
                       key={index}
                       purchase={purchase}
-                      refetch={purchasesQuery.refetch}
-                      arrayLength={purchasesQuery.data.length}
+                      refetch={transactionsQuery.refetch}
+                      arrayLength={transactionsQuery.data.length}
                     />
                   )
                 )

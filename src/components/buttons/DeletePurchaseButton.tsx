@@ -33,7 +33,7 @@ export default function DeletePurchaseButton(props: { purchase: Purchase }) {
   const deletePurchase = useMutation(
     async (id: number | any) => {
       try {
-        const response = await axios.delete(BACKEND_URL + "purchases/" + id);
+        const response = await axios.delete(BACKEND_URL + "transactions/" + id);
         return response.data;
       } catch (error: any) {
         console.log(error);
@@ -43,7 +43,7 @@ export default function DeletePurchaseButton(props: { purchase: Purchase }) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("purchases");
+        queryClient.invalidateQueries("transactions");
       },
     }
   );

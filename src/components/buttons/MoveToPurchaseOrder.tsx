@@ -35,7 +35,7 @@ export default function MoveToPurchaseRequisition(props: {
     async (data: any) => {
       try {
         const response = await axios.put(
-          BACKEND_URL + "purchases/" + props.purchase.id,
+          BACKEND_URL + "transactions/" + props.purchase.id,
           data
         );
         props.refetch();

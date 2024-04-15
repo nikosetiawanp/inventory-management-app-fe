@@ -37,7 +37,7 @@ export default function CreatePurchase() {
   const createPurchase = useMutation(
     async (data: Purchase) => {
       try {
-        const response = await axios.post(BACKEND_URL + "purchases/", data);
+        const response = await axios.post(BACKEND_URL + "transactions/", data);
         return response.data;
       } catch (error) {
         console.log(error);
@@ -46,7 +46,7 @@ export default function CreatePurchase() {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("purchases");
+        queryClient.invalidateQueries("transactions");
       },
     }
   );
@@ -54,6 +54,7 @@ export default function CreatePurchase() {
   const onSubmit: SubmitHandler<Purchase> = async (data, event) => {
     const dataToSubmit: any = {
       number: data.number,
+      type: "P",
       date: formattedDate,
       expectedArrival: null,
       isApproved: false,

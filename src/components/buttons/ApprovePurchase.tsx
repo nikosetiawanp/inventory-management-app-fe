@@ -39,7 +39,7 @@ export default function ApprovePurchase(props: {
       };
       try {
         const response = await axios.put(
-          BACKEND_URL + "purchases/" + props.purchase.id,
+          BACKEND_URL + "transactions/" + props.purchase.id,
           dataToSubmit
         );
         props.refetch();
