@@ -7,13 +7,13 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useState } from "react";
-import { Purchase } from "../../interfaces/interfaces";
+import { Transaction } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
 export default function ApprovePurchase(props: {
   refetch(): any;
-  purchase: Purchase;
+  transaction: Transaction;
 }) {
   const [open, setOpen] = useState(false);
   const handleClickOpen = (event: any) => {
@@ -28,18 +28,19 @@ export default function ApprovePurchase(props: {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
   const approvePurchase = useMutation(
-    async (data: Purchase) => {
+    async (data: Transaction) => {
       const dataToSubmit = {
-        number: props.purchase.number,
-        date: props.purchase.date,
-        expectedArrival: props.purchase.expectedArrival,
+        number: props.transaction.number,
+        date: props.transaction.date,
+        expectedArrival: props.transaction.expectedArrival,
         isApproved: true,
         isDone: false,
-        contactId: props.purchase.contactId,
+        contactId: props.transaction.contactId,
+        type: "P",
       };
       try {
         const response = await axios.put(
-          BACKEND_URL + "transactions/" + props.purchase.id,
+          BACKEND_URL + "transactions/" + props.transaction.id,
           dataToSubmit
         );
         props.refetch();
@@ -66,11 +67,12 @@ export default function ApprovePurchase(props: {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          Approve {props.purchase.number}?
+          Approve {props.transaction.number}?
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Anda yakin ingin menandai {props.purchase.number} sudah diapprove?
+            Anda yakin ingin menandai {props.transaction.number} sudah
+            diapprove?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -79,12 +81,12 @@ export default function ApprovePurchase(props: {
             variant="contained"
             color={approvePurchase.isLoading ? "inherit" : "primary"}
             onClick={() => {
-              approvePurchase.mutateAsync(props.purchase);
+              approvePurchase.mutateAsync(props.transaction);
             }}
             autoFocus
             disabled={approvePurchase.isLoading}
           >
-            {approvePurchase.isLoading ? "Menghapus" : "Approve"}
+            {approvePurchase.isLoading ? "Mengupdate" : "Approve"}
           </Button>
         </DialogActions>
       </Dialog>

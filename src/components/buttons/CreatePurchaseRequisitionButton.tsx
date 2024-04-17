@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@mui/material";
-import CreatePurchaseRequisitionForm from "../forms/CreatePurchase";
+import CreatePurchaseRequisitionForm from "../forms/CreateTransaction";
 
 import AddIcon from "@mui/icons-material/Add";
 

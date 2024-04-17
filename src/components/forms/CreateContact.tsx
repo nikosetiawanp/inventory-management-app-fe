@@ -1,13 +1,9 @@
 import {
   Autocomplete,
-  AutocompleteRenderInputParams,
-  Box,
   Button,
-  Checkbox,
   Dialog,
   FormControl,
   FormControlLabel,
-  FormLabel,
   Radio,
   RadioGroup,
   Stack,
@@ -15,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Contact } from "../../interfaces/interfaces";
@@ -27,7 +23,6 @@ export default function CreateContact() {
     register,
     handleSubmit,
     control,
-    watch,
     formState: { errors },
   } = useForm<Contact>();
 
@@ -37,7 +32,7 @@ export default function CreateContact() {
 
   const [selectedProvince, setSelectedProvince] = useState<any>();
   const [selectedCity, setSelectedCity] = useState<any>();
-  const [isSupplier, setIsSupplier] = useState<boolean>(true);
+  const [type, setType] = useState<"V" | "C">("V");
 
   const createContact = useMutation(
     async (data: Contact) => {
@@ -49,7 +44,7 @@ export default function CreateContact() {
         province: selectedProvince.provinsi,
         city: selectedCity,
         address: data.address,
-        isSupplier: isSupplier,
+        type: type,
       };
       console.log(dataToSubmit);
 
@@ -210,18 +205,16 @@ export default function CreateContact() {
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="row-radio-buttons-group"
-                value={isSupplier}
-                onChange={(event) =>
-                  setIsSupplier(event.target.value === "true")
-                }
+                value={type}
+                onChange={(event) => setType(event.target.value as "V" | "C")}
               >
                 <FormControlLabel
-                  value={true}
+                  value={"V"}
                   control={<Radio />}
-                  label="Supplier"
+                  label="Vendor"
                 />
                 <FormControlLabel
-                  value={false}
+                  value={"C"}
                   control={<Radio />}
                   label="Customer"
                 />

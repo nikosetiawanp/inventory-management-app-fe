@@ -20,12 +20,12 @@ import { useState } from "react";
 import PurchaseRow from "../components/rows/PurchaseRow";
 import axios from "axios";
 import { useQuery } from "react-query";
-import { Purchase } from "../interfaces/interfaces";
+import { Transaction } from "../interfaces/interfaces";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import CreatePurchase from "../components/forms/CreatePurchase";
+import CreateTransaction from "../components/forms/CreateTransaction";
 
 export default function PurchaseOrderPage() {
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -38,7 +38,7 @@ export default function PurchaseOrderPage() {
   const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&`
+        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=P`
     );
     return response.data.data;
   };
@@ -87,7 +87,7 @@ export default function PurchaseOrderPage() {
           </Button>
 
           {/* BUTTON */}
-          <CreatePurchase />
+          <CreateTransaction type={"P"} />
         </Stack>
 
         <TableContainer
@@ -125,11 +125,11 @@ export default function PurchaseOrderPage() {
                 <RowSkeleton rows={15} columns={5} />
               ) : (
                 transactionsQuery.data?.map(
-                  (purchase: Purchase, index: number) => (
+                  (transaction: Transaction, index: number) => (
                     <PurchaseRow
                       index={index}
                       key={index}
-                      purchase={purchase}
+                      transaction={transaction}
                       refetch={transactionsQuery.refetch}
                       arrayLength={transactionsQuery.data.length}
                     />

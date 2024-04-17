@@ -15,10 +15,10 @@ export interface Contact {
   province: string;
   city: string;
   address: string;
-  is_supplier: boolean;
+  type: "V" | "C";
 }
 
-export interface PurchaseItem {
+export interface TransactionItem {
   items(items: any): unknown;
   id: string;
   quantity: number;
@@ -28,11 +28,11 @@ export interface PurchaseItem {
   purchaseId: string | number;
   productId: string | number;
 
-  purchase: Purchase;
+  transaction: Transaction;
   product: Product;
 }
 
-export interface Purchase {
+export interface Transaction {
   id: string | number;
   number: string;
   date: string;
@@ -43,7 +43,7 @@ export interface Purchase {
 
   contact: Contact;
   contacts: Contact[];
-  purchaseItems: PurchaseItem[];
+  purchaseItems: TransactionItem[];
   inventories: Inventory[];
 }
 
@@ -56,7 +56,7 @@ export interface Inventory {
   description: string | null;
   purchaseId: string | number;
 
-  purchase: Purchase;
+  transaction: Transaction;
   contact: Contact;
   inventoryItems: InventoryItem[];
 }
@@ -75,10 +75,10 @@ export interface Invoice {
   date: string;
   dueDate: string;
   inventoryId: number | string;
-  purchaseId: number | string;
+  transactionId: number | string;
 
   inventory: Inventory;
-  purchase: Purchase;
+  transaction: Transaction;
   debts: Debt[];
 }
 

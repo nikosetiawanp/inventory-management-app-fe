@@ -8,45 +8,59 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  Button,
-  Stack,
-  InputAdornment,
-  TextField,
-  Typography,
 } from "@mui/material";
-import { Inventory, Purchase, PurchaseItem } from "../../interfaces/interfaces";
+import {
+  Inventory,
+  Transaction,
+  TransactionItem,
+} from "../../interfaces/interfaces";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
-import { register } from "module";
-import { useForm } from "react-hook-form";
 import EditPurchaseItemRow from "./EditPurchaseItemRow";
 
-export default function PurchaseDetailRow(props: {
-  purchaseItem: PurchaseItem;
+export default function TransactionDetailRow(props: {
+  transactionItem: TransactionItem;
   index: number;
-  purchase: Purchase;
+  transaction: Transaction;
   inventories: Inventory[];
 }) {
   const [editing, setEditing] = useState(false);
   // TOTAL ARRIVED
   const getTotalArrived = (productId: any) => {
-    const inventoryItems = props.inventories.map(
-      (inventory: Inventory) => inventory.inventoryItems
-    );
-    const filteredByProductId = [...inventoryItems.flat()]
-      .filter((inventoryItem: any) => inventoryItem.productId == productId)
-      .map((item: any) => item.quantity);
+    // if (props.inventories.length == 0) return 0;
+    // const inventoryItems = props.inventories?.map(
+    //   (inventory: Inventory) => inventory?.inventoryItems
+    // );
+    // const filteredByProductId = [...inventoryItems.flat()]
+    //   .filter((inventoryItem: any) => inventoryItem?.productId == productId)
+    //   .map((item: any) => item.quantity);
 
-    const total = filteredByProductId.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0
-    );
-    return total;
+    // const total = filteredByProductId.reduce(
+    //   (accumulator, currentValue) => accumulator + currentValue,
+    //   0
+    // );
+    // return total;
+    return 0;
   };
+  // const getTotalArrived = (productId: any) => {
+  //   const inventoryItems = props.inventories?.map(
+  //     (inventory: Inventory) => inventory.inventoryItems
+  //   );
+
+  //   // Flatten the array manually using concat and the spread operator
+  //   const flattenedInventoryItems = [].concat(...inventoryItems);
+
+  //   const filteredByProductId = flattenedInventoryItems
+  //     .filter((inventoryItem: any) => inventoryItem.productId == productId)
+  //     .map((item: any) => item.quantity);
+
+  //   const total = filteredByProductId.reduce(
+  //     (accumulator, currentValue) => accumulator + currentValue,
+  //     0
+  //   );
+  //   return total;
+  // };
   // TOTAL PRICE
   const calculateTotal = (
     quantity: number,
@@ -61,18 +75,18 @@ export default function PurchaseDetailRow(props: {
     const result = priceTotal - discountTotal + taxTotal;
     return result;
   };
-  const calculateSum = (items: PurchaseItem[]) => {
-    if (!items) return 0;
-    const totals = items?.map((item: PurchaseItem) =>
-      calculateTotal(item.quantity, item.price, item.discount, item.tax)
-    );
-    let sum = 0;
+  // const calculateSum = (items: TransactionItem[]) => {
+  //   if (!items) return 0;
+  //   const totals = items?.map((item: TransactionItem) =>
+  //     calculateTotal(item.quantity, item.price, item.discount, item.tax)
+  //   );
+  //   let sum = 0;
 
-    totals.forEach((price: number) => {
-      sum += price;
-    });
-    return sum;
-  };
+  //   totals.forEach((price: number) => {
+  //     sum += price;
+  //   });
+  //   return sum;
+  // };
 
   // FORMAT CURRENCY
   const currencyFormatter = new Intl.NumberFormat("id-ID", {
@@ -137,10 +151,10 @@ export default function PurchaseDetailRow(props: {
   const Row = () => {
     return (
       <TableRow key={props.index}>
-        <TableCell>{props.purchaseItem.product.name}</TableCell>
+        <TableCell>{props.transactionItem.product.name}</TableCell>
 
         <TableCell align="center">
-          {props.purchaseItem.quantity} {props.purchaseItem.product.unit}
+          {props.transactionItem.quantity} {props.transactionItem.product.unit}
         </TableCell>
 
         <TableCell align="center">
@@ -148,17 +162,17 @@ export default function PurchaseDetailRow(props: {
             size="small"
             variant="filled"
             color={
-              getTotalArrived(props.purchaseItem.productId) == 0
+              getTotalArrived(props.transactionItem.productId) == 0
                 ? "error"
-                : getTotalArrived(props.purchaseItem.productId) >=
-                  props.purchaseItem.quantity
+                : getTotalArrived(props.transactionItem.productId) >=
+                  props.transactionItem.quantity
                 ? "success"
                 : "warning"
             }
             label={
-              getTotalArrived(props.purchaseItem.productId) +
+              getTotalArrived(props.transactionItem.productId) +
               " " +
-              props.purchaseItem.product.unit
+              props.transactionItem.product.unit
             }
           />
           {/* <Typography
@@ -190,18 +204,18 @@ export default function PurchaseDetailRow(props: {
           /> */}
         </TableCell>
         <TableCell align="right">
-          {currencyFormatter.format(props.purchaseItem.price)}
+          {currencyFormatter.format(props.transactionItem.price)}
         </TableCell>
 
-        <TableCell align="center">{props.purchaseItem.discount}%</TableCell>
-        <TableCell align="center">{props.purchaseItem.tax}%</TableCell>
+        <TableCell align="center">{props.transactionItem.discount}%</TableCell>
+        <TableCell align="center">{props.transactionItem.tax}%</TableCell>
         <TableCell align="right">
           {currencyFormatter.format(
             calculateTotal(
-              props.purchaseItem.quantity,
-              props.purchaseItem.price,
-              props.purchaseItem.discount,
-              props.purchaseItem.tax
+              props.transactionItem.quantity,
+              props.transactionItem.price,
+              props.transactionItem.discount,
+              props.transactionItem.tax
             )
           )}
         </TableCell>
@@ -355,11 +369,11 @@ export default function PurchaseDetailRow(props: {
 
   return editing ? (
     <EditPurchaseItemRow
-      purchaseItem={props.purchaseItem}
+      purchaseItem={props.transactionItem}
       editing={editing}
       setEditing={setEditing}
       inventories={props.inventories}
-      purchase={props.purchase}
+      purchase={props.transaction}
     />
   ) : (
     <Row />

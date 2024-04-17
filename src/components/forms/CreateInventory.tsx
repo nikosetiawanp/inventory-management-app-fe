@@ -1,27 +1,14 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+import { Button, Dialog, Stack, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  Inventory,
-  Product,
-  Purchase,
-  Contact,
-} from "../../interfaces/interfaces";
+import { Inventory, Transaction } from "../../interfaces/interfaces";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import axios from "axios";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import SelectPurchase from "../select/SelectPurchase";
+import { useMutation, useQueryClient } from "react-query";
+import SelectTransaction from "../select/SelectTransaction";
 
 export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
   const {
@@ -34,11 +21,10 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const [open, setOpen] = useState(false);
   // VENDOR
-  const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(
-    null
-  );
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
   const handlePurchaseChange = (event: any, value: any) => {
-    setSelectedPurchase(value);
+    setSelectedTransaction(value);
     setValue("contact", value ? value.id : "");
   };
 
@@ -80,7 +66,7 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
       receiptNumber: data.receiptNumber,
       isArrival: true,
       description: data.description,
-      purchaseId: selectedPurchase?.id,
+      transactionId: selectedTransaction?.id,
     };
     try {
       console.log(dataToSubmit);
@@ -112,9 +98,9 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
           <Stack gap={3} padding={4}>
             <Typography variant="h6">Catat Gudang Masuk</Typography>
             {/* PURCHASE */}
-            <SelectPurchase
-              selectedPurchase={selectedPurchase}
-              setSelectedPurchase={setSelectedPurchase}
+            <SelectTransaction
+              selectedPurchase={selectedTransaction}
+              setSelectedPurchase={setSelectedTransaction}
               handlePurchaseChange={handlePurchaseChange}
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>

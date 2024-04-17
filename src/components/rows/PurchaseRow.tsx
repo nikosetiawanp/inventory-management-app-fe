@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { TableRow, TableCell, Chip } from "@mui/material";
 
-import { Purchase } from "../../interfaces/interfaces";
+import { Transaction } from "../../interfaces/interfaces";
 import MoreVertPurchaseButton from "../buttons/MoreVertPurchaseButton";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
-import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-import PurchaseDetailDialog from "../dialogs/PurchaseDetailDialog";
+import TransactionDetailDialog from "../dialogs/TransactionDetailDialog";
 
 export default function PurchaseRow(props: {
   index: number;
-  purchase: Purchase;
+  transaction: Transaction;
   refetch: any;
   arrayLength: number;
 }) {
@@ -62,22 +61,22 @@ export default function PurchaseRow(props: {
         sx={{ cursor: "pointer" }}
         onClick={() => setOpen(true)}
       >
-        <TableCell>{props.purchase.number}</TableCell>
-        <TableCell>{props.purchase.contact.name}</TableCell>
-        <TableCell>{formatDate(props.purchase.date)}</TableCell>
+        <TableCell>{props.transaction?.number}</TableCell>
+        <TableCell>{props.transaction?.contact?.name}</TableCell>
+        <TableCell>{formatDate(props.transaction?.date)}</TableCell>
         <TableCell>
           <Chip
             size="small"
             variant="filled"
             icon={
-              props.purchase.isApproved ? (
+              props.transaction?.isApproved ? (
                 <CheckCircleIcon fontSize="small" />
               ) : (
                 <WatchLaterIcon fontSize="small" />
               )
             }
-            label={props.purchase.isApproved ? "Approved" : "Pending"}
-            color={props.purchase.isApproved ? "success" : "warning"}
+            label={props.transaction?.isApproved ? "Approved" : "Pending"}
+            color={props.transaction?.isApproved ? "success" : "warning"}
           />
         </TableCell>
         <TableCell>
@@ -85,28 +84,27 @@ export default function PurchaseRow(props: {
             size="small"
             variant="filled"
             icon={
-              props.purchase.isDone ? (
+              props.transaction.isDone ? (
                 <CheckCircleIcon fontSize="small" />
               ) : (
                 <WatchLaterIcon fontSize="small" />
               )
             }
-            label={props.purchase.isDone ? "Selesai" : "Belum Selesai"}
-            color={props.purchase.isDone ? "success" : "warning"}
+            label={props.transaction?.isDone ? "Selesai" : "Belum Selesai"}
+            color={props.transaction?.isDone ? "success" : "warning"}
           />
         </TableCell>
 
         <TableCell>
-          <MoreVertPurchaseButton purchase={props.purchase} />
+          <MoreVertPurchaseButton purchase={props.transaction} />
         </TableCell>
       </TableRow>
 
       {/* DIALOG */}
-
-      <PurchaseDetailDialog
+      <TransactionDetailDialog
         open={open}
         setOpen={setOpen}
-        purchase={props.purchase}
+        transaction={props.transaction}
         refetch={props.refetch}
       />
     </>

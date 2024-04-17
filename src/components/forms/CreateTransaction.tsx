@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import SelectContact from "../select/SelectContact";
 import AddIcon from "@mui/icons-material/Add";
 
-export default function CreatePurchase() {
+export default function CreateTransaction(props: { type: "P" | "S" }) {
   const {
     register,
     handleSubmit,
@@ -34,7 +34,7 @@ export default function CreatePurchase() {
   // POST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
-  const createPurchase = useMutation(
+  const createTransaction = useMutation(
     async (data: Purchase) => {
       try {
         const response = await axios.post(BACKEND_URL + "transactions/", data);
@@ -54,7 +54,7 @@ export default function CreatePurchase() {
   const onSubmit: SubmitHandler<Purchase> = async (data, event) => {
     const dataToSubmit: any = {
       number: data.number,
-      type: "P",
+      type: props.type,
       date: formattedDate,
       expectedArrival: null,
       isApproved: false,
@@ -63,7 +63,7 @@ export default function CreatePurchase() {
     };
 
     try {
-      await createPurchase.mutateAsync(dataToSubmit);
+      await createTransaction.mutateAsync(dataToSubmit);
       setOpen(false);
     } catch (error) {
       console.log("Mutation Error:", error);
@@ -79,7 +79,7 @@ export default function CreatePurchase() {
         sx={{ marginLeft: "auto" }}
         size="small"
       >
-        Buat Purchase Order
+        {props.type == "P" ? "Buat Purchase Order" : "Buat Sales Order"}
       </Button>
       <Dialog
         open={open}
@@ -93,7 +93,9 @@ export default function CreatePurchase() {
           noValidate
         >
           <Stack gap={3} padding={4}>
-            <Typography variant="h6">Buat Purchase Requisition</Typography>
+            <Typography variant="h6">
+              {props.type == "P" ? "Buat Purchase Order" : "Buat Sales Order"}
+            </Typography>
             {/* DATE PICKER */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
@@ -112,6 +114,7 @@ export default function CreatePurchase() {
               selectedContact={selectedContact}
               setSelectedContact={setSelectedContact}
               handleContactChange={handleContactChange}
+              type={props.type}
             />
 
             {/* NOMOR SURAT */}
@@ -136,9 +139,9 @@ export default function CreatePurchase() {
               <Button
                 variant={"contained"}
                 type="submit"
-                disabled={createPurchase.isLoading}
+                disabled={createTransaction.isLoading}
               >
-                {createPurchase.isLoading ? "Menyimpan" : "Simpan"}
+                {createTransaction.isLoading ? "Menyimpan" : "Simpan"}
               </Button>
             </Stack>
           </Stack>

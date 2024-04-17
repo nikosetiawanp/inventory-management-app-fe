@@ -1,7 +1,5 @@
 import {
-  Button,
   Dialog,
-  InputBase,
   Stack,
   Table,
   TableBody,
@@ -16,21 +14,22 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Contact } from "../../interfaces/interfaces";
-import CreateVendorButton from "../buttons/CreateVendorButton";
-import SearchIcon from "@mui/icons-material/Search";
 import CreateContact from "../forms/CreateContact";
 
 export default function SelectContact(props: {
   selectedContact: Contact | null | undefined;
   setSelectedContact: any;
   handleContactChange: any;
+  type: "P" | "S";
 }) {
   const [open, setOpen] = useState(false);
 
   // GET PURCHASES
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getContacts = async () => {
-    const response = await axios.get(BACKEND_URL + "contacts");
+    const response = await axios.get(
+      BACKEND_URL + `contacts?type=${props.type == "P" ? "V" : "C"}`
+    );
     return response.data.data;
   };
   const contactsQuery = useQuery({
@@ -73,7 +72,7 @@ export default function SelectContact(props: {
               marginBottom={2}
               marginRight={"auto"}
             >
-              Pilih Vendor
+              {props.type == "P" ? "Pilih Vendor" : "Pilih Customer"}
             </Typography>
             <CreateContact />
             {/* <CreateVendorButton /> */}

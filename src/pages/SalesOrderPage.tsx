@@ -9,7 +9,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import Drawer from "../components/Drawer";
@@ -24,7 +23,7 @@ import RowSkeleton from "../components/skeletons/RowSkeleton";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import CreatePurchase from "../components/forms/CreatePurchase";
+import CreateTransaction from "../components/forms/CreateTransaction";
 
 export default function PurchaseRequisitionPage() {
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -37,7 +36,7 @@ export default function PurchaseRequisitionPage() {
   const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&`
+        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=S`
     );
     return response.data.data;
   };
@@ -86,7 +85,7 @@ export default function PurchaseRequisitionPage() {
           </Button>
 
           {/* BUTTON */}
-          <CreatePurchase />
+          <CreateTransaction type={"S"} />
         </Stack>
 
         <TableContainer

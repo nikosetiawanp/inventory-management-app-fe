@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonGroup,
   IconButton,
   Stack,
   Table,
@@ -17,19 +18,19 @@ import { Settings } from "@mui/icons-material";
 import { Contact } from "../interfaces/interfaces";
 
 import Drawer from "../components/Drawer";
-import CreateVendorButton from "../components/buttons/CreateVendorButton";
 import MoreVertVendorButton from "../components/buttons/MoreVertVendorButton";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CreateContact from "../components/forms/CreateContact";
-import { provinceData } from "../public/ProvinceData";
 
 export default function ContactPage() {
   // FETCHING DATA
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getContacts = async () => {
-    const response = await axios.get(BACKEND_URL + "contacts/");
+    const response = await axios.get(
+      BACKEND_URL + `contacts?type=${selectedType}`
+    );
     console.log(response.data);
 
     return response.data.data;
@@ -41,12 +42,21 @@ export default function ContactPage() {
     refetchOnWindowFocus: false,
   });
 
+  const [selectedType, setSelectedType] = useState("V");
   const [searchInput, setSearchInput] = useState("");
   const filteredContactsQuery = contactsQuery?.data?.filter(
     (vendor: Contact) =>
       vendor.name.toLowerCase().includes(searchInput.toLowerCase()) ||
       vendor.code.toLowerCase().includes(searchInput.toLowerCase())
   );
+
+  const handleTypeChange = (type: "V" | "C") => {
+    setSelectedType(type);
+  };
+
+  useEffect(() => {
+    contactsQuery.refetch();
+  }, [selectedType]);
 
   return (
     // PAGE
@@ -58,7 +68,12 @@ export default function ContactPage() {
         <Typography fontWeight={"bold"} variant="h4">
           Contacts
         </Typography>
-        <Stack direction={"row"} justifyContent={"space-between"} width={1}>
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          width={1}
+          gap={2}
+        >
           <TextField
             id="outlined-basic"
             placeholder="Cari"
@@ -68,9 +83,29 @@ export default function ContactPage() {
             value={searchInput}
             onChange={(event) => {
               setSearchInput(event.target.value);
+              contactsQuery.refetch();
             }}
           />
           {/* BUTTON */}
+          <ButtonGroup
+            sx={{ marginRight: "auto" }}
+            disabled={contactsQuery.isRefetching}
+          >
+            <Button
+              variant={selectedType == "V" ? "contained" : "outlined"}
+              size="small"
+              onClick={() => handleTypeChange("V")}
+            >
+              Vendor
+            </Button>
+            <Button
+              variant={selectedType == "C" ? "contained" : "outlined"}
+              size="small"
+              onClick={() => handleTypeChange("C")}
+            >
+              Customer
+            </Button>
+          </ButtonGroup>
           <CreateContact />
         </Stack>
 
@@ -95,6 +130,7 @@ export default function ContactPage() {
                 <TableCell>Alamat</TableCell>
                 <TableCell>Nomor Telepon</TableCell>
                 <TableCell>Email</TableCell>
+
                 <TableCell width={10}>
                   <IconButton size="small">
                     <Settings fontSize="small" />

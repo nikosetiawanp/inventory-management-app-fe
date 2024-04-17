@@ -1,17 +1,10 @@
-import {
-  TableRow,
-  TableCell,
-  Box,
-  Typography,
-  TextField,
-  IconButton,
-} from "@mui/material";
+import { TableRow, TableCell, TextField, IconButton } from "@mui/material";
 import { ClearIcon } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import { Product } from "../../interfaces/interfaces";
 import SelectProduct from "../select/SelectProduct";
 
-export default function NewPurchaseItem(props: {
+export default function NewInventoryItem(props: {
   update: any;
   index: any;
   value: any;

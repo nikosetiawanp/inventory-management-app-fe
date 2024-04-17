@@ -1,4 +1,4 @@
-import { MoreVert, Settings } from "@mui/icons-material";
+import { Settings } from "@mui/icons-material";
 import {
   Dialog,
   Stack,
@@ -11,32 +11,23 @@ import {
   TableCell,
   IconButton,
   TableBody,
-  Chip,
 } from "@mui/material";
-import MorePurchaseButton from "../buttons/MorePurchaseButton";
 
-import {
-  PurchaseItem,
-  Product,
-  Purchase,
-  Inventory,
-  InventoryItem,
-} from "../../interfaces/interfaces";
-import AddIcon from "@mui/icons-material/Add";
+import { TransactionItem, Transaction } from "../../interfaces/interfaces";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import RowSkeleton from "../skeletons/RowSkeleton";
 import { useEffect, useState } from "react";
-import NewPurchaseItem from "../rows/NewPurchaseItem";
+import NewTransactionItem from "../rows/NewTransactionItem";
 import CreateInvoice from "../buttons/CreateInvoice";
-import PurchaseDetailRow from "../rows/PurchaseDetailRow";
+import TransactionDetailRow from "../rows/TransactionDetailRow";
 import ApprovePurchase from "../buttons/ApprovePurchase";
 
-export default function PurchaseDetailDialog(props: {
+export default function TransactionDetailDialog(props: {
   open: boolean;
   setOpen: any;
-  purchase: Purchase;
+  transaction: Transaction;
   refetch: any;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -44,21 +35,23 @@ export default function PurchaseDetailDialog(props: {
 
   //   FORM
   const { control, handleSubmit, watch, setValue } = useForm();
-  const { fields, append, prepend, update, remove } = useFieldArray({
+  const { fields, append, update, remove } = useFieldArray({
     control,
-    name: "purchaseItems",
+    name: "transactionItems",
   });
 
   // GET ITEMS
-  const getPurchaseItems = async () => {
+  const getTransactionItems = async () => {
     const response = await axios.get(
-      BACKEND_URL + `purchase-items?purchaseId=${props.purchase.id}`
+      BACKEND_URL + `transaction-items?transactionId=${props.transaction.id}`
     );
+    console.log(response.data.data);
+
     return response.data.data;
   };
-  const purchaseItemsQuery = useQuery({
-    queryKey: [`purchaseItems.${props.purchase.id}`],
-    queryFn: () => getPurchaseItems(),
+  const transactionItemsQuery = useQuery({
+    queryKey: [`transactionItems.${props.transaction.id}`],
+    queryFn: () => getTransactionItems(),
     refetchOnWindowFocus: false,
     enabled: props.open,
   });
@@ -79,8 +72,9 @@ export default function PurchaseDetailDialog(props: {
   // GET INVENTORIES
   const getInventories = async () => {
     const response = await axios.get(
-      BACKEND_URL + `inventories?purchaseId=${props.purchase.id}`
+      BACKEND_URL + `inventories?transactionId=${props.transaction.id}`
     );
+    console.log(response.data.data);
 
     return response.data.data;
   };
@@ -125,9 +119,9 @@ export default function PurchaseDetailDialog(props: {
     return result;
   };
 
-  const calculateSum = (purchaseItems: PurchaseItem[]) => {
-    if (!purchaseItems) return 0;
-    const totals = purchaseItems?.map((item: PurchaseItem) =>
+  const calculateSum = (transactionItems: TransactionItem[]) => {
+    if (!transactionItems) return 0;
+    const totals = transactionItems?.map((item: TransactionItem) =>
       calculateTotal(item.quantity, item.price, item.discount, item.tax)
     );
     let sum = 0;
@@ -187,11 +181,11 @@ export default function PurchaseDetailDialog(props: {
   // POST
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createItems = useMutation(
-    async (data: PurchaseItem[]) => {
+    async (data: TransactionItem[]) => {
       setIsSubmitting(true);
       try {
         const response = await axios.post(
-          BACKEND_URL + "purchase-items/bulk",
+          BACKEND_URL + "transaction-items/bulk",
           data
         );
         setIsSubmitting(false);
@@ -203,18 +197,19 @@ export default function PurchaseDetailDialog(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(`purchaseItems.${props.purchase.id}`);
+        queryClient.invalidateQueries(
+          `transactionItems.${props.transaction.id}`
+        );
       },
     }
   );
 
-  const onSubmit: SubmitHandler<any> = async (
-    data: { purchaseItems: PurchaseItem[] },
-    event
-  ) => {
+  const onSubmit: SubmitHandler<any> = async (data: {
+    transactionItems: TransactionItem[];
+  }) => {
     try {
-      console.log(data.purchaseItems);
-      await createItems.mutateAsync(data.purchaseItems);
+      console.log(data.transactionItems);
+      await createItems.mutateAsync(data.transactionItems);
       clearFieldsArray();
     } catch (error) {
       console.log("Mutation Error:", error);
@@ -240,17 +235,18 @@ export default function PurchaseDetailDialog(props: {
           <Stack>
             <Typography variant="body1">Purchase Order</Typography>
             <Typography variant="h3" fontWeight="bold">
-              {props.purchase.number}
+              {props.transaction?.number}
             </Typography>
             <Stack direction={"row"} gap={0.5}>
               <Typography variant="body1">Vendor :</Typography>
-              <Typography>{props.purchase.contact.name}</Typography>
+              <Typography>{props.transaction?.contact?.name}</Typography>
             </Stack>
             <Typography variant="body1">
-              Tanggal : {formatDate(props.purchase.date)}
+              Tanggal : {formatDate(props.transaction?.date)}
             </Typography>
             <Typography variant="body1">
-              Estimasi Kedatangan : {formatDate(props.purchase.expectedArrival)}
+              Estimasi Kedatangan :{" "}
+              {formatDate(props.transaction?.expectedArrival)}
             </Typography>
           </Stack>
 
@@ -265,25 +261,22 @@ export default function PurchaseDetailDialog(props: {
                 disabled={isSubmitting}
                 sx={{ minHeight: "100%" }}
               >
-                {isSubmitting
-                  ? "Menyimpan"
-                  : // <CircularProgress color="inherit" size={15} />
-                    "Simpan"}
+                {isSubmitting ? "Menyimpan" : "Simpan"}
               </Button>
             ) : (
               <>
-                {props.purchase.isApproved ? (
+                {props.transaction?.isApproved ? (
                   <>
                     {/* <Button variant="outlined">2 Faktur</Button> */}
                     <CreateInvoice
                       inventories={inventoriesQuery.data}
-                      purchase={props.purchase}
+                      purchase={props.transaction}
                     />
                   </>
                 ) : (
                   <ApprovePurchase
                     refetch={props.refetch}
-                    purchase={props.purchase}
+                    transaction={props.transaction}
                   />
                 )}
                 {/* <MorePurchaseButton /> */}
@@ -343,23 +336,23 @@ export default function PurchaseDetailDialog(props: {
               }}
             >
               {/* NEW ITEM */}
-              {purchaseItemsQuery.isLoading ? (
+              {transactionItemsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={8} />
               ) : (
-                purchaseItemsQuery.data?.map(
-                  (purchaseItem: PurchaseItem, index: number) => (
-                    <PurchaseDetailRow
+                transactionItemsQuery.data?.map(
+                  (transactionItem: TransactionItem, index: number) => (
+                    <TransactionDetailRow
                       key={index}
-                      purchaseItem={purchaseItem}
+                      transactionItem={transactionItem}
                       index={index}
-                      purchase={props.purchase}
+                      transaction={props.transaction}
                       inventories={inventoriesQuery.data}
                     />
                   )
                 )
               )}
               {fields.map((field, index) => (
-                <NewPurchaseItem
+                <NewTransactionItem
                   key={field.id}
                   control={control}
                   update={update}
@@ -367,7 +360,7 @@ export default function PurchaseDetailDialog(props: {
                   value={field}
                   remove={remove}
                   products={productsQuery.data}
-                  purchase={props.purchase}
+                  purchase={props.transaction}
                   watch={watch}
                   fields={fields}
                   setValue={setValue}
@@ -383,7 +376,7 @@ export default function PurchaseDetailDialog(props: {
                     price: "",
                     discount: "",
                     tax: "",
-                    purchaseId: props.purchase.id,
+                    transactionId: props.transaction?.id,
                     productId: "",
                   });
                 }}
@@ -411,7 +404,7 @@ export default function PurchaseDetailDialog(props: {
           </Typography>
           <Typography fontWeight={"bold"} variant="body1">
             {currencyFormatter.format(
-              calculateSum(purchaseItemsQuery.data as any)
+              calculateSum(transactionItemsQuery.data as any)
             )}
           </Typography>
         </Stack>

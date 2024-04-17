@@ -33,6 +33,12 @@ const theme = createTheme({
         disableElevation: true,
       },
     },
+    MuiButtonGroup: {
+      defaultProps: {
+        disableRipple: true,
+        disableElevation: true,
+      },
+    },
   },
 });
 

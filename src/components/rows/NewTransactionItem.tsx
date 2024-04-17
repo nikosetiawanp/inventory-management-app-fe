@@ -1,9 +1,6 @@
 import {
   TableRow,
   TableCell,
-  Autocomplete,
-  Box,
-  Typography,
   TextField,
   InputAdornment,
   IconButton,
@@ -13,7 +10,7 @@ import { useEffect, useState } from "react";
 import { Product } from "../../interfaces/interfaces";
 import SelectProduct from "../select/SelectProduct";
 
-export default function NewPurchaseItem(props: {
+export default function NewTransactionItem(props: {
   update: any;
   index: any;
   value: any;
@@ -30,7 +27,7 @@ export default function NewPurchaseItem(props: {
 
   useEffect(() => {
     props.setValue(
-      `purchaseItems[${props.index}].productId`,
+      `transactionItems[${props.index}].productId`,
       selectedProduct?.id
     );
   }, [selectedProduct]);
@@ -55,7 +52,7 @@ export default function NewPurchaseItem(props: {
           id={`items[${props.index}].quantity`}
           variant="outlined"
           size="small"
-          {...register(`purchaseItems[${props.index}].quantity`, {
+          {...register(`transactionItems[${props.index}].quantity`, {
             required: "Tidak boleh kosong",
           })}
           sx={{ textAlign: "center" }}
@@ -73,7 +70,7 @@ export default function NewPurchaseItem(props: {
 
       <TableCell width={200}>
         <TextField
-          id={`purchaseItems[${props.index}].price`}
+          id={`transactionItems[${props.index}].price`}
           variant="outlined"
           size="small"
           InputProps={{
@@ -81,20 +78,20 @@ export default function NewPurchaseItem(props: {
               <InputAdornment position="start">Rp</InputAdornment>
             ),
           }}
-          {...register(`purchaseItems[${props.index}].price`)}
+          {...register(`transactionItems[${props.index}].price`)}
         />
       </TableCell>
 
       {/* DISCOUNT */}
       <TableCell width={80}>
         <TextField
-          id={`purchaseItems[${props.index}].discount`}
+          id={`transactionItems[${props.index}].discount`}
           variant="outlined"
           size="small"
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}
-          {...register(`purchaseItems[${props.index}].discount`, {
+          {...register(`transactionItems[${props.index}].discount`, {
             required: "Tidak boleh kosong",
           })}
         />
@@ -108,7 +105,7 @@ export default function NewPurchaseItem(props: {
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}
-          {...register(`purchaseItems[${props.index}].tax`, {
+          {...register(`transactionItems[${props.index}].tax`, {
             required: "Tidak boleh kosong",
           })}
         />

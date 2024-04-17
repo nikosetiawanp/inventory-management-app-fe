@@ -17,7 +17,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { Purchase } from "../../interfaces/interfaces";
+import { Transaction } from "../../interfaces/interfaces";
 
 export default function SelectPurchase(props: {
   selectedPurchase: Purchase | null | undefined;
@@ -35,7 +35,7 @@ export default function SelectPurchase(props: {
   const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&isApproved=1&isDone=0`
+        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&isApproved=1&type=P`
     );
     console.log(response.data.data);
 
