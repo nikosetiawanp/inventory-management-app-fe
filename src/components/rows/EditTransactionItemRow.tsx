@@ -3,52 +3,51 @@ import {
   TableCell,
   TextField,
   InputAdornment,
-  Chip,
   Stack,
   IconButton,
 } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Inventory,
-  InventoryItem,
-  Purchase,
-  PurchaseItem,
+  Transaction,
+  TransactionItem,
 } from "../../interfaces/interfaces";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
 
-export default function EditPurchaseItemRow(props: {
-  purchaseItem: PurchaseItem;
+export default function EditTransactionItemRow(props: {
+  transactionItem: TransactionItem;
   editing: boolean;
   setEditing: any;
   inventories: Inventory[];
-  purchase: Purchase;
+  transaction: Transaction;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors },
+    // formState: { errors },
   } = useForm();
 
-  const updatePurchaseItem = useMutation(
-    async (data: PurchaseItem) => {
+  const updateTransactionItem = useMutation(
+    async (data: TransactionItem) => {
       const dataToSubmit = {
         quantity: data.quantity,
         price: data.price,
         discount: data.discount,
         tax: data.tax,
-        purchaseId: props.purchaseItem.purchaseId,
-        productId: props.purchaseItem.productId,
+        transactionId: props.transactionItem?.transactionId,
+        productId: props.transactionItem?.productId,
       };
 
+      console.log(dataToSubmit);
+
       try {
-        const response = await axios.patch(
-          BACKEND_URL + "purchase-items/" + props.purchaseItem.id,
+        const response = await axios.put(
+          BACKEND_URL + "transaction-items/" + props.transactionItem?.id,
           dataToSubmit
         );
 
@@ -59,14 +58,16 @@ export default function EditPurchaseItemRow(props: {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(`purchaseItems.${props.purchase.id}`);
+        queryClient.invalidateQueries(
+          `transactionItems.${props.transaction.id}`
+        );
       },
     }
   );
 
-  const onSubmit: SubmitHandler<PurchaseItem> = async (data, event) => {
+  const onSubmit: SubmitHandler<TransactionItem> = async (data, event) => {
     try {
-      await updatePurchaseItem.mutateAsync(data);
+      await updateTransactionItem.mutateAsync(data);
       console.log("Success");
       props.setEditing(false);
     } catch (error) {
@@ -75,36 +76,36 @@ export default function EditPurchaseItemRow(props: {
   };
 
   // FORMAT CURRENCY
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  });
+  // const currencyFormatter = new Intl.NumberFormat("id-ID", {
+  //   style: "currency",
+  //   currency: "IDR",
+  // });
 
-  // TOTAL ARRIVED
-  const getTotalArrived = (productId: any) => {
-    const inventoryItems = props.inventories.map(
-      (inventory: Inventory) => inventory.inventoryItems
-    );
-    const filteredByProductId = [...inventoryItems.flat()]
-      .filter((inventoryItem: any) => inventoryItem.productId == productId)
-      .map((item: any) => item.quantity);
+  // // TOTAL ARRIVED
+  // const getTotalArrived = (productId: any) => {
+  //   const inventoryItems = props.inventories.map(
+  //     (inventory: Inventory) => inventory.inventoryItems
+  //   );
+  //   const filteredByProductId = [...inventoryItems.flat()]
+  //     .filter((inventoryItem: any) => inventoryItem.productId == productId)
+  //     .map((item: any) => item.quantity);
 
-    const total = filteredByProductId.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0
-    );
-    return total;
-  };
+  //   const total = filteredByProductId.reduce(
+  //     (accumulator, currentValue) => accumulator + currentValue,
+  //     0
+  //   );
+  //   return total;
+  // };
 
   return (
     <TableRow>
-      <TableCell>{props.purchaseItem?.product?.name}</TableCell>
+      <TableCell>{props.transactionItem?.product?.name}</TableCell>
       <TableCell width={100}>
         <TextField
           id={`quantity`}
           variant="outlined"
           size="small"
-          defaultValue={props.purchaseItem.quantity}
+          defaultValue={props.transactionItem?.quantity}
           {...register(`quantity`, {
             required: "Tidak boleh kosong",
           })}
@@ -112,7 +113,7 @@ export default function EditPurchaseItemRow(props: {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                {props.purchaseItem?.product?.unit}
+                {props.transactionItem?.product?.unit}
               </InputAdornment>
             ),
           }}
@@ -124,7 +125,7 @@ export default function EditPurchaseItemRow(props: {
           id={`price`}
           variant="outlined"
           size="small"
-          defaultValue={props.purchaseItem.price}
+          defaultValue={props.transactionItem?.price}
           {...register(`price`, {
             required: "Tidak boleh kosong",
           })}
@@ -142,7 +143,7 @@ export default function EditPurchaseItemRow(props: {
           id={`discount`}
           variant="outlined"
           size="small"
-          defaultValue={props.purchaseItem.discount}
+          defaultValue={props.transactionItem?.discount}
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}
@@ -156,7 +157,7 @@ export default function EditPurchaseItemRow(props: {
           id={`tax`}
           variant="outlined"
           size="small"
-          defaultValue={props.purchaseItem.tax}
+          defaultValue={props.transactionItem?.tax}
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}

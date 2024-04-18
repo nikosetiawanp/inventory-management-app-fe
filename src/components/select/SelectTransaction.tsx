@@ -20,7 +20,7 @@ import { useQuery } from "react-query";
 import { Transaction } from "../../interfaces/interfaces";
 
 export default function SelectPurchase(props: {
-  selectedPurchase: Purchase | null | undefined;
+  selectedPurchase: Transaction | null | undefined;
   setSelectedPurchase: any;
   handlePurchaseChange: any;
 }) {
@@ -118,7 +118,7 @@ export default function SelectPurchase(props: {
               <TableBody>
                 {transactionsQuery?.data &&
                   transactionsQuery?.data.map(
-                    (purchase: Purchase, index: number) => (
+                    (purchase: Transaction, index: number) => (
                       <TableRow
                         key={index}
                         hover

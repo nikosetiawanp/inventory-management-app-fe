@@ -17,7 +17,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 
 import { useState } from "react";
-import EditPurchaseItemRow from "./EditPurchaseItemRow";
+import EditTransactionItemRow from "./EditTransactionItemRow";
 
 export default function TransactionDetailRow(props: {
   transactionItem: TransactionItem;
@@ -368,12 +368,12 @@ export default function TransactionDetailRow(props: {
   // };
 
   return editing ? (
-    <EditPurchaseItemRow
-      purchaseItem={props.transactionItem}
+    <EditTransactionItemRow
+      transactionItem={props.transactionItem}
       editing={editing}
       setEditing={setEditing}
       inventories={props.inventories}
-      purchase={props.transaction}
+      transaction={props.transaction}
     />
   ) : (
     <Row />

@@ -25,7 +25,7 @@ export interface TransactionItem {
   price: number;
   discount: number;
   tax: number;
-  purchaseId: string | number;
+  transactionId: string | number;
   productId: string | number;
 
   transaction: Transaction;
@@ -43,7 +43,7 @@ export interface Transaction {
 
   contact: Contact;
   contacts: Contact[];
-  purchaseItems: TransactionItem[];
+  transactionItems: TransactionItem[];
   inventories: Inventory[];
 }
 
@@ -51,10 +51,10 @@ export interface Inventory {
   id: number | string;
   number: string;
   date: any;
-  isArrival: boolean;
+  type: "A" | "D";
   receiptNumber: string;
   description: string | null;
-  purchaseId: string | number;
+  transactionId: string | number;
 
   transaction: Transaction;
   contact: Contact;

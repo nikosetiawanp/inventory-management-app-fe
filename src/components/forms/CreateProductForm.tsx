@@ -63,7 +63,7 @@ export default function CreateProductForm(props: {
     } catch (error) {
       console.log("Mutation Error:", error);
     }
-    event?.target.reset();
+    // event?.target.reset();
     props.setOpen(false);
   };
 
