@@ -24,8 +24,8 @@ import {
   PurchaseItem,
   Inventory,
   InventoryItem,
+  TransactionItem,
 } from "../../interfaces/interfaces";
-import AddIcon from "@mui/icons-material/Add";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
@@ -38,7 +38,7 @@ export default function InventoryDetailDialog(props: {
   open: boolean;
   setOpen: any;
   inventory: Inventory;
-  purchaseItems: PurchaseItem[];
+  transactionItems: TransactionItem[];
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
@@ -124,7 +124,7 @@ export default function InventoryDetailDialog(props: {
       const dataToSubmit = await data.map((data, index) => {
         return {
           quantity: data.quantity ? data.quantity : 0,
-          productId: props.purchaseItems[index].productId,
+          productId: props.transactionItems[index].productId,
           inventoryId: props.inventory.id,
         };
       });
@@ -182,7 +182,7 @@ export default function InventoryDetailDialog(props: {
                 {formatDate(props.inventory?.date)}
               </Typography>
               <Typography variant="body1">
-                {props.inventory?.purchase?.contact?.name}
+                {props.inventory?.transaction?.contact?.name}
               </Typography>
             </Stack>
             {/* BUTTONS */}
@@ -244,7 +244,7 @@ export default function InventoryDetailDialog(props: {
               >
                 {/* NEW ITEM */}
                 {inventoryItemsQuery?.data?.length == 0
-                  ? props.purchaseItems?.map(
+                  ? props.transactionItems?.map(
                       (purchaseItem: any, index: number) => (
                         <TableRow key={index}>
                           {/* {index} */}
@@ -279,7 +279,7 @@ export default function InventoryDetailDialog(props: {
                           index={index}
                           inventory={props.inventory}
                           inventoryItem={inventoryItem}
-                          purchaseItems={props.purchaseItems}
+                          purchaseItems={props.transactionItems}
                         />
                         // <TableRow key={index}>
                         //   {/* {index} */}

@@ -35,8 +35,10 @@ export default function InventoryArrivalPage() {
   const getInventories = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&isArrival=1`
+        `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=A`
     );
+    console.log(response.data.data);
+
     return response.data.data;
   };
 

@@ -57,9 +57,9 @@ export default function InventoryRow(props: {
       >
         <TableCell>{props.inventory?.number}</TableCell>
         <TableCell>{props.inventory?.receiptNumber}</TableCell>
-        <TableCell>{props.inventory?.purchase?.contact?.name}</TableCell>
+        <TableCell>{props.inventory?.transaction?.contact?.name}</TableCell>
         <TableCell>{formatDate(props.inventory?.date)}</TableCell>
-        <TableCell>{props.inventory?.purchase?.number}</TableCell>
+        <TableCell>{props.inventory?.transaction?.number}</TableCell>
         <TableCell>{props.inventory?.description}</TableCell>
         <TableCell align="center" width={10}>
           <ArrivalHistoryOptionButton inventory={props.inventory} />
@@ -70,7 +70,7 @@ export default function InventoryRow(props: {
         open={open}
         setOpen={setOpen}
         inventory={props.inventory}
-        purchaseItems={props.inventory?.purchase?.purchaseItems}
+        transactionItems={props.inventory?.transaction?.transactionItems}
       />
     </>
   );

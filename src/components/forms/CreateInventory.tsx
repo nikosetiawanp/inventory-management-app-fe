@@ -64,7 +64,7 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
       number: data.number,
       date: formattedDate,
       receiptNumber: data.receiptNumber,
-      isArrival: true,
+      type: props.type,
       description: data.description,
       transactionId: selectedTransaction?.id,
     };
@@ -96,7 +96,9 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
       >
         <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
           <Stack gap={3} padding={4}>
-            <Typography variant="h6">Catat Gudang Masuk</Typography>
+            <Typography variant="h6">
+              {props.type == "A" ? "Catat Gudang Masuk" : "Catat Gudang Keluar"}
+            </Typography>
             {/* PURCHASE */}
             <SelectTransaction
               selectedPurchase={selectedTransaction}
