@@ -47,7 +47,7 @@ const DeleteArrivalHistory = (props: { inventory: Inventory }) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("inventoryhistories");
+        queryClient.invalidateQueries("inventories");
       },
     }
   );
