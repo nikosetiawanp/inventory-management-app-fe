@@ -1,5 +1,5 @@
 import { Dialog, Stack, Typography, TextField, Button } from "@mui/material";
-import { Purchase, Contact } from "../../interfaces/interfaces";
+import { Transaction, Contact } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
@@ -16,7 +16,7 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<Purchase>();
+  } = useForm<Transaction>();
 
   const [open, setOpen] = useState(false);
 
@@ -35,7 +35,7 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
   const createTransaction = useMutation(
-    async (data: Purchase) => {
+    async (data: Transaction) => {
       try {
         const response = await axios.post(BACKEND_URL + "transactions/", data);
         return response.data;
@@ -51,7 +51,7 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
     }
   );
 
-  const onSubmit: SubmitHandler<Purchase> = async (data, event) => {
+  const onSubmit: SubmitHandler<Transaction> = async (data, event) => {
     const dataToSubmit: any = {
       number: data.number,
       type: props.type,

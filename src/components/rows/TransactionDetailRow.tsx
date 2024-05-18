@@ -114,6 +114,7 @@ export default function TransactionDetailRow(props: {
           aria-controls={open ? "demo-positioned-menu" : undefined}
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
+          disabled={props.transaction.isApproved}
         >
           <MoreVert fontSize="small" />
         </IconButton>

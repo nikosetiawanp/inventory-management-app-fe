@@ -50,7 +50,7 @@ export default function SelectContact(props: {
     <>
       <TextField
         id="outlined-basic"
-        label="Contact"
+        label={props.type == "P" ? "Vendor" : "Customer"}
         variant="outlined"
         sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}

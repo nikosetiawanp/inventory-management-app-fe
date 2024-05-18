@@ -21,7 +21,6 @@ import {
 } from "@mui/material";
 
 import {
-  PurchaseItem,
   Inventory,
   InventoryItem,
   TransactionItem,

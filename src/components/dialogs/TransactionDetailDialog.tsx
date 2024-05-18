@@ -367,22 +367,25 @@ export default function TransactionDetailDialog(props: {
                 />
               ))}
               {/* <TableRow> */}
-              <Button
-                variant="text"
-                // startIcon={<AddIcon />}
-                onClick={() => {
-                  append({
-                    quantity: 0,
-                    price: "",
-                    discount: "",
-                    tax: "",
-                    transactionId: props.transaction?.id,
-                    productId: "",
-                  });
-                }}
-              >
-                Tambah Produk
-              </Button>
+              {!props.transaction?.isApproved && (
+                <Button
+                  variant="text"
+                  // startIcon={<AddIcon />}
+                  onClick={() => {
+                    append({
+                      quantity: 0,
+                      price: "",
+                      discount: "",
+                      tax: "",
+                      transactionId: props.transaction?.id,
+                      productId: "",
+                    });
+                  }}
+                >
+                  Tambah Produk
+                </Button>
+              )}
+
               {/* </TableRow> */}
             </TableBody>
           </Table>

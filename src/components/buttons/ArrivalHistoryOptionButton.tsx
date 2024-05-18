@@ -19,7 +19,7 @@ import { Inventory } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
-const DeleteArrivalHistory = (props: { inventory: Inventory }) => {
+const DeleteInventory = (props: { inventory: Inventory }) => {
   const [open, setOpen] = useState(false);
   const handleClickOpen = (event: any) => {
     event.stopPropagation();
@@ -32,12 +32,11 @@ const DeleteArrivalHistory = (props: { inventory: Inventory }) => {
 
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
-  const deleteInventoryHistory = useMutation(
+  const deleteInventory = useMutation(
     async (id: number | any) => {
+      console.log(id);
       try {
-        const response = await axios.delete(
-          BACKEND_URL + "inventory-histories/" + id
-        );
+        const response = await axios.delete(BACKEND_URL + "inventories/" + id);
         return response.data;
       } catch (error: any) {
         console.log(error);
@@ -67,7 +66,9 @@ const DeleteArrivalHistory = (props: { inventory: Inventory }) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Hapus ABXKSKJD?</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          Hapus {props.inventory?.number}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Data yang sudah dihapus tidak dapat dikembalikan.
@@ -76,14 +77,14 @@ const DeleteArrivalHistory = (props: { inventory: Inventory }) => {
         <DialogActions>
           <Button onClick={handleClose}>Batal</Button>
           <Button
-            color={deleteInventoryHistory.isLoading ? "inherit" : "error"}
+            color={deleteInventory.isLoading ? "inherit" : "error"}
             onClick={() => {
-              deleteInventoryHistory.mutateAsync(props.inventory.id);
+              deleteInventory.mutateAsync(props.inventory?.id);
             }}
             autoFocus
-            disabled={deleteInventoryHistory.isLoading}
+            disabled={deleteInventory.isLoading}
           >
-            {deleteInventoryHistory.isLoading
+            {deleteInventory.isLoading
               ? "Menghapus"
               : // <CircularProgress color="inherit" size={15} />
                 "Hapus"}
@@ -143,7 +144,7 @@ export default function ArrivalHistoryOptionButton(props: {
           </ListItemIcon>
           <ListItemText>Ubah</ListItemText>
         </MenuItem>
-        <DeleteArrivalHistory inventory={props.inventory} />
+        <DeleteInventory inventory={props.inventory} />
         {/* <DeleteProductButton product={props.product} /> */}
       </Menu>
     </>

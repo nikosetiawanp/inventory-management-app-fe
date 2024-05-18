@@ -19,9 +19,7 @@ export default function InventoryRow(props: {
     };
 
     const formattedDate = date.toLocaleDateString("id-ID", options);
-
     const [day, month, year] = formattedDate.split(" ");
-
     const monthNames = [
       "Januari",
       "Februari",
