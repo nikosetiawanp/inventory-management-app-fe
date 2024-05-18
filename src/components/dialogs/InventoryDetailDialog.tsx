@@ -223,11 +223,11 @@ export default function InventoryDetailDialog(props: {
                   <TableCell>Produk</TableCell>
                   <TableCell align="center">Quantity</TableCell>
                   <TableCell align="center">Masuk</TableCell>
-                  <TableCell width={10}>
+                  {/* <TableCell width={10}>
                     <IconButton size="small">
                       <Settings fontSize="small" />
                     </IconButton>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               </TableHead>
 
@@ -267,7 +267,7 @@ export default function InventoryDetailDialog(props: {
                               }}
                             />
                           </TableCell>
-                          <TableCell width={10}></TableCell>
+                          {/* <TableCell width={10}></TableCell> */}
                         </TableRow>
                       )
                     )

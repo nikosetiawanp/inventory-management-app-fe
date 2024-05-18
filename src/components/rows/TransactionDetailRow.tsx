@@ -27,32 +27,13 @@ export default function TransactionDetailRow(props: {
 }) {
   const [editing, setEditing] = useState(false);
   // TOTAL ARRIVED
-  const getTotalArrived = (productId: any) => {
-    // if (props.inventories.length == 0) return 0;
-    // const inventoryItems = props.inventories?.map(
-    //   (inventory: Inventory) => inventory?.inventoryItems
-    // );
-    // const filteredByProductId = [...inventoryItems.flat()]
-    //   .filter((inventoryItem: any) => inventoryItem?.productId == productId)
-    //   .map((item: any) => item.quantity);
-
-    // const total = filteredByProductId.reduce(
-    //   (accumulator, currentValue) => accumulator + currentValue,
-    //   0
-    // );
-    // return total;
-    return 0;
-  };
   // const getTotalArrived = (productId: any) => {
+  //   if (props.inventories.length == 0) return 0;
   //   const inventoryItems = props.inventories?.map(
-  //     (inventory: Inventory) => inventory.inventoryItems
+  //     (inventory: Inventory) => inventory?.inventoryItems
   //   );
-
-  //   // Flatten the array manually using concat and the spread operator
-  //   const flattenedInventoryItems = [].concat(...inventoryItems);
-
-  //   const filteredByProductId = flattenedInventoryItems
-  //     .filter((inventoryItem: any) => inventoryItem.productId == productId)
+  //   const filteredByProductId = [...inventoryItems.flat()]
+  //     .filter((inventoryItem: any) => inventoryItem?.productId == productId)
   //     .map((item: any) => item.quantity);
 
   //   const total = filteredByProductId.reduce(
@@ -60,7 +41,26 @@ export default function TransactionDetailRow(props: {
   //     0
   //   );
   //   return total;
+  //   return 0;
   // };
+  const getTotalArrived = (productId: any) => {
+    const inventoryItems = props.inventories?.map(
+      (inventory: Inventory) => inventory.inventoryItems
+    );
+
+    // Flatten the array manually using concat and the spread operator
+    const flattenedInventoryItems = [].concat(...(inventoryItems as any));
+
+    const filteredByProductId = flattenedInventoryItems
+      .filter((inventoryItem: any) => inventoryItem.productId == productId)
+      .map((item: any) => item.quantity);
+
+    const total = filteredByProductId.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0
+    );
+    return total;
+  };
   // TOTAL PRICE
   const calculateTotal = (
     quantity: number,

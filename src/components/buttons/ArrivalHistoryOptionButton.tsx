@@ -145,7 +145,6 @@ export default function ArrivalHistoryOptionButton(props: {
           <ListItemText>Ubah</ListItemText>
         </MenuItem>
         <DeleteInventory inventory={props.inventory} />
-        {/* <DeleteProductButton product={props.product} /> */}
       </Menu>
     </>
   );

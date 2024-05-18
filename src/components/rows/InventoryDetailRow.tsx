@@ -16,10 +16,9 @@ import { useState } from "react";
 import {
   Inventory,
   InventoryItem,
-  PurchaseItem,
+  TransactionItem,
 } from "../../interfaces/interfaces";
 import EditIcon from "@mui/icons-material/Edit";
-import { register } from "module";
 import { SubmitHandler, useForm } from "react-hook-form";
 import CheckIcon from "@mui/icons-material/Check";
 
@@ -30,7 +29,7 @@ import axios from "axios";
 export default function InventoryDetailRow(props: {
   index: number;
   inventoryItem: InventoryItem;
-  purchaseItems: PurchaseItem[];
+  purchaseItems: TransactionItem[];
   inventory: Inventory;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -176,7 +175,8 @@ export default function InventoryDetailRow(props: {
           />
         )}
       </TableCell>
-      <TableCell width={10}>
+      {/* OPTIONS */}
+      {/* <TableCell width={10}>
         {editing ? (
           <Stack direction="row" justifyContent="center">
             <IconButton
@@ -197,7 +197,7 @@ export default function InventoryDetailRow(props: {
         ) : (
           <OptionButton />
         )}
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   );
 }
