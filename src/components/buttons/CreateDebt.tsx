@@ -32,8 +32,8 @@ export default function CreateDebt(props: {
   const dataToSubmit = {
     amount: props.debtAmount,
     isPaid: false,
-    invoiceId: props.invoice.id,
-    contactId: props.invoice.purchase.contactId,
+    invoiceId: props.invoice?.id,
+    contactId: props.invoice?.transaction?.contactId,
   };
 
   const createDebt = useMutation(

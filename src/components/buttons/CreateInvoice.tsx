@@ -13,13 +13,13 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { Inventory, Purchase } from "../../interfaces/interfaces";
+import { Inventory, Transaction } from "../../interfaces/interfaces";
 import SelectInventory from "../select/SelectInventory";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 
 export default function CreateInvoice(props: {
   inventories: Inventory[];
-  purchase: Purchase;
+  transaction: Transaction;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -63,9 +63,11 @@ export default function CreateInvoice(props: {
       number: data.number,
       date: formattedDate,
       dueDate: formattedDueDate,
-      purchaseId: props.purchase.id,
+      transactionId: props.transaction.id,
       inventoryId: selectedInventory?.id,
     };
+
+    console.log(dataToSubmit);
 
     try {
       await createInvoice.mutateAsync(dataToSubmit);

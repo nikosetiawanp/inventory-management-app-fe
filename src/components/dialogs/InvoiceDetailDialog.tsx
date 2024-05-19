@@ -16,7 +16,7 @@ import {
 import MorePurchaseButton from "../buttons/MorePurchaseButton";
 
 import {
-  PurchaseItem,
+  TransactionItem,
   Inventory,
   InventoryItem,
   Invoice,
@@ -63,13 +63,13 @@ export default function InvoiceDetailDialog(props: {
   // GET PURCHASE ITEMS
   const getPurchaseItems = async () => {
     const response = await axios.get(
-      BACKEND_URL + `purchase-items?purchaseId=${props.invoice.purchaseId}`
+      BACKEND_URL + `purchase-items?purchaseId=${props.invoice.transactionId}`
     );
 
     return response.data.data;
   };
   const purchaseItemsQuery = useQuery({
-    queryKey: [`purchaseItems.${props.invoice.purchaseId}`],
+    queryKey: [`purchaseItems.${props.invoice.transactionId}`],
     queryFn: () => getPurchaseItems(),
     refetchOnWindowFocus: false,
     enabled: props.open,
@@ -124,8 +124,8 @@ export default function InvoiceDetailDialog(props: {
 
   // FIND PURCHASE ITEM
   const findPurchaseItem = (inventoryItem: InventoryItem) => {
-    const foundPurchaseItem: PurchaseItem = purchaseItemsQuery.data.find(
-      (purchaseItem: PurchaseItem) =>
+    const foundPurchaseItem: TransactionItem = purchaseItemsQuery.data.find(
+      (purchaseItem: TransactionItem) =>
         purchaseItem.productId == inventoryItem.productId
     );
 
@@ -182,15 +182,15 @@ export default function InvoiceDetailDialog(props: {
         >
           {/* TITLE */}
           <Stack>
-            <Typography variant="h4">{props.invoice.number}</Typography>
+            <Typography variant="h4">{props.invoice?.number}</Typography>
             <Typography variant="body1">
-              {formatDate(props.invoice.inventory.date)}
+              {formatDate(props.invoice?.inventory.date)}
             </Typography>
             <Typography variant="body1">
-              Jatuh tempo : {formatDate(props.invoice.dueDate)}
+              Jatuh tempo : {formatDate(props.invoice?.dueDate)}
             </Typography>
             <Typography variant="body1">
-              {props.invoice.inventory.number}
+              {props.invoice?.inventory.number}
             </Typography>
           </Stack>
           {/* BUTTONS */}
@@ -264,7 +264,7 @@ export default function InvoiceDetailDialog(props: {
                       {/* HARGA */}
                       <TableCell align="right">
                         {currencyFormatter.format(
-                          findPurchaseItem(inventoryItem).price
+                          findPurchaseItem(inventoryItem)?.price
                         )}
                         {/* {findPurchaseItem(inventoryItem).price
                           ? currencyFormatter.format(
@@ -285,9 +285,9 @@ export default function InvoiceDetailDialog(props: {
                         {currencyFormatter.format(
                           calculateTotal(
                             inventoryItem.quantity,
-                            findPurchaseItem(inventoryItem).price,
-                            findPurchaseItem(inventoryItem).discount,
-                            findPurchaseItem(inventoryItem).tax
+                            findPurchaseItem(inventoryItem)?.price,
+                            findPurchaseItem(inventoryItem)?.discount,
+                            findPurchaseItem(inventoryItem)?.tax
                           )
                         )}
                       </TableCell>

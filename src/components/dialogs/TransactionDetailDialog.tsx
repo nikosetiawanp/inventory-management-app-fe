@@ -270,7 +270,7 @@ export default function TransactionDetailDialog(props: {
                     {/* <Button variant="outlined">2 Faktur</Button> */}
                     <CreateInvoice
                       inventories={inventoriesQuery.data}
-                      purchase={props.transaction}
+                      transaction={props.transaction}
                     />
                   </>
                 ) : (
