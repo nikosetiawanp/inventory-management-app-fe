@@ -61,16 +61,17 @@ export default function InvoiceDetailDialog(props: {
   });
 
   // GET PURCHASE ITEMS
-  const getPurchaseItems = async () => {
+  const getTransactionItems = async () => {
     const response = await axios.get(
-      BACKEND_URL + `purchase-items?purchaseId=${props.invoice.transactionId}`
+      BACKEND_URL +
+        `transaction-items?transactionId=${props.invoice?.transactionId}`
     );
 
     return response.data.data;
   };
   const purchaseItemsQuery = useQuery({
-    queryKey: [`purchaseItems.${props.invoice.transactionId}`],
-    queryFn: () => getPurchaseItems(),
+    queryKey: [`purchaseItems.${props.invoice?.transactionId}`],
+    queryFn: () => getTransactionItems(),
     refetchOnWindowFocus: false,
     enabled: props.open,
   });
@@ -125,8 +126,8 @@ export default function InvoiceDetailDialog(props: {
   // FIND PURCHASE ITEM
   const findPurchaseItem = (inventoryItem: InventoryItem) => {
     const foundPurchaseItem: TransactionItem = purchaseItemsQuery.data.find(
-      (purchaseItem: TransactionItem) =>
-        purchaseItem.productId == inventoryItem.productId
+      (transactionItem: TransactionItem) =>
+        transactionItem.productId == inventoryItem.productId
     );
 
     return foundPurchaseItem;

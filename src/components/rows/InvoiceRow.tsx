@@ -1,6 +1,10 @@
 import { Chip, TableCell, TableRow } from "@mui/material";
 import ArrivalHistoryOptionButton from "../buttons/ArrivalHistoryOptionButton";
-import { Inventory, Invoice, PurchaseItem } from "../../interfaces/interfaces";
+import {
+  Inventory,
+  Invoice,
+  TransactionItem,
+} from "../../interfaces/interfaces";
 import { useState } from "react";
 import InventoryDetailDialog from "../dialogs/InventoryDetailDialog";
 import InvoiceOptionButton from "../buttons/InvoiceOptionButton";
@@ -55,7 +59,7 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
       >
         <TableCell>{formatDate(props.invoice?.date)}</TableCell>
         <TableCell>{props.invoice?.number}</TableCell>
-        <TableCell>{props.invoice?.purchase?.contact?.name}</TableCell>
+        <TableCell>{props.invoice?.transaction?.contact?.name}</TableCell>
         <TableCell>
           <Chip
             size="small"
