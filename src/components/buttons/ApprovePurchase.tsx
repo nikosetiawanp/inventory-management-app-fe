@@ -30,14 +30,16 @@ export default function ApprovePurchase(props: {
   const approvePurchase = useMutation(
     async (data: Transaction) => {
       const dataToSubmit = {
-        number: props.transaction.number,
-        date: props.transaction.date,
-        expectedArrival: props.transaction.expectedArrival,
+        number: props.transaction?.number,
+        date: props.transaction?.date,
+        expectedArrival: null,
         isApproved: true,
         isDone: false,
-        contactId: props.transaction.contactId,
+        contactId: props.transaction?.contactId,
         type: "P",
       };
+      console.log(dataToSubmit);
+
       try {
         const response = await axios.put(
           BACKEND_URL + "transactions/" + props.transaction.id,
@@ -46,6 +48,7 @@ export default function ApprovePurchase(props: {
         props.refetch();
         return response.data;
       } catch (error) {
+        console.log(error);
         throw new Error("Network response was not ok");
       }
     },
@@ -55,6 +58,7 @@ export default function ApprovePurchase(props: {
       },
     }
   );
+
   return (
     <>
       <Button variant="contained" onClick={handleClickOpen}>

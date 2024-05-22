@@ -13,11 +13,14 @@ import {
 import { useState } from "react";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Vendor } from "../../interfaces/interfaces";
+import { Transaction, TransactionItem } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
-export default function DeleteVendorButton(props: { vendor: Vendor }) {
+export default function DeleteTransactionItemButton(props: {
+  transaction: Transaction;
+  transactionItem: TransactionItem;
+}) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
@@ -28,10 +31,12 @@ export default function DeleteVendorButton(props: { vendor: Vendor }) {
   };
 
   const queryClient = useQueryClient();
-  const deleteVendor = useMutation(
+  const deleteTransactionItem = useMutation(
     async (id: number | any) => {
       try {
-        const response = await axios.delete(BACKEND_URL + "vendors/" + id);
+        const response = await axios.delete(
+          BACKEND_URL + "transaction-items/" + id
+        );
         return response.data;
       } catch (error: any) {
         console.log(error);
@@ -41,16 +46,18 @@ export default function DeleteVendorButton(props: { vendor: Vendor }) {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("vendors");
+        queryClient.invalidateQueries(
+          `transactionItems.${props.transaction.id}`
+        );
       },
     }
   );
 
-  const { isLoading } = deleteVendor;
+  const { isLoading } = deleteTransactionItem;
 
   return (
     <>
-      <MenuItem onClick={handleClickOpen}>
+      <MenuItem onClick={() => handleClickOpen()}>
         <ListItemIcon>
           <DeleteIcon fontSize="small" color="error" />
         </ListItemIcon>
@@ -63,14 +70,10 @@ export default function DeleteVendorButton(props: { vendor: Vendor }) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          Hapus {props.vendor.code}?
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">Hapus item ini?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Data yang sudah dihapus tidak dapat dikembalikan.
-            {/* Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running. */}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -78,7 +81,7 @@ export default function DeleteVendorButton(props: { vendor: Vendor }) {
           <Button
             color={isLoading ? "inherit" : "error"}
             onClick={() => {
-              deleteVendor.mutateAsync(props.vendor.id);
+              deleteTransactionItem.mutateAsync(props.transactionItem?.id);
             }}
             autoFocus
             disabled={isLoading}

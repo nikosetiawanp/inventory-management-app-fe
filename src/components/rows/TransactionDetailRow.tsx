@@ -15,9 +15,11 @@ import {
   TransactionItem,
 } from "../../interfaces/interfaces";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useState } from "react";
 import EditTransactionItemRow from "./EditTransactionItemRow";
+import DeleteTransactionItem from "../buttons/DeleteTransactionItem";
 
 export default function TransactionDetailRow(props: {
   transactionItem: TransactionItem;
@@ -142,6 +144,16 @@ export default function TransactionDetailRow(props: {
             </ListItemIcon>
             <ListItemText>Ubah</ListItemText>
           </MenuItem>
+          <DeleteTransactionItem
+            transaction={props.transaction}
+            transactionItem={props.transactionItem}
+          />
+          {/* <MenuItem onClick={() => setEditing(true)}>
+            <ListItemIcon>
+              <DeleteIcon fontSize="small" color="error" />
+            </ListItemIcon>
+            <ListItemText sx={{ color: "error.main" }}>Hapus</ListItemText>
+          </MenuItem> */}
           {/* <DeleteInvoice invoice={props.invoice} /> */}
           {/* <DeleteProductButton product={props.product} /> */}
         </Menu>

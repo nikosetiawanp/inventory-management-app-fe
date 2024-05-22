@@ -242,12 +242,13 @@ export default function TransactionDetailDialog(props: {
               <Typography>{props.transaction?.contact?.name}</Typography>
             </Stack>
             <Typography variant="body1">
-              Tanggal : {formatDate(props.transaction?.date)}
+              {/* Tanggal :  */}
+              {formatDate(props.transaction?.date)}
             </Typography>
-            <Typography variant="body1">
+            {/* <Typography variant="body1">
               Estimasi Kedatangan :{" "}
               {formatDate(props.transaction?.expectedArrival)}
-            </Typography>
+            </Typography> */}
           </Stack>
 
           {/* BUTTONS */}

@@ -11,7 +11,7 @@ import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Contact } from "../../interfaces/interfaces";
-import DeleteVendorButton from "./DeleteVendorButton";
+import DeleteContactButton from "./DeleteContactButton";
 
 export default function MoreVertVendorButton(props: { contact: Contact }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -59,7 +59,7 @@ export default function MoreVertVendorButton(props: { contact: Contact }) {
           </ListItemIcon>
           <ListItemText>Ubah</ListItemText>
         </MenuItem>
-        <DeleteVendorButton vendor={props.contact} />
+        <DeleteContactButton contact={props.contact} />
         {/* <MenuItem>
           <ListItemIcon>
             <DeleteIcon fontSize="small" color="error" />

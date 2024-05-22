@@ -29,7 +29,10 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
 
   // DATE
   const [selectedDate, setSelectedDate] = useState(dayjs());
+  // const [expectedArrival, setExpectedArrival] = useState(null);
+
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
+  // const formattedExpectedArrival = dayjs(expectedArrival).format("YYYY-MM-DD");
 
   // POST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -61,6 +64,8 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
       isDone: false,
       contactId: selectedContact?.id,
     };
+
+    console.log(dataToSubmit);
 
     try {
       await createTransaction.mutateAsync(dataToSubmit);
@@ -108,6 +113,19 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
                 }}
               />
             </LocalizationProvider>
+
+            {/* EXPECTED ARRIVAL */}
+            {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Estimasi Kedatangan"
+                value={expectedArrival}
+                onChange={(newValue: any) => setExpectedArrival(newValue)}
+                format="DD/MM/YYYY"
+                slotProps={{
+                  field: { clearable: true },
+                }}
+              />
+            </LocalizationProvider> */}
 
             {/* AUTOCOMPLETE */}
             <SelectContact

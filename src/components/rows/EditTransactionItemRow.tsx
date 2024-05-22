@@ -68,7 +68,6 @@ export default function EditTransactionItemRow(props: {
   const onSubmit: SubmitHandler<TransactionItem> = async (data, event) => {
     try {
       await updateTransactionItem.mutateAsync(data);
-      console.log("Success");
       props.setEditing(false);
     } catch (error) {
       console.log(error);
