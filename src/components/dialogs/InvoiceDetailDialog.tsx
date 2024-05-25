@@ -125,7 +125,7 @@ export default function InvoiceDetailDialog(props: {
 
   // FIND PURCHASE ITEM
   const findPurchaseItem = (inventoryItem: InventoryItem) => {
-    const foundPurchaseItem: TransactionItem = purchaseItemsQuery.data.find(
+    const foundPurchaseItem: TransactionItem = purchaseItemsQuery?.data?.find(
       (transactionItem: TransactionItem) =>
         transactionItem.productId == inventoryItem.productId
     );
@@ -153,9 +153,9 @@ export default function InvoiceDetailDialog(props: {
     const totals = inventoryItems?.map((inventoryItem: InventoryItem) =>
       calculateTotal(
         inventoryItem.quantity,
-        findPurchaseItem(inventoryItem).price,
-        findPurchaseItem(inventoryItem).discount,
-        findPurchaseItem(inventoryItem).tax
+        findPurchaseItem(inventoryItem)?.price,
+        findPurchaseItem(inventoryItem)?.discount,
+        findPurchaseItem(inventoryItem)?.tax
       )
     );
 
@@ -198,7 +198,7 @@ export default function InvoiceDetailDialog(props: {
           <Stack direction="row" gap={2}>
             {/* <Typography>{props.inventory.invoiceNumber}</Typography> */}
             <CreateDebt
-              debtAmount={calculateSum(inventoryItemsQuery.data)}
+              debtAmount={calculateSum(inventoryItemsQuery?.data)}
               invoice={props.invoice}
             />
             {/* <Button variant="contained" onClick={() => {}}>

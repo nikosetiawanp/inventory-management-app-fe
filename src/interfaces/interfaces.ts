@@ -85,11 +85,13 @@ export interface Invoice {
 export interface Debt {
   id: number | string;
   amount: number;
+  type: "D" | "R";
   isPaid: boolean;
   invoiceId: string | number;
   contactId: string | number;
 
   invoice: Invoice;
+  contact: Contact;
   payments: Payment[];
 }
 

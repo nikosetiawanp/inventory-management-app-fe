@@ -31,6 +31,7 @@ export default function CreateDebt(props: {
 
   const dataToSubmit = {
     amount: props.debtAmount,
+    type: "D",
     isPaid: false,
     invoiceId: props.invoice?.id,
     contactId: props.invoice?.transaction?.contactId,
@@ -38,6 +39,8 @@ export default function CreateDebt(props: {
 
   const createDebt = useMutation(
     async (data: Debt) => {
+      console.log(data);
+
       try {
         const response = await axios.post(BACKEND_URL + "debts/", data);
         setOpen(false);

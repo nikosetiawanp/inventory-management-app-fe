@@ -35,7 +35,10 @@ export default function DebtPage() {
 
   // GET DEBTS
   const getDebts = async () => {
-    const response = await axios.get(BACKEND_URL + `debts/`);
+    const response = await axios.get(
+      BACKEND_URL +
+        `debts?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
+    );
     console.log(response.data.data);
 
     return response.data.data;
@@ -57,9 +60,7 @@ export default function DebtPage() {
     };
 
     const formattedDate = date.toLocaleDateString("id-ID", options);
-
     const [day, month, year] = formattedDate.split(" ");
-
     const monthNames = [
       "Januari",
       "Februari",

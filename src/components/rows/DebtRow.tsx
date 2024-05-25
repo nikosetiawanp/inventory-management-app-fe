@@ -57,16 +57,16 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
   };
 
   const today = new Date();
-  const dueDate = new Date(props.debt.invoice.dueDate);
+  const dueDate = new Date(props.debt?.invoice?.dueDate);
 
   const debtAmount = props.debt?.amount;
   const totalPaid = sumDebtPayments(props.debt?.payments);
 
   return (
     <TableRow key={props.index} hover>
-      <TableCell>{formatDate(props.debt?.invoice.date)}</TableCell>
-      <TableCell>{props.debt?.invoice.number}</TableCell>
-      <TableCell>{props.debt?.invoice?.purchase?.contact?.name}</TableCell>
+      <TableCell>{formatDate(props.debt?.invoice?.date)}</TableCell>
+      <TableCell>{props.debt?.invoice?.number}</TableCell>
+      <TableCell>{props.debt?.contact?.name}</TableCell>
       <TableCell>
         <Chip
           variant="filled"
