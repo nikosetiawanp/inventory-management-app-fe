@@ -147,10 +147,9 @@ export default function CreatePayment(props: { debt: Debt }) {
               id="amount"
               label="Deskripsi"
               variant="outlined"
-              {...register("description", { required: "Tidak boleh kosong" })}
+              {...register("description")}
               error={!!errors.description}
               helperText={errors.description?.message}
-              required
             />
 
             {/* ACTIONS */}
