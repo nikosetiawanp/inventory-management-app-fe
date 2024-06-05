@@ -277,10 +277,10 @@ export default function InvoiceDetailDialog(props: {
                       </TableCell>
 
                       <TableCell align="center">
-                        {findPurchaseItem(inventoryItem).discount}%
+                        {findPurchaseItem(inventoryItem)?.discount}%
                       </TableCell>
                       <TableCell align="center">
-                        {findPurchaseItem(inventoryItem).tax}%
+                        {findPurchaseItem(inventoryItem)?.tax}%
                       </TableCell>
                       <TableCell align="right">
                         {currencyFormatter.format(

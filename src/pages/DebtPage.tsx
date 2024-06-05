@@ -22,7 +22,7 @@ import { useQuery } from "react-query";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { CheckCircle, Settings, WatchLater } from "@mui/icons-material";
 import { Debt, Payment } from "../interfaces/interfaces";
-import PayDebt from "../components/buttons/PayDebt";
+import PayDebt from "../components/buttons/CreatePayment";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import DebtRow from "../components/rows/DebtRow";
 
@@ -146,6 +146,7 @@ export default function DebtPage() {
                 <TableCell>Tanggal Jatuh Tempo</TableCell>
                 <TableCell>Jumlah Tagihan</TableCell>
                 <TableCell>Jumlah Dibayar</TableCell>
+                <TableCell align="center">Pembayaran</TableCell>
                 <TableCell align="center">Status</TableCell>
                 <TableCell width={10} align="center">
                   <IconButton size="small">
@@ -161,36 +162,6 @@ export default function DebtPage() {
               ) : (
                 debtsQuery?.data?.map((debt: Debt, index: number) => (
                   <DebtRow key={index} index={index} debt={debt} />
-                  // <TableRow key={index} hover>
-                  //   <TableCell>{formatDate(debt?.invoice.date)}</TableCell>
-                  //   <TableCell>{debt?.invoice.number}</TableCell>
-                  //   <TableCell>
-                  //     {debt?.invoice?.purchase?.contact?.name}
-                  //   </TableCell>
-                  //   <TableCell>
-                  //     <Chip
-                  //       variant="filled"
-                  //       size="small"
-                  //       label={formatDate(debt?.invoice?.dueDate)}
-                  //     />
-                  //   </TableCell>
-                  //   <TableCell>
-                  //     {currencyFormatter.format(debt?.amount)}
-                  //   </TableCell>
-                  //   <TableCell align="center">
-                  //     <Chip
-                  //       label={debt?.isPaid ? "Lunas" : "Belum lunas"}
-                  //       variant="filled"
-                  //       color={debt?.isPaid ? "success" : "error"}
-                  //       size="small"
-                  //     />
-                  //   </TableCell>
-                  //   <TableCell>
-                  //     {/* {sumDebtPayments(debt.debtPayments) < debt?.debtAmount ? (
-                  //       <PayDebt debt={debt} />
-                  //     ) : null} */}
-                  //   </TableCell>
-                  // </TableRow>
                 ))
               )}
             </TableBody>

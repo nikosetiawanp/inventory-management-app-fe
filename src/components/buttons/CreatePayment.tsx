@@ -11,13 +11,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { register } from "module";
 import { useState } from "react";
-import { Debt } from "../../interfaces/interfaces";
+import { Cash, Debt, Payment } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import CompleteDebt from "./CompleteDebt";
 
-export default function PayDebt(props: { debt: Debt }) {
+export default function CreatePayment(props: { debt: Debt }) {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
@@ -27,24 +27,48 @@ export default function PayDebt(props: { debt: Debt }) {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<Debt>();
+  } = useForm<Cash>();
 
-  //   UPDATE DEBT
+  // CREATE CASH
+  const createCash = useMutation(
+    async (data: Cash) => {
+      try {
+        const response = await axios.post(BACKEND_URL + "cashes/", data);
+        return response.data;
+      } catch (error) {
+        console.log(error);
+        throw new Error("Network response was not ok");
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("cashes");
+        console.log("Create Cash Successful");
+      },
+    }
+  );
+
+  //   CREATE PAYMENT
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
-  const updateDebt = useMutation(
-    async (data: Debt) => {
+  const createPayment = useMutation(
+    async (data: Cash) => {
       try {
         const response = await axios.post(BACKEND_URL + "payments/", data);
         setOpen(false);
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
+        console.error(
+          "Error posting payment:",
+          error.response ? error.response.data : error.message
+        );
         throw new Error("Network response was not ok");
       }
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries(`debts`);
+        console.log("Create Cash Successful");
       },
     }
   );
@@ -52,16 +76,16 @@ export default function PayDebt(props: { debt: Debt }) {
   const onSubmit: SubmitHandler<any> = async (data: any, event: any) => {
     const dataToSubmit = {
       date: formattedDate,
+      number: data.number,
+      description: data.description,
       amount: data.amount,
       debtId: props.debt.id,
-
-      number: "0000",
-      description: null,
       accountId: 1,
     };
+    console.log(dataToSubmit);
     try {
-      console.log(dataToSubmit);
-      await updateDebt.mutateAsync(dataToSubmit as any);
+      await createCash.mutateAsync(dataToSubmit as any);
+      await createPayment.mutateAsync(dataToSubmit as any);
     } catch (error) {
       console.log("Mutation Error:", error);
     }
@@ -109,6 +133,26 @@ export default function PayDebt(props: { debt: Debt }) {
               required
             />
 
+            <TextField
+              id="amount"
+              label="Nomor Kas"
+              variant="outlined"
+              {...register("number", { required: "Tidak boleh kosong" })}
+              error={!!errors.number}
+              helperText={errors.number?.message}
+              required
+            />
+
+            <TextField
+              id="amount"
+              label="Deskripsi"
+              variant="outlined"
+              {...register("description", { required: "Tidak boleh kosong" })}
+              error={!!errors.description}
+              helperText={errors.description?.message}
+              required
+            />
+
             {/* ACTIONS */}
             <Stack
               direction={"row"}
@@ -127,9 +171,9 @@ export default function PayDebt(props: { debt: Debt }) {
               <Button
                 variant={"contained"}
                 type="submit"
-                disabled={updateDebt.isLoading}
+                disabled={createPayment.isLoading}
               >
-                {updateDebt.isLoading ? "Menunggu" : "Bayar"}
+                {createPayment.isLoading ? "Menunggu" : "Bayar"}
               </Button>
             </Stack>
           </Stack>

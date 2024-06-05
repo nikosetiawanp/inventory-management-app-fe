@@ -1,6 +1,8 @@
 import { TableRow, TableCell, Chip, Typography } from "@mui/material";
 import { Debt, Payment } from "../../interfaces/interfaces";
-import PayDebt from "../buttons/PayDebt";
+import PayDebt from "../buttons/CreatePayment";
+import PaymentListDialog from "../dialogs/PaymentListDialog";
+import CreatePayment from "../buttons/CreatePayment";
 
 export default function DebtRow(props: { index: number; debt: Debt }) {
   const formatDate = (inputDate: string) => {
@@ -89,20 +91,17 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
         >
           {currencyFormatter.format(totalPaid)}
         </Typography>
-        {/* <Chip
-          variant="filled"
-          size="small"
-          label={currencyFormatter.format(totalPaid)}
-          color={
-            totalPaid == 0
-              ? "error"
-              : totalPaid >= debtAmount
-              ? "success"
-              : "warning"
-          }
-        /> */}
       </TableCell>
 
+      <TableCell>
+        <PaymentListDialog debt={props.debt} />
+        {/* <Chip
+          label={`${props.debt?.payments?.length} pembayaran`}
+          variant="filled"
+          color="primary"
+          size="small"
+        /> */}
+      </TableCell>
       <TableCell align="center">
         {totalPaid >= debtAmount}
         <Chip
@@ -112,8 +111,9 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
           size="small"
         />
       </TableCell>
+
       <TableCell>
-        {props.debt?.isPaid ? null : <PayDebt debt={props.debt} />}
+        {props.debt?.isPaid ? null : <CreatePayment debt={props.debt} />}
       </TableCell>
     </TableRow>
   );
