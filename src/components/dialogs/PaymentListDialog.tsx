@@ -15,6 +15,8 @@ import {
 import { Contact, Debt, Payment } from "../../interfaces/interfaces";
 import { useState } from "react";
 import CreatePayment from "../buttons/CreatePayment";
+import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 export default function PaymentListDialog(props: { debt: Debt }) {
   // FORMAT CURRENCY
@@ -75,11 +77,18 @@ export default function PaymentListDialog(props: { debt: Debt }) {
         size="small"
         onClick={() => setOpen(true)}
       /> */}
-      <Button
+      <Chip
+        label={props.debt?.payments?.length}
+        icon={<InsertDriveFileIcon fontSize="small" />}
+        color="primary"
+        size="small"
+        onClick={() => setOpen(true)}
+      />
+      {/* <Button
         variant="text"
         size="small"
         onClick={() => setOpen(true)}
-      >{`${props.debt?.payments?.length} pembayaran`}</Button>
+      >{`${props.debt?.payments?.length} pembayaran`}</Button> */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -139,7 +148,7 @@ export default function PaymentListDialog(props: { debt: Debt }) {
                 }}
               >
                 <TableRow>
-                  <TableCell>Tanggal</TableCell>
+                  <TableCell>Tanggal Pembayaran</TableCell>
                   <TableCell>Jumlah</TableCell>
                 </TableRow>
               </TableHead>

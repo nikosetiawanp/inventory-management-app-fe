@@ -102,7 +102,7 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
           size="small"
         /> */}
       </TableCell>
-      <TableCell align="center">
+      {/* <TableCell align="center">
         {totalPaid >= debtAmount}
         <Chip
           label={props.debt?.isPaid ? "Selesai" : "Belum selesai"}
@@ -110,7 +110,7 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
           color={props.debt?.isPaid ? "success" : "warning"}
           size="small"
         />
-      </TableCell>
+      </TableCell> */}
 
       <TableCell>
         {props.debt?.isPaid ? null : <CreatePayment debt={props.debt} />}

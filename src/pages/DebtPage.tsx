@@ -16,30 +16,42 @@ import Drawer from "../components/Drawer";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
+
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { CheckCircle, Settings, WatchLater } from "@mui/icons-material";
+import { CheckCircle, Filter, Settings, WatchLater } from "@mui/icons-material";
 import { Debt, Payment } from "../interfaces/interfaces";
 import PayDebt from "../components/buttons/CreatePayment";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import DebtRow from "../components/rows/DebtRow";
+import DataFilter from "../components/filters/DataFilter";
 
 export default function DebtPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-  const selectedYear = formattedDate.split("-")[0];
-  const selectedMonth = formattedDate.split("-")[1];
+
+  const [selectedStartDate, setSelectedStartDate] = useState(dayjs());
+  const [selectedEndDate, setSelectedEndDate] = useState(dayjs());
+
+  const formattedStartDate = dayjs(selectedStartDate).format("YYYY-MM-DD");
+  const formattedEndDate = dayjs(selectedEndDate).format("YYYY-MM-DD");
+
+  const [sortConfig, setSortConfig] = useState({
+    key: "contact",
+    direction: "ascending",
+  });
+
+  // const selectedYear = formattedDate.split("-")[0];
+  // const selectedMonth = formattedDate.split("-")[1];
 
   // GET DEBTS
   const getDebts = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `debts?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
+        `debts?startDate=${formattedStartDate}&endDate=${formattedEndDate}&isPaid=0`
     );
-    console.log(response.data.data);
+    // console.log(response.data.data);
 
     return response.data.data;
   };
@@ -92,6 +104,57 @@ export default function DebtPage() {
     currency: "IDR",
   });
 
+  const vendors: string[] | any = [
+    ...new Set(debtsQuery?.data?.map((data: Debt) => data?.contact?.name)),
+  ];
+  const [excludedData, setExcludedData] = useState<string[]>([]);
+
+  const filteredDebtsQuery = debtsQuery?.data?.filter(
+    (debt: Debt) => !excludedData?.includes(debt?.contact?.name)
+  );
+
+  const sortedData = useMemo(() => {
+    // SORT INVOICE DATE ASCENDING
+    if (
+      sortConfig.key == "invoice-date" &&
+      sortConfig.direction == "ascending"
+    ) {
+      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
+        a?.invoice?.date.localeCompare(b?.invoice?.date)
+      );
+    }
+
+    // SORT INVOICE DATE ASCENDING
+    if (
+      sortConfig.key == "invoice-date" &&
+      sortConfig.direction == "descending"
+    ) {
+      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
+        b?.invoice?.date.localeCompare(a?.invoice?.date)
+      );
+    }
+
+    // SORT CONTACT ASCENDING
+    if (sortConfig.key == "contact" && sortConfig.direction == "ascending") {
+      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
+        a?.contact?.name?.localeCompare(b?.contact?.name)
+      );
+    }
+
+    // SORT CONTACT ASCENDING
+    if (sortConfig.key == "contact" && sortConfig.direction == "descending") {
+      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
+        b?.contact?.name?.localeCompare(a?.contact?.name)
+      );
+    }
+  }, [debtsQuery, excludedData, sortConfig]);
+
+  useEffect(() => {
+    console.log(sortedData);
+
+    console.log(sortConfig);
+  }, [sortConfig]);
+
   return (
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
       <Drawer />
@@ -104,11 +167,20 @@ export default function DebtPage() {
         <Stack direction={"row"} gap={2} width={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              views={["month", "year"]}
+              views={["day", "month", "year"]}
               slotProps={{ textField: { size: "small" } }}
-              value={selectedDate}
-              onChange={(newValue: any) => setSelectedDate(newValue)}
-              format="MMMM YYYY"
+              value={selectedStartDate}
+              onChange={(newValue: any) => setSelectedStartDate(newValue)}
+              format="DD MMMM YYYY"
+              label="Setelah"
+            />
+            <DatePicker
+              views={["day", "month", "year"]}
+              slotProps={{ textField: { size: "small" } }}
+              value={selectedEndDate}
+              onChange={(newValue: any) => setSelectedEndDate(newValue)}
+              format="DD MMMM YYYY"
+              label="Sebelum"
             />
           </LocalizationProvider>
           <Button
@@ -140,14 +212,36 @@ export default function DebtPage() {
               }}
             >
               <TableRow>
-                <TableCell>Tanggal Faktur</TableCell>
+                <TableCell>
+                  Tanggal Faktur{" "}
+                  <DataFilter
+                    sortConfigKey={"invoice-date"}
+                    data={[]}
+                    // excludedData={[]}
+                    // setExcludedData={null}
+                    sortConfig={sortConfig}
+                    setSortConfig={setSortConfig}
+                    useFilter={true}
+                  />{" "}
+                </TableCell>
                 <TableCell>Nomor Faktur</TableCell>
-                <TableCell>Vendor</TableCell>
+                <TableCell width={100}>
+                  Vendor{" "}
+                  <DataFilter
+                    sortConfigKey={"contact"}
+                    data={vendors}
+                    excludedData={excludedData}
+                    setExcludedData={setExcludedData}
+                    sortConfig={sortConfig}
+                    setSortConfig={setSortConfig}
+                    useFilter={true}
+                  />
+                </TableCell>
                 <TableCell>Tanggal Jatuh Tempo</TableCell>
                 <TableCell>Jumlah Tagihan</TableCell>
                 <TableCell>Jumlah Dibayar</TableCell>
                 <TableCell align="center">Pembayaran</TableCell>
-                <TableCell align="center">Status</TableCell>
+                {/* <TableCell align="center">Status</TableCell> */}
                 <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />
@@ -160,7 +254,7 @@ export default function DebtPage() {
               {debtsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={6} />
               ) : (
-                debtsQuery?.data?.map((debt: Debt, index: number) => (
+                sortedData?.map((debt: Debt, index: number) => (
                   <DebtRow key={index} index={index} debt={debt} />
                 ))
               )}
