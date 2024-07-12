@@ -1,14 +1,17 @@
 import {
+  Box,
   Button,
   ButtonGroup,
   IconButton,
   Stack,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -64,51 +67,57 @@ export default function ContactPage() {
       {/* DRAWER */}
       <Drawer />
       {/* CONTENT */}
-      <Stack padding={4} gap={4} width={1}>
+      <Stack padding={4} gap={2} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
           Contacts
         </Typography>
+
+        <TextField
+          id="outlined-basic"
+          placeholder="Cari"
+          variant="outlined"
+          size="small"
+          sx={{ width: "300px" }}
+          value={searchInput}
+          onChange={(event) => {
+            setSearchInput(event.target.value);
+            contactsQuery.refetch();
+          }}
+        />
+
         <Stack
           direction={"row"}
           justifyContent={"space-between"}
           width={1}
           gap={2}
         >
-          <TextField
-            id="outlined-basic"
-            placeholder="Cari"
-            variant="outlined"
-            size="small"
-            sx={{ width: "400px" }}
-            value={searchInput}
-            onChange={(event) => {
-              setSearchInput(event.target.value);
-              contactsQuery.refetch();
-            }}
-          />
           {/* BUTTON */}
           <ButtonGroup
-            sx={{ marginRight: "auto" }}
+            // sx={{ marginRight: "auto" }}
             disabled={contactsQuery.isRefetching}
           >
             <Button
-              variant={selectedType == "V" ? "contained" : "outlined"}
+              // variant={selectedType == "V" ? "contained" : "outlined"}
+              variant="contained"
+              color={selectedType == "V" ? "primary" : "inherit"}
               size="small"
               onClick={() => handleTypeChange("V")}
             >
               Vendor
             </Button>
             <Button
-              variant={selectedType == "C" ? "contained" : "outlined"}
+              // variant={selectedType == "C" ? "contained" : "outlined"}
+              variant="contained"
+              color={selectedType == "C" ? "primary" : "inherit"}
               size="small"
               onClick={() => handleTypeChange("C")}
             >
               Customer
             </Button>
           </ButtonGroup>
+
           <CreateContact />
         </Stack>
-
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >

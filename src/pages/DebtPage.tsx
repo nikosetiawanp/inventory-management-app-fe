@@ -1,8 +1,6 @@
 import {
-  Button,
-  Chip,
-  CircularProgress,
   IconButton,
+  Paper,
   Stack,
   Table,
   TableBody,
@@ -13,51 +11,60 @@ import {
   Typography,
 } from "@mui/material";
 import Drawer from "../components/Drawer";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 
-import RefreshIcon from "@mui/icons-material/Refresh";
-import { CheckCircle, Filter, Settings, WatchLater } from "@mui/icons-material";
+import { Settings } from "@mui/icons-material";
 import { Debt, Payment } from "../interfaces/interfaces";
-import PayDebt from "../components/buttons/CreatePayment";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import DebtRow from "../components/rows/DebtRow";
-import DataFilter from "../components/filters/DataFilter";
+import ChecklistFilter from "../components/filters/ChecklistFilter";
+import DateFilter from "../components/filters/DateFilter";
+import SortButton from "../components/buttons/SortButton";
+import calculateSum from "../helpers/calculations";
+import numberToIDR from "../helpers/formatters";
 
 export default function DebtPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
-  const [selectedStartDate, setSelectedStartDate] = useState(dayjs());
-  const [selectedEndDate, setSelectedEndDate] = useState(dayjs());
+  // DATE
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const formattedStartDate = selectedStartDate
+    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
+    : "";
+  const formattedEndDate = selectedEndDate
+    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
+    : "";
 
-  const formattedStartDate = dayjs(selectedStartDate).format("YYYY-MM-DD");
-  const formattedEndDate = dayjs(selectedEndDate).format("YYYY-MM-DD");
-
+  const [includedData, setIncludedData] = useState<string[]>([]);
   const [sortConfig, setSortConfig] = useState({
-    key: "contact",
+    key: "invoice-date",
     direction: "ascending",
   });
-
-  // const selectedYear = formattedDate.split("-")[0];
-  // const selectedMonth = formattedDate.split("-")[1];
 
   // GET DEBTS
   const getDebts = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `debts?startDate=${formattedStartDate}&endDate=${formattedEndDate}&isPaid=0`
+        "debts?" +
+        "isPaid=0" +
+        `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
+        `&endDate=${selectedEndDate ? formattedEndDate : ""}`
     );
-    // console.log(response.data.data);
-
     return response.data.data;
   };
 
+  const refetch = () => {
+    getDebts();
+    debtsQuery.refetch();
+  };
+
   const debtsQuery = useQuery({
-    queryKey: ["debts"],
+    queryKey: ["debts", formattedStartDate, formattedEndDate],
     queryFn: getDebts,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -98,32 +105,18 @@ export default function DebtPage() {
     return formattedDate;
   };
 
-  // FORMAT CURRENCY
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  });
-
   const vendors: string[] | any = [
     ...new Set(debtsQuery?.data?.map((data: Debt) => data?.contact?.name)),
   ];
-  const [excludedData, setExcludedData] = useState<string[]>([]);
+  const filteredDebtsQuery =
+    includedData.length == 0
+      ? debtsQuery?.data
+      : debtsQuery?.data?.filter((debt: Debt) =>
+          includedData?.includes(debt?.contact?.name)
+        );
 
-  const filteredDebtsQuery = debtsQuery?.data?.filter(
-    (debt: Debt) => !excludedData?.includes(debt?.contact?.name)
-  );
-
+  // SORT DATA
   const sortedData = useMemo(() => {
-    // SORT INVOICE DATE ASCENDING
-    if (
-      sortConfig.key == "invoice-date" &&
-      sortConfig.direction == "ascending"
-    ) {
-      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
-        a?.invoice?.date.localeCompare(b?.invoice?.date)
-      );
-    }
-
     // SORT INVOICE DATE ASCENDING
     if (
       sortConfig.key == "invoice-date" &&
@@ -134,37 +127,147 @@ export default function DebtPage() {
       );
     }
 
+    // SORT INVOICE DATE ASCENDING
+    if (
+      sortConfig.key == "invoice-date" &&
+      sortConfig.direction == "ascending"
+    ) {
+      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
+        a?.invoice?.date.localeCompare(b?.invoice?.date)
+      );
+    }
+
     // SORT CONTACT ASCENDING
-    if (sortConfig.key == "contact" && sortConfig.direction == "ascending") {
+    if (sortConfig.key == "vendor" && sortConfig.direction == "ascending") {
       return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
         a?.contact?.name?.localeCompare(b?.contact?.name)
       );
     }
 
     // SORT CONTACT ASCENDING
-    if (sortConfig.key == "contact" && sortConfig.direction == "descending") {
+    if (sortConfig.key == "vendor" && sortConfig.direction == "descending") {
       return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
         b?.contact?.name?.localeCompare(a?.contact?.name)
       );
     }
-  }, [debtsQuery, excludedData, sortConfig]);
+  }, [debtsQuery, includedData, sortConfig]);
+
+  const arrayOfDebts = filteredDebtsQuery
+    ? filteredDebtsQuery.map((debt: Debt) => debt?.amount)
+    : [];
+
+  const arrayOfPayments = filteredDebtsQuery
+    ? filteredDebtsQuery
+        ?.map((debt: Debt) =>
+          debt.payments.map((payment: Payment) => payment.amount)
+        )
+        .flat()
+    : [];
 
   useEffect(() => {
-    console.log(sortedData);
+    console.log(arrayOfPayments);
+  }, []);
 
-    console.log(sortConfig);
-  }, [sortConfig]);
+  // const [debtAmounts, setDebtAmounts] = useState<number[]>([]);
+
+  // useEffect(() => {
+  //   if (debtsQuery.data) {
+  //     setDebtAmounts(debtsQuery?.data?.map((debt: Debt) => debt?.amount));
+  //     console.log(debtAmounts);
+  //   }
+  // }, [debtsQuery?.data]);
+  useEffect(() => {
+    setIncludedData([]);
+  }, [selectedStartDate, selectedEndDate]);
 
   return (
-    <Stack direction={"row"} height={"100vh"} width={"100vw"}>
+    <Stack
+      direction={"row"}
+      height={"100vh"}
+      width={"100vw"}
+      sx={{ backgroundColor: "background" }}
+    >
       <Drawer />
-      <Stack padding={4} gap={4} width={1}>
+      <Stack padding={4} gap={2} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
           Hutang
         </Typography>
 
-        {/* NAVS */}
         <Stack direction={"row"} gap={2} width={1}>
+          <Paper
+            sx={{
+              border: 1,
+              borderColor: "divider",
+              boxShadow: 0,
+              padding: 2,
+            }}
+          >
+            <Typography variant="subtitle2" color={"inherit"}>
+              Total Tagihan
+            </Typography>
+            <Typography variant="h5">
+              {numberToIDR(calculateSum(arrayOfDebts))}
+            </Typography>
+          </Paper>
+          <Paper
+            sx={{
+              border: 1,
+              borderColor: "divider",
+              boxShadow: 0,
+              padding: 2,
+            }}
+          >
+            <Typography variant="subtitle2" color={"inherit"}>
+              Total Dibayar
+            </Typography>
+            <Typography variant="h5" color={"success.main"}>
+              {numberToIDR(calculateSum(arrayOfPayments))}
+            </Typography>
+          </Paper>
+          <Paper
+            sx={{
+              border: 1,
+              borderColor: "divider",
+              boxShadow: 0,
+              padding: 2,
+            }}
+          >
+            <Typography variant="subtitle2" color={"inherit"}>
+              Sisa Hutang
+            </Typography>
+            <Typography variant="h5" color={"error.main"}>
+              {numberToIDR(
+                calculateSum(arrayOfDebts) - calculateSum(arrayOfPayments)
+              )}
+            </Typography>
+          </Paper>
+        </Stack>
+
+        {/* FILTERS */}
+        <Stack direction={"row"} gap={2} width={1}>
+          <DateFilter
+            sortConfigKey={"invoice-date"}
+            selectedStartDate={selectedStartDate}
+            selectedEndDate={selectedEndDate}
+            setSelectedStartDate={setSelectedStartDate}
+            setSelectedEndDate={setSelectedEndDate}
+            sortConfig={sortConfig}
+            setSortConfig={setSortConfig}
+            refetch={refetch}
+            label="Tanggal Faktur"
+          />{" "}
+          <ChecklistFilter
+            data={vendors}
+            includedData={includedData}
+            setIncludedData={setIncludedData}
+            sortConfig={sortConfig}
+            setSortConfig={setSortConfig}
+            label={"Vendor"}
+          />
+        </Stack>
+
+        {/* NAVS */}
+        {/* <Stack direction={"row"} gap={2} width={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               views={["day", "month", "year"]}
@@ -186,7 +289,7 @@ export default function DebtPage() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => debtsQuery.refetch()}
+            onClick={() => refresh()}
             disabled={debtsQuery.isRefetching || debtsQuery.isLoading}
           >
             {debtsQuery.isRefetching || debtsQuery.isLoading ? (
@@ -195,7 +298,7 @@ export default function DebtPage() {
               <RefreshIcon fontSize="small" />
             )}
           </Button>
-        </Stack>
+        </Stack> */}
 
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
@@ -214,30 +317,40 @@ export default function DebtPage() {
               <TableRow>
                 <TableCell>
                   Tanggal Faktur{" "}
-                  <DataFilter
+                  {/* <DateFilter
                     sortConfigKey={"invoice-date"}
-                    data={[]}
-                    // excludedData={[]}
-                    // setExcludedData={null}
+                    selectedStartDate={selectedStartDate}
+                    selectedEndDate={selectedEndDate}
+                    setSelectedStartDate={setSelectedStartDate}
+                    setSelectedEndDate={setSelectedEndDate}
                     sortConfig={sortConfig}
                     setSortConfig={setSortConfig}
-                    useFilter={true}
-                  />{" "}
+                    refetch={refetch}
+                  /> */}
+                  <SortButton
+                    sortConfigKey="invoice-date"
+                    sortConfig={sortConfig}
+                    setSortConfig={setSortConfig}
+                  />
                 </TableCell>
+                <TableCell>Tanggal Jatuh Tempo</TableCell>
                 <TableCell>Nomor Faktur</TableCell>
                 <TableCell width={100}>
                   Vendor{" "}
-                  <DataFilter
+                  <SortButton
+                    sortConfigKey="vendor"
+                    sortConfig={sortConfig}
+                    setSortConfig={setSortConfig}
+                  />
+                  {/* <StringFilter
                     sortConfigKey={"contact"}
                     data={vendors}
                     excludedData={excludedData}
                     setExcludedData={setExcludedData}
                     sortConfig={sortConfig}
                     setSortConfig={setSortConfig}
-                    useFilter={true}
-                  />
+                  /> */}
                 </TableCell>
-                <TableCell>Tanggal Jatuh Tempo</TableCell>
                 <TableCell>Jumlah Tagihan</TableCell>
                 <TableCell>Jumlah Dibayar</TableCell>
                 <TableCell align="center">Pembayaran</TableCell>

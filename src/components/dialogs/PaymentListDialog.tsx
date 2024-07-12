@@ -2,7 +2,6 @@ import {
   Dialog,
   Stack,
   Typography,
-  TextField,
   TableContainer,
   Table,
   TableHead,
@@ -10,13 +9,11 @@ import {
   TableCell,
   TableBody,
   Chip,
-  Button,
 } from "@mui/material";
-import { Contact, Debt, Payment } from "../../interfaces/interfaces";
+import { Debt, Payment } from "../../interfaces/interfaces";
 import { useState } from "react";
 import CreatePayment from "../buttons/CreatePayment";
-import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 
 export default function PaymentListDialog(props: { debt: Debt }) {
   // FORMAT CURRENCY
@@ -61,34 +58,17 @@ export default function PaymentListDialog(props: { debt: Debt }) {
   };
 
   const [open, setOpen] = useState(false);
-  //   const [searchInput, setSearchInput] = useState("");
-  //   const filteredPaymentssQuery = props.debt?.payments.filter(
-  //     (payment: Payment) =>
-  //       payment.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-  //       payment.code.toLowerCase().includes(searchInput.toLowerCase())
-  //   );
 
   return (
     <>
-      {/* <Chip
-        label={`${props.debt?.payments?.length} pembayaran`}
-        variant="filled"
-        color="primary"
-        size="small"
-        onClick={() => setOpen(true)}
-      /> */}
       <Chip
         label={props.debt?.payments?.length}
-        icon={<InsertDriveFileIcon fontSize="small" />}
+        icon={<ReceiptIcon fontSize="small" />}
         color="primary"
         size="small"
         onClick={() => setOpen(true)}
       />
-      {/* <Button
-        variant="text"
-        size="small"
-        onClick={() => setOpen(true)}
-      >{`${props.debt?.payments?.length} pembayaran`}</Button> */}
+
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -109,25 +89,6 @@ export default function PaymentListDialog(props: { debt: Debt }) {
             <CreatePayment debt={props.debt} />
             {/* <CreateVendorButton /> */}
           </Stack>
-
-          {/* <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            borderColor={"divider"}
-          >
-            <TextField
-              id="outlined-basic"
-              placeholder="Cari vendor"
-              variant="outlined"
-              size="small"
-              sx={{ width: 1 }}
-              value={searchInput}
-              onChange={(event) => {
-                setSearchInput(event.target.value);
-              }}
-            />
-          </Stack> */}
 
           {/* TABLE */}
           <TableContainer

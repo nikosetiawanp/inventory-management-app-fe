@@ -16,7 +16,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { Inventory, Purchase } from "../../interfaces/interfaces";
+import { Inventory } from "../../interfaces/interfaces";
 
 export default function SelectInventory(props: {
   selectedInventory: Inventory | null | undefined;

@@ -67,8 +67,6 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
   return (
     <TableRow key={props.index} hover>
       <TableCell>{formatDate(props.debt?.invoice?.date)}</TableCell>
-      <TableCell>{props.debt?.invoice?.number}</TableCell>
-      <TableCell>{props.debt?.contact?.name}</TableCell>
       <TableCell>
         <Chip
           variant="filled"
@@ -77,6 +75,9 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
           color={today <= dueDate ? "primary" : "error"}
         />
       </TableCell>
+      <TableCell>{props.debt?.invoice?.number}</TableCell>
+      <TableCell>{props.debt?.contact?.name}</TableCell>
+
       <TableCell>{currencyFormatter.format(props.debt?.amount)}</TableCell>
       <TableCell>
         <Typography
