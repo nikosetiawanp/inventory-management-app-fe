@@ -24,8 +24,8 @@ import DebtRow from "../components/rows/DebtRow";
 import ChecklistFilter from "../components/filters/ChecklistFilter";
 import DateFilter from "../components/filters/DateFilter";
 import SortButton from "../components/buttons/SortButton";
-import calculateSum from "../helpers/calculations";
-import numberToIDR from "../helpers/formatters";
+import { sum } from "../helpers/calculationHelpers";
+import { formatIDR } from "../helpers/currencyHelpers";
 
 export default function DebtPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -165,18 +165,6 @@ export default function DebtPage() {
     : [];
 
   useEffect(() => {
-    console.log(arrayOfPayments);
-  }, []);
-
-  // const [debtAmounts, setDebtAmounts] = useState<number[]>([]);
-
-  // useEffect(() => {
-  //   if (debtsQuery.data) {
-  //     setDebtAmounts(debtsQuery?.data?.map((debt: Debt) => debt?.amount));
-  //     console.log(debtAmounts);
-  //   }
-  // }, [debtsQuery?.data]);
-  useEffect(() => {
     setIncludedData([]);
   }, [selectedStartDate, selectedEndDate]);
 
@@ -205,9 +193,7 @@ export default function DebtPage() {
             <Typography variant="subtitle2" color={"inherit"}>
               Total Tagihan
             </Typography>
-            <Typography variant="h5">
-              {numberToIDR(calculateSum(arrayOfDebts))}
-            </Typography>
+            <Typography variant="h5">{formatIDR(sum(arrayOfDebts))}</Typography>
           </Paper>
           <Paper
             sx={{
@@ -221,7 +207,7 @@ export default function DebtPage() {
               Total Dibayar
             </Typography>
             <Typography variant="h5" color={"success.main"}>
-              {numberToIDR(calculateSum(arrayOfPayments))}
+              {formatIDR(sum(arrayOfPayments))}
             </Typography>
           </Paper>
           <Paper
@@ -236,15 +222,13 @@ export default function DebtPage() {
               Sisa Hutang
             </Typography>
             <Typography variant="h5" color={"error.main"}>
-              {numberToIDR(
-                calculateSum(arrayOfDebts) - calculateSum(arrayOfPayments)
-              )}
+              {formatIDR(sum(arrayOfDebts) - sum(arrayOfPayments))}
             </Typography>
           </Paper>
         </Stack>
 
         {/* FILTERS */}
-        <Stack direction={"row"} gap={2} width={1}>
+        <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
           <DateFilter
             sortConfigKey={"invoice-date"}
             selectedStartDate={selectedStartDate}

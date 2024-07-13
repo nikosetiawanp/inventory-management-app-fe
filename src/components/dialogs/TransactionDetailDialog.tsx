@@ -23,6 +23,9 @@ import NewTransactionItem from "../rows/NewTransactionItem";
 import CreateInvoice from "../buttons/CreateInvoice";
 import TransactionDetailRow from "../rows/TransactionDetailRow";
 import ApprovePurchase from "../buttons/ApprovePurchase";
+import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
+import { formatIDR } from "../../helpers/currencyHelpers";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function TransactionDetailDialog(props: {
   open: boolean;
@@ -45,7 +48,6 @@ export default function TransactionDetailDialog(props: {
     const response = await axios.get(
       BACKEND_URL + `transaction-items?transactionId=${props.transaction.id}`
     );
-    console.log(response.data.data);
 
     return response.data.data;
   };
@@ -74,7 +76,6 @@ export default function TransactionDetailDialog(props: {
     const response = await axios.get(
       BACKEND_URL + `inventories?transactionId=${props.transaction.id}`
     );
-    console.log(response.data.data);
 
     return response.data.data;
   };
@@ -85,57 +86,15 @@ export default function TransactionDetailDialog(props: {
     enabled: props.open,
   });
 
-  // const getTotalArrived = (productId: any) => {
-  //   const inventoryItems = inventoriesQuery?.data?.map(
-  //     (inventory: Inventory) => inventory.inventoryItems
-  //   );
-  //   const filteredByProductId = [...inventoryItems.flat()]
-  //     .filter((inventoryItem: any) => inventoryItem.productId == productId)
-  //     .map((item: any) => item.quantity);
-
-  //   const total = filteredByProductId.reduce(
-  //     (accumulator, currentValue) => accumulator + currentValue,
-  //     0
-  //   );
-  //   return total;
-  // };
-
-  useEffect(() => {
-    // console.log(inventoryItems);
-  }, [inventoriesQuery.isLoading]);
-
-  // TOTAL PRICE
-  const calculateTotal = (
-    quantity: number,
-    price: number,
-    discount: number,
-    tax: number
-  ) => {
-    const priceTotal = quantity * price;
-    const discountTotal = priceTotal * (discount / 100);
-    const taxTotal = priceTotal * (tax / 100);
-
-    const result = priceTotal - discountTotal + taxTotal;
-    return result;
-  };
-
-  const calculateSum = (transactionItems: TransactionItem[]) => {
-    if (!transactionItems) return 0;
-    const totals = transactionItems?.map((item: TransactionItem) =>
-      calculateTotal(item.quantity, item.price, item.discount, item.tax)
-    );
-    let sum = 0;
-
-    totals.forEach((price: number) => {
-      sum += price;
-    });
-    return sum;
-  };
-
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  });
+  const arrayOfNetPrice = transactionItemsQuery.data.map(
+    (transactionItem: TransactionItem) =>
+      calculateNetPrice(
+        transactionItem.quantity,
+        transactionItem.price,
+        transactionItem.discount,
+        transactionItem.tax
+      )
+  );
 
   const clearFieldsArray = () => {
     for (let i = 0; i < fields.length; i++) {
@@ -143,39 +102,6 @@ export default function TransactionDetailDialog(props: {
         remove(0);
       } else return;
     }
-  };
-  // FORMAT DATE
-  const formatDate = (inputDate: string) => {
-    const date = new Date(inputDate);
-    const options: any = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    const formattedDate = date.toLocaleDateString("id-ID", options);
-    const [day, month, year] = formattedDate.split(" ");
-    const monthNames = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const monthIndex = monthNames.indexOf(month);
-    if (monthIndex !== -1) {
-      const indonesianMonth = monthNames[monthIndex];
-      return `${day} ${indonesianMonth} ${year}`;
-    }
-
-    return formattedDate;
   };
 
   // POST
@@ -208,7 +134,6 @@ export default function TransactionDetailDialog(props: {
     transactionItems: TransactionItem[];
   }) => {
     try {
-      console.log(data.transactionItems);
       await createItems.mutateAsync(data.transactionItems);
       clearFieldsArray();
     } catch (error) {
@@ -243,7 +168,7 @@ export default function TransactionDetailDialog(props: {
             </Stack>
             <Typography variant="body1">
               {/* Tanggal :  */}
-              {formatDate(props.transaction?.date)}
+              {formatDate(props.transaction?.date, "DD MMMM YYYY")}
             </Typography>
             {/* <Typography variant="body1">
               Estimasi Kedatangan :{" "}
@@ -407,9 +332,7 @@ export default function TransactionDetailDialog(props: {
             Total
           </Typography>
           <Typography fontWeight={"bold"} variant="body1">
-            {currencyFormatter.format(
-              calculateSum(transactionItemsQuery.data as any)
-            )}
+            {formatIDR(sum(arrayOfNetPrice))}
           </Typography>
         </Stack>
       </Stack>

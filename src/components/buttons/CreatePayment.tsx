@@ -16,11 +16,11 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import CompleteDebt from "./CompleteDebt";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function CreatePayment(props: { debt: Debt }) {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
 
   const {
     register,
@@ -75,7 +75,7 @@ export default function CreatePayment(props: { debt: Debt }) {
 
   const onSubmit: SubmitHandler<any> = async (data: any, event: any) => {
     const dataToSubmit = {
-      date: formattedDate,
+      date: formatDate(selectedDate, "YYYY-MM-DD"),
       number: data.number,
       description: data.description,
       amount: data.amount,

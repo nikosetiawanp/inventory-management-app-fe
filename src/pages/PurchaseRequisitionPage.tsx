@@ -25,7 +25,7 @@ import MonthFilterButton from "../components/buttons/MonthFilterButton";
 import PurchaseRow from "../components/rows/PurchaseRow";
 import axios from "axios";
 import { useQuery } from "react-query";
-import { Purchase } from "../interfaces/interfaces";
+import { Transaction } from "../interfaces/interfaces";
 import RowSkeleton from "../components/skeletons/RowSkeleton";
 import YearFilterButton from "../components/buttons/VendorFilterButton";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -135,11 +135,11 @@ export default function PurchaseRequisitionPage() {
                 <RowSkeleton rows={15} columns={5} />
               ) : (
                 transactionsQuery.data?.map(
-                  (purchase: Purchase, index: number) => (
+                  (transaction: Transaction, index: number) => (
                     <PurchaseRow
                       index={index}
                       key={index}
-                      purchase={purchase}
+                      transaction={transaction}
                       refetch={transactionsQuery.refetch}
                       arrayLength={transactionsQuery.data.length}
                     />

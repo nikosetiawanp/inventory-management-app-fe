@@ -1,96 +1,49 @@
 import { TableRow, TableCell, Chip, Typography } from "@mui/material";
 import { Debt, Payment } from "../../interfaces/interfaces";
-import PayDebt from "../buttons/CreatePayment";
 import PaymentListDialog from "../dialogs/PaymentListDialog";
 import CreatePayment from "../buttons/CreatePayment";
+import { sum } from "../../helpers/calculationHelpers";
+import { formatDate } from "../../helpers/dateHelpers";
+import "dayjs/locale/id";
+import { formatIDR } from "../../helpers/currencyHelpers";
 
 export default function DebtRow(props: { index: number; debt: Debt }) {
-  const formatDate = (inputDate: string) => {
-    const date = new Date(inputDate);
-    const options: any = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-
-    const formattedDate = date.toLocaleDateString("id-ID", options);
-
-    const [day, month, year] = formattedDate.split(" ");
-
-    const monthNames = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const monthIndex = monthNames.indexOf(month);
-
-    if (monthIndex !== -1) {
-      const indonesianMonth = monthNames[monthIndex];
-      return `${day} ${indonesianMonth} ${year}`;
-    }
-
-    return formattedDate;
-  };
-
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  });
-
-  const sumDebtPayments = (payments: Payment[]) => {
-    if (payments.length < 1) return 0;
-
-    let totalPaidDebt = 0;
-
-    for (let i = 0; i < payments.length; i++) {
-      totalPaidDebt += payments[i].amount;
-    }
-    return totalPaidDebt;
-  };
+  const arrayOfPayments = props.debt.payments.map(
+    (payment: Payment) => payment.amount
+  );
 
   const today = new Date();
   const dueDate = new Date(props.debt?.invoice?.dueDate);
 
-  const debtAmount = props.debt?.amount;
-  const totalPaid = sumDebtPayments(props.debt?.payments);
-
   return (
     <TableRow key={props.index} hover>
-      <TableCell>{formatDate(props.debt?.invoice?.date)}</TableCell>
+      <TableCell>
+        {formatDate(props.debt?.invoice?.date, "D MMMM YYYY")}
+      </TableCell>
       <TableCell>
         <Chip
-          variant="filled"
+          variant="outlined"
           size="small"
-          label={formatDate(props.debt?.invoice?.dueDate)}
+          label={formatDate(props.debt?.invoice?.dueDate, "D MMMM YYYY")}
           color={today <= dueDate ? "primary" : "error"}
         />
       </TableCell>
       <TableCell>{props.debt?.invoice?.number}</TableCell>
       <TableCell>{props.debt?.contact?.name}</TableCell>
 
-      <TableCell>{currencyFormatter.format(props.debt?.amount)}</TableCell>
+      <TableCell>{formatIDR(props.debt?.amount)}</TableCell>
       <TableCell>
         <Typography
           variant="body2"
           color={
-            totalPaid == 0
+            sum(arrayOfPayments) == 0
               ? "error.main"
-              : totalPaid >= debtAmount
+              : sum(arrayOfPayments) >= props.debt?.amount
               ? "success.main"
               : "warning.main"
           }
         >
-          {currencyFormatter.format(totalPaid)}
+          {formatIDR(sum(arrayOfPayments))}
         </Typography>
       </TableCell>
 

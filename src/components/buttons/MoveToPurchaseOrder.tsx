@@ -16,17 +16,16 @@ import { register } from "module";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { Purchase } from "../../interfaces/interfaces";
+import { Transaction } from "../../interfaces/interfaces";
 
 export default function MoveToPurchaseRequisition(props: {
-  purchase: Purchase;
+  transaction: Transaction;
   refetch: any;
 }) {
   const [open, setOpen] = useState(false);
 
   // DATE
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
 
   // POST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -35,7 +34,7 @@ export default function MoveToPurchaseRequisition(props: {
     async (data: any) => {
       try {
         const response = await axios.put(
-          BACKEND_URL + "transactions/" + props.purchase.id,
+          BACKEND_URL + "transactions/" + props.transaction.id,
           data
         );
         props.refetch();
@@ -62,11 +61,10 @@ export default function MoveToPurchaseRequisition(props: {
 
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     const dataToSubmit = {
-      vendorId: props.purchase.vendorId,
-      prNumber: props.purchase.prNumber,
-      prDate: props.purchase.prDate,
+      vendorId: props.transaction.contactId,
+      number: props.transaction.number,
+      prDate: props.transaction.date,
       poNumber: data?.poNumber,
-      poDate: formattedDate,
       status: "PO",
     };
     try {

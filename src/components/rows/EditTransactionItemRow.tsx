@@ -74,28 +74,6 @@ export default function EditTransactionItemRow(props: {
     }
   };
 
-  // FORMAT CURRENCY
-  // const currencyFormatter = new Intl.NumberFormat("id-ID", {
-  //   style: "currency",
-  //   currency: "IDR",
-  // });
-
-  // // TOTAL ARRIVED
-  // const getTotalArrived = (productId: any) => {
-  //   const inventoryItems = props.inventories.map(
-  //     (inventory: Inventory) => inventory.inventoryItems
-  //   );
-  //   const filteredByProductId = [...inventoryItems.flat()]
-  //     .filter((inventoryItem: any) => inventoryItem.productId == productId)
-  //     .map((item: any) => item.quantity);
-
-  //   const total = filteredByProductId.reduce(
-  //     (accumulator, currentValue) => accumulator + currentValue,
-  //     0
-  //   );
-  //   return total;
-  // };
-
   return (
     <TableRow>
       <TableCell>{props.transactionItem?.product?.name}</TableCell>

@@ -14,49 +14,10 @@ import { Debt, Payment } from "../../interfaces/interfaces";
 import { useState } from "react";
 import CreatePayment from "../buttons/CreatePayment";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import { formatIDR } from "../../helpers/currencyHelpers";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function PaymentListDialog(props: { debt: Debt }) {
-  // FORMAT CURRENCY
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  });
-
-  // FORMAT DATE
-  const formatDate = (inputDate: string) => {
-    const date = new Date(inputDate);
-    const options: any = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-
-    const formattedDate = date.toLocaleDateString("id-ID", options);
-    const [day, month, year] = formattedDate.split(" ");
-    const monthNames = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const monthIndex = monthNames.indexOf(month);
-    if (monthIndex !== -1) {
-      const indonesianMonth = monthNames[monthIndex];
-      return `${day} ${indonesianMonth} ${year}`;
-    }
-
-    return formattedDate;
-  };
-
   const [open, setOpen] = useState(false);
 
   return (
@@ -116,10 +77,10 @@ export default function PaymentListDialog(props: { debt: Debt }) {
               <TableBody>
                 {props.debt?.payments.map((payment: Payment, index: number) => (
                   <TableRow key={index} hover sx={{ cursor: "pointer" }}>
-                    <TableCell>{formatDate(payment?.date)}</TableCell>
                     <TableCell>
-                      {currencyFormatter.format(payment?.amount)}
+                      {formatDate(payment?.date, "DD MMMM YYYY")}
                     </TableCell>
+                    <TableCell>{formatIDR(payment?.amount)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

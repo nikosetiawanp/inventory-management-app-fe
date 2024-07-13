@@ -9,27 +9,22 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  IconButton,
   TableBody,
-  Chip,
 } from "@mui/material";
 import MorePurchaseButton from "../buttons/MorePurchaseButton";
 
 import {
   TransactionItem,
-  Inventory,
   InventoryItem,
   Invoice,
 } from "../../interfaces/interfaces";
-import AddIcon from "@mui/icons-material/Add";
-import { useFieldArray, useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import RowSkeleton from "../skeletons/RowSkeleton";
-import { useEffect, useState } from "react";
-import NewInventoryItem from "../rows/NewInventoryItem";
-import CreateInvoice from "../buttons/CreateInvoice";
+
 import CreateDebt from "../buttons/CreateDebt";
+import { formatIDR } from "../../helpers/currencyHelpers";
+import { sum } from "../../helpers/calculationHelpers";
 
 export default function InvoiceDetailDialog(props: {
   open: boolean;
@@ -40,11 +35,11 @@ export default function InvoiceDetailDialog(props: {
   const queryClient = useQueryClient();
 
   //   FORM
-  const { control, handleSubmit, watch, setValue } = useForm();
-  const { fields, append, prepend, update, remove } = useFieldArray({
-    control,
-    name: "inventoryItems",
-  });
+  // const { control, handleSubmit, watch, setValue } = useForm();
+  // const { fields, append, prepend, update, remove } = useFieldArray({
+  //   control,
+  //   name: "inventoryItems",
+  // });
 
   // GET INVENTORY ITEMS
   const getInventoryItems = async () => {
@@ -75,13 +70,7 @@ export default function InvoiceDetailDialog(props: {
     refetchOnWindowFocus: false,
     enabled: props.open,
   });
-  const clearFieldsArray = () => {
-    for (let i = 0; i < fields.length; i++) {
-      if (fields.length > 0) {
-        remove(0);
-      } else return;
-    }
-  };
+
   // FORMAT DATE
   const formatDate = (inputDate: string) => {
     const date = new Date(inputDate);
@@ -116,12 +105,6 @@ export default function InvoiceDetailDialog(props: {
 
     return formattedDate;
   };
-
-  // FORMAT CURRENCY
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  });
 
   // FIND PURCHASE ITEM
   const findPurchaseItem = (inventoryItem: InventoryItem) => {
@@ -264,16 +247,7 @@ export default function InvoiceDetailDialog(props: {
 
                       {/* HARGA */}
                       <TableCell align="right">
-                        {currencyFormatter.format(
-                          findPurchaseItem(inventoryItem)?.price
-                        )}
-                        {/* {findPurchaseItem(inventoryItem).price
-                          ? currencyFormatter.format(
-                              findPurchaseItem(inventoryItem).price
-                            )
-                          : currencyFormatter.format(
-                              findPurchaseItem(inventoryItem).price
-                            )} */}
+                        {formatIDR(findPurchaseItem(inventoryItem)?.price)}
                       </TableCell>
 
                       <TableCell align="center">
@@ -283,7 +257,7 @@ export default function InvoiceDetailDialog(props: {
                         {findPurchaseItem(inventoryItem)?.tax}%
                       </TableCell>
                       <TableCell align="right">
-                        {currencyFormatter.format(
+                        {formatIDR(
                           calculateTotal(
                             inventoryItem.quantity,
                             findPurchaseItem(inventoryItem)?.price,
@@ -315,7 +289,7 @@ export default function InvoiceDetailDialog(props: {
             Total
           </Typography>
           <Typography fontWeight={"bold"} variant="body1">
-            {currencyFormatter.format(calculateSum(inventoryItemsQuery.data))}
+            {formatIDR(sum(inventoryItemsQuery.data))}
           </Typography>
         </Stack>
       </Stack>

@@ -332,27 +332,6 @@ export default function InventoryDetailDialog(props: {
               </TableBody>
             </Table>
           </TableContainer>
-
-          {/* FOOTER */}
-          {/* <Stack
-          position={"sticky"}
-          bottom={0}
-          direction={"row"}
-          justifyContent={"space-between"}
-          bgcolor={"white"}
-          padding={2}
-          borderTop={1}
-          borderColor={"divider"}
-        >
-          <Typography fontWeight={"bold"} variant="body1">
-            Total
-          </Typography>
-          <Typography fontWeight={"bold"} variant="body1">
-            {currencyFormatter.format(
-              calculateSum(purchaseItemsQuery.data as any)
-            )}
-          </Typography>
-        </Stack> */}
         </Stack>
       </form>
     </Dialog>

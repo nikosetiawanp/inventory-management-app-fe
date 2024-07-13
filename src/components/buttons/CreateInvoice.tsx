@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { Inventory, Transaction } from "../../interfaces/interfaces";
 import SelectInventory from "../select/SelectInventory";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function CreateInvoice(props: {
   inventories: Inventory[];
@@ -29,8 +30,7 @@ export default function CreateInvoice(props: {
   // DATE
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [selectedDueDate, setSelectedDueDate] = useState();
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-  const formattedDueDate = dayjs(selectedDueDate).format("YYYY-MM-DD");
+  const formattedDueDate = formatDate(selectedDueDate, "YYYY-MM-DD");
 
   const {
     register,
@@ -61,8 +61,8 @@ export default function CreateInvoice(props: {
   const onSubmit: SubmitHandler<any> = async (data, event) => {
     const dataToSubmit = {
       number: data.number,
-      date: formattedDate,
-      dueDate: formattedDueDate,
+      date: formatDate(selectedDate, "YYYY-MM-DD"),
+      dueDate: formatDate(selectedDueDate, "YYYY-MM-DD"),
       transactionId: props.transaction.id,
       inventoryId: selectedInventory?.id,
     };

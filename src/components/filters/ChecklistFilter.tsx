@@ -3,8 +3,8 @@ import {
   ButtonGroup,
   Checkbox,
   FormControlLabel,
+  FormGroup,
   Menu,
-  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -15,10 +15,6 @@ import { useEffect, useState } from "react";
 import { ArrowDropDown } from "@mui/icons-material";
 
 import CloseIcon from "@mui/icons-material/Close";
-// import CheckIcon from "@mui/icons-material/Check";
-// import CheckBoxIcon from "@mui/icons-material/CheckBox";
-// import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-// import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 
 export default function StringFilter(props: {
   data: string[];
@@ -51,7 +47,6 @@ export default function StringFilter(props: {
   };
 
   const check = (data: string) => {
-    console.log("✅");
     !props.includedData?.includes(data)
       ? props.setIncludedData([...props.includedData, data])
       : props.setIncludedData(
@@ -59,22 +54,15 @@ export default function StringFilter(props: {
         );
   };
 
-  const deselectAll = () => {
-    props.setIncludedData([...props.data]);
-  };
-
   const resetFilter = () => {
     props.setIncludedData([]);
   };
-
-  useEffect(() => {}, [props.data]);
 
   return (
     <div>
       {/* BUTTON */}
       <ButtonGroup size="small">
         <Button
-          // startIcon={props.excludedData.length > 0 && <CheckIcon />}
           endIcon={props.includedData.length == 0 && <ArrowDropDown />}
           onClick={handleClick}
           color={props.includedData.length > 0 ? "primary" : "inherit"}
@@ -82,9 +70,6 @@ export default function StringFilter(props: {
           disabled={props.data.length == 0}
         >
           {props.label}
-          {/* {props.excludedData.length > 0
-            ? `${props.data.length - props.excludedData.length} ${props.label}`
-            : props.label} */}
         </Button>
         {props.includedData.length > 0 && (
           <Button
@@ -125,49 +110,20 @@ export default function StringFilter(props: {
                 onKeyDown={(e) => e.stopPropagation()}
               />
             </Stack>
-            {/* <MenuItem
-              selected={false}
-              dense
-              onClick={() =>
-                props.excludedData.length < props.data.length
-                  ? deselectAll()
-                  : resetFilter()
-              }
-            >
-              <Checkbox
-                size="medium"
-                checked={props.excludedData.length < props.data.length}
-                checkedIcon={
-                  props.excludedData.length == 0 ? (
-                    <CheckBoxIcon />
-                  ) : (
-                    <IndeterminateCheckBoxIcon />
-                  )
-                }
-                // checked={props.excludedData.length !== 0}
-              />
-              Pilih semua
-            </MenuItem> */}
-            {searchResult?.map((data: string, index: number) => (
-              <MenuItem
-                key={index}
-                selected={props.includedData.includes(data)}
-                onClick={() => check(data)}
-                dense
-                sx={{ paddingX: 2 }}
-              >
-                <Checkbox
-                  size="small"
+
+            {/* CHECKLIST */}
+            <FormGroup sx={{ paddingX: 2 }}>
+              {searchResult?.map((data: string, index: number) => (
+                <FormControlLabel
+                  key={index}
                   checked={props.includedData.includes(data)}
-                  // checked={
-                  //   !props.excludedData?.includes(data) ||
-                  //   props.excludedData.length == 0
-                  // }
+                  control={<Checkbox size="small" />}
+                  label={data}
                   onClick={() => check(data)}
                 />
-                {data}
-              </MenuItem>
-            ))}
+              ))}
+            </FormGroup>
+
             <Stack direction={"row"} gap={2} padding={2} justifyContent={"end"}>
               <Button size="small" variant="text" onClick={() => resetFilter()}>
                 Reset
