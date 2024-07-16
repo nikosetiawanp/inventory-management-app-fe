@@ -26,7 +26,6 @@ export default function MoreVertTransactionButton(props: {
     event.stopPropagation();
     setAnchorEl(null);
   };
-  console.log(props.transaction.id);
 
   return (
     <>

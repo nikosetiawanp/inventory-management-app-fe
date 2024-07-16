@@ -1,7 +1,6 @@
 import { Button, ButtonGroup, Menu, Stack, Typography } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
-import CheckIcon from "@mui/icons-material/Check";
 
 import * as React from "react";
 import { useState } from "react";
@@ -11,14 +10,6 @@ import dayjs from "dayjs";
 import { ArrowDropDown } from "@mui/icons-material";
 
 export default function StringFilter(props: {
-  sortConfigKey: string;
-  sortConfig: { key: string; direction: string };
-  setSortConfig: React.Dispatch<
-    React.SetStateAction<{
-      key: string;
-      direction: string;
-    }>
-  >;
   selectedStartDate: string | number | dayjs.Dayjs | Date | null | undefined;
   setSelectedStartDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>> | any;
   selectedEndDate: string | number | dayjs.Dayjs | Date | null | undefined;

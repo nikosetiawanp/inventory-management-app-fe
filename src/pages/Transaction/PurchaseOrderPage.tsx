@@ -1,6 +1,4 @@
 import {
-  Button,
-  CircularProgress,
   IconButton,
   Stack,
   Table,
@@ -17,30 +15,36 @@ import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import CreateTransaction from "./CreateTransaction";
 
 import { Settings } from "@mui/icons-material";
-import RefreshIcon from "@mui/icons-material/Refresh";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { Transaction } from "../../interfaces/interfaces";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { formatDate } from "../../helpers/dateHelpers";
 import TransactionRow from "./TransactionRow";
+import DateFilter from "../../components/filters/DateFilter";
+import SortButton from "../../components/buttons/SortButton";
+import ChecklistFilter from "../../components/filters/ChecklistFilter";
 
 export default function PurchaseOrderPage() {
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = formatDate(selectedDate, "YYYY-MM-DD");
-  const selectedYear = formattedDate.split("-")[0];
-  const selectedMonth = formattedDate.split("-")[1];
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const formattedStartDate = selectedStartDate
+    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
+    : "";
+  const formattedEndDate = selectedEndDate
+    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
+    : "";
 
   // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=P`
+        "transactions?" +
+        `type=P` +
+        `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
+        `&endDate=${selectedEndDate ? formattedEndDate : ""}`
     );
     return response.data.data;
   };
@@ -49,7 +53,69 @@ export default function PurchaseOrderPage() {
     queryKey: ["transactions"],
     queryFn: () => getTransactions(),
     refetchOnWindowFocus: false,
+    enabled: true,
   });
+
+  const refetch = () => {
+    getTransactions();
+    transactionsQuery.refetch();
+  };
+
+  const [includedData, setIncludedData] = useState<string[]>([]);
+  const [sortConfig, setSortConfig] = useState({
+    key: "po-date",
+    direction: "descending",
+  });
+
+  const contacts: string[] | any = [
+    ...new Set(
+      transactionsQuery?.data?.map(
+        (transaction: Transaction) => transaction?.contact?.name
+      )
+    ),
+  ];
+
+  const filteredTransactionsQuery =
+    includedData.length == 0
+      ? transactionsQuery?.data
+      : transactionsQuery?.data?.filter((transaction: Transaction) =>
+          includedData?.includes(transaction?.contact?.name)
+        );
+
+  const sortedData = useMemo(() => {
+    // SORT INVOICE DATE ASCENDING
+    if (sortConfig.key == "po-date" && sortConfig.direction == "descending") {
+      return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
+        b?.date.localeCompare(a?.date)
+      );
+    }
+
+    // SORT INVOICE DATE ASCENDING
+    if (sortConfig.key == "po-date" && sortConfig.direction == "ascending") {
+      return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
+        a?.date.localeCompare(b?.date)
+      );
+    }
+
+    // SORT CONTACT ASCENDING
+    if (sortConfig.key == "contact" && sortConfig.direction == "ascending") {
+      return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
+        a?.contact?.name?.localeCompare(b?.contact?.name)
+      );
+    }
+
+    // SORT CONTACT ASCENDING
+    if (sortConfig.key == "contact" && sortConfig.direction == "descending") {
+      return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
+        b?.contact?.name?.localeCompare(a?.contact?.name)
+      );
+    }
+  }, [transactionsQuery, includedData, sortConfig]);
+
+  useEffect(() => {
+    refetch();
+    console.log(transactionsQuery.data);
+  }, [selectedStartDate, selectedEndDate]);
 
   return (
     // PAGE
@@ -64,7 +130,23 @@ export default function PurchaseOrderPage() {
         </Typography>
 
         <Stack direction={"row"} gap={2} width={1}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateFilter
+            selectedStartDate={selectedStartDate}
+            selectedEndDate={selectedEndDate}
+            setSelectedStartDate={setSelectedStartDate}
+            setSelectedEndDate={setSelectedEndDate}
+            refetch={refetch}
+            label="Tanggal PO"
+          />
+          <ChecklistFilter
+            data={contacts}
+            includedData={includedData}
+            setIncludedData={setIncludedData}
+            sortConfig={sortConfig}
+            setSortConfig={setSortConfig}
+            label={"Vendor"}
+          />
+          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               views={["month", "year"]}
               slotProps={{ textField: { size: "small" } }}
@@ -72,8 +154,8 @@ export default function PurchaseOrderPage() {
               onChange={(newValue: any) => setSelectedDate(newValue)}
               format="MMMM YYYY"
             />
-          </LocalizationProvider>
-          <Button
+          </LocalizationProvider> */}
+          {/* <Button
             size="small"
             variant="contained"
             onClick={() => transactionsQuery.refetch()}
@@ -86,7 +168,7 @@ export default function PurchaseOrderPage() {
             ) : (
               <RefreshIcon fontSize="small" />
             )}
-          </Button>
+          </Button> */}
 
           {/* BUTTON */}
           <CreateTransaction type={"P"} />
@@ -108,9 +190,23 @@ export default function PurchaseOrderPage() {
               }}
             >
               <TableRow>
-                <TableCell>Nomor PO</TableCell>
-                <TableCell>Vendor</TableCell>
-                <TableCell>Tanggal PO</TableCell>
+                <TableCell>Nomor PO </TableCell>
+                <TableCell>
+                  Vendor{" "}
+                  <SortButton
+                    sortConfigKey="contact"
+                    sortConfig={sortConfig}
+                    setSortConfig={setSortConfig}
+                  />
+                </TableCell>
+                <TableCell>
+                  Tanggal PO{" "}
+                  <SortButton
+                    sortConfigKey="po-date"
+                    sortConfig={sortConfig}
+                    setSortConfig={setSortConfig}
+                  />
+                </TableCell>
                 <TableCell>Status Approval</TableCell>
                 <TableCell>Status Selesai</TableCell>
                 <TableCell width={10}>
@@ -126,17 +222,15 @@ export default function PurchaseOrderPage() {
               {transactionsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={5} />
               ) : (
-                transactionsQuery.data?.map(
-                  (transaction: Transaction, index: number) => (
-                    <TransactionRow
-                      index={index}
-                      key={index}
-                      transaction={transaction}
-                      refetch={transactionsQuery.refetch}
-                      arrayLength={transactionsQuery.data.length}
-                    />
-                  )
-                )
+                sortedData?.map((transaction: Transaction, index: number) => (
+                  <TransactionRow
+                    index={index}
+                    key={index}
+                    transaction={transaction}
+                    refetch={transactionsQuery.refetch}
+                    arrayLength={transactionsQuery.data.length}
+                  />
+                ))
               )}
             </TableBody>
           </Table>

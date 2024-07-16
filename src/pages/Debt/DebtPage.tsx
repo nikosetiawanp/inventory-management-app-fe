@@ -71,7 +71,7 @@ export default function DebtPage() {
   });
 
   const vendors: string[] | any = [
-    ...new Set(debtsQuery?.data?.map((data: Debt) => data?.contact?.name)),
+    ...new Set(debtsQuery?.data?.map((debt: Debt) => debt?.contact?.name)),
   ];
   const filteredDebtsQuery =
     includedData.length == 0
@@ -195,13 +195,10 @@ export default function DebtPage() {
         {/* FILTERS */}
         <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
           <DateFilter
-            sortConfigKey={"invoice-date"}
             selectedStartDate={selectedStartDate}
             selectedEndDate={selectedEndDate}
             setSelectedStartDate={setSelectedStartDate}
             setSelectedEndDate={setSelectedEndDate}
-            sortConfig={sortConfig}
-            setSortConfig={setSortConfig}
             refetch={refetch}
             label="Tanggal Faktur"
           />{" "}
