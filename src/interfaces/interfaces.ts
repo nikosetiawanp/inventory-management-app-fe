@@ -1,5 +1,5 @@
 export interface Product {
-  id: string;
+  id: number;
   code: string;
   name: string;
   unit: string;
@@ -33,7 +33,7 @@ export interface TransactionItem {
 }
 
 export interface Transaction {
-  id: string | number;
+  id: number;
   number: string;
   date: string;
   expectedArrival: string;

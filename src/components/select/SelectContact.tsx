@@ -14,7 +14,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Contact } from "../../interfaces/interfaces";
-import CreateContact from "../forms/CreateContact";
+import CreateContact from "../../pages/Contact/CreateContact";
 
 export default function SelectContact(props: {
   selectedContact: Contact | null | undefined;
@@ -75,7 +75,6 @@ export default function SelectContact(props: {
               {props.type == "P" ? "Pilih Vendor" : "Pilih Customer"}
             </Typography>
             <CreateContact />
-            {/* <CreateVendorButton /> */}
           </Stack>
 
           <Stack

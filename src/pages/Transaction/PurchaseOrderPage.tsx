@@ -11,23 +11,27 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import Drawer from "../components/Drawer";
+
+import Drawer from "../../components/Drawer";
+import RowSkeleton from "../../components/skeletons/RowSkeleton";
+import CreateTransaction from "./CreateTransaction";
+
 import { Settings } from "@mui/icons-material";
 import RefreshIcon from "@mui/icons-material/Refresh";
+
 import { useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
-import { Transaction } from "../interfaces/interfaces";
-import RowSkeleton from "../components/skeletons/RowSkeleton";
+import { Transaction } from "../../interfaces/interfaces";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import CreateTransaction from "./Transaction/CreateTransaction";
-import TransactionRow from "./Transaction/TransactionRow";
+import { formatDate } from "../../helpers/dateHelpers";
+import TransactionRow from "./TransactionRow";
 
-export default function PurchaseRequisitionPage() {
+export default function PurchaseOrderPage() {
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
+  const formattedDate = formatDate(selectedDate, "YYYY-MM-DD");
   const selectedYear = formattedDate.split("-")[0];
   const selectedMonth = formattedDate.split("-")[1];
 
@@ -36,7 +40,7 @@ export default function PurchaseRequisitionPage() {
   const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=S`
+        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=P`
     );
     return response.data.data;
   };
@@ -56,7 +60,7 @@ export default function PurchaseRequisitionPage() {
       {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Sales Order
+          Purchase Order
         </Typography>
 
         <Stack direction={"row"} gap={2} width={1}>
@@ -85,7 +89,7 @@ export default function PurchaseRequisitionPage() {
           </Button>
 
           {/* BUTTON */}
-          <CreateTransaction type={"S"} />
+          <CreateTransaction type={"P"} />
         </Stack>
 
         <TableContainer
@@ -104,9 +108,9 @@ export default function PurchaseRequisitionPage() {
               }}
             >
               <TableRow>
-                <TableCell>Nomor SO</TableCell>
+                <TableCell>Nomor PO</TableCell>
                 <TableCell>Vendor</TableCell>
-                <TableCell>Tanggal SO</TableCell>
+                <TableCell>Tanggal PO</TableCell>
                 <TableCell>Status Approval</TableCell>
                 <TableCell>Status Selesai</TableCell>
                 <TableCell width={10}>

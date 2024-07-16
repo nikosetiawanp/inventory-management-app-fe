@@ -1,5 +1,4 @@
 import {
-  Button,
   Dialog,
   Stack,
   Table,
@@ -15,7 +14,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Product } from "../../interfaces/interfaces";
-import CreateProductButton from "../buttons/CreateProductButton";
+import CreateProductButton from "../../pages/Product/CreateProductButton";
 
 export default function SelectProduct(props: {
   selectedProduct: Product | null;
@@ -85,21 +84,22 @@ export default function SelectProduct(props: {
           {/* HEADER */}
           <Stack
             direction={"row"}
-            justifyContent={"space-between"}
             alignItems={"center"}
             marginBottom={2}
+            gap={2}
           >
             <TextField
               id="outlined-basic"
               placeholder="Cari produk"
               variant="outlined"
               size="small"
-              sx={{ width: 1 }}
+              fullWidth
               value={searchInput}
               onChange={(event) => {
                 setSearchInput(event.target.value);
               }}
             />
+
             {/* <Typography variant="h4">Pilih Produk</Typography> */}
           </Stack>
 

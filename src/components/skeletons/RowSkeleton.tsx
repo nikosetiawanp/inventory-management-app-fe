@@ -1,5 +1,5 @@
 import { Skeleton, TableCell, TableRow } from "@mui/material";
-import MoreVertVendorButton from "../buttons/MoreVertVendorButton";
+import MoreVertVendorButton from "../../pages/Contact/MoreVertContactButton";
 
 export default function RowSkeleton(props: { rows: number; columns: number }) {
   const keys = [...Array(props.rows).keys()];

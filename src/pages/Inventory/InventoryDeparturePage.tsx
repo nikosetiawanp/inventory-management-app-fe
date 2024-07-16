@@ -11,54 +11,55 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import Drawer from "../components/Drawer";
+import Drawer from "../../components/Drawer";
 import { Settings } from "@mui/icons-material";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState } from "react";
+import dayjs from "dayjs";
+import CreateInventory from "./CreateInventory";
 import axios from "axios";
 import { useQuery } from "react-query";
-import { Transaction } from "../interfaces/interfaces";
-import RowSkeleton from "../components/skeletons/RowSkeleton";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
-import CreateTransaction from "./Transaction/CreateTransaction";
-import TransactionRow from "./Transaction/TransactionRow";
 
-export default function PurchaseRequisitionPage() {
+import { Inventory } from "../../interfaces/interfaces";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import InventoryRow from "./InventoryRow";
+
+export default function InventoryDeparturePage() {
+  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
   const selectedYear = formattedDate.split("-")[0];
   const selectedMonth = formattedDate.split("-")[1];
 
-  // FETCHING PRODUCTS
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const getTransactions = async () => {
+  // GET INVENTORY HISTORY
+  const getInventories = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=S`
+        `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=D`
     );
+    console.log(response.data.data);
+
     return response.data.data;
   };
 
-  const transactionsQuery = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => getTransactions(),
+  const inventoriesQuery = useQuery({
+    queryKey: ["inventories"],
+    queryFn: getInventories,
     refetchOnWindowFocus: false,
+    enabled: true,
   });
 
   return (
-    // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
-      {/* DRAWER */}
       <Drawer />
-
-      {/* CONTENT */}
       <Stack padding={4} gap={4} width={1}>
         <Typography fontWeight={"bold"} variant="h4">
-          Sales Order
+          Gudang Keluar
         </Typography>
 
+        {/* NAVS */}
         <Stack direction={"row"} gap={2} width={1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -72,12 +73,12 @@ export default function PurchaseRequisitionPage() {
           <Button
             size="small"
             variant="contained"
-            onClick={() => transactionsQuery.refetch()}
+            onClick={() => inventoriesQuery.refetch()}
             disabled={
-              transactionsQuery.isRefetching || transactionsQuery.isLoading
+              inventoriesQuery.isRefetching || inventoriesQuery.isLoading
             }
           >
-            {transactionsQuery.isRefetching || transactionsQuery.isLoading ? (
+            {inventoriesQuery.isRefetching || inventoriesQuery.isLoading ? (
               <CircularProgress size={15} color="inherit" />
             ) : (
               <RefreshIcon fontSize="small" />
@@ -85,14 +86,13 @@ export default function PurchaseRequisitionPage() {
           </Button>
 
           {/* BUTTON */}
-          <CreateTransaction type={"S"} />
+          <CreateInventory type="D" />
         </Stack>
 
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
-          <Table sx={{ borderCollapse: "separate" }} size="small">
-            {/* HEAD */}
+          <Table sx={{ borderCollapse: "separate" }}>
             <TableHead
               sx={{
                 position: "sticky",
@@ -104,34 +104,27 @@ export default function PurchaseRequisitionPage() {
               }}
             >
               <TableRow>
-                <TableCell>Nomor SO</TableCell>
+                <TableCell>Nomor Surat Jalan</TableCell>
+                <TableCell>Nomor Faktur</TableCell>
                 <TableCell>Vendor</TableCell>
-                <TableCell>Tanggal SO</TableCell>
-                <TableCell>Status Approval</TableCell>
-                <TableCell>Status Selesai</TableCell>
-                <TableCell width={10}>
+                <TableCell>Tanggal Keluar</TableCell>
+                <TableCell>Sales Order</TableCell>
+                <TableCell>Deskripsi</TableCell>
+                <TableCell width={10} align="center">
                   <IconButton size="small">
                     <Settings fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
             </TableHead>
-
-            {/* ROWS */}
-            <TableBody sx={{ overflowY: "scroll" }}>
-              {transactionsQuery.isLoading ? (
-                <RowSkeleton rows={15} columns={5} />
-              ) : (
-                transactionsQuery.data?.map(
-                  (transaction: Transaction, index: number) => (
-                    <TransactionRow
-                      index={index}
-                      key={index}
-                      transaction={transaction}
-                      refetch={transactionsQuery.refetch}
-                      arrayLength={transactionsQuery.data.length}
-                    />
-                  )
+            <TableBody>
+              {inventoriesQuery?.data?.map(
+                (inventory: Inventory, index: number) => (
+                  <InventoryRow
+                    key={index}
+                    index={index}
+                    inventory={inventory}
+                  />
                 )
               )}
             </TableBody>

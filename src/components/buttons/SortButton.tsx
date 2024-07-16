@@ -1,11 +1,4 @@
-import {
-  Checkbox,
-  IconButton,
-  Menu,
-  MenuItem,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { IconButton } from "@mui/material";
 
 import * as React from "react";
 import { ArrowDownward, ArrowUpward, SwapVert } from "@mui/icons-material";
@@ -43,7 +36,6 @@ export default function SortButton(props: {
     return (
       <IconButton
         size="small"
-        // color="primary"
         onClick={() => {
           props.setSortConfig({
             key: props.sortConfigKey,
@@ -63,7 +55,6 @@ export default function SortButton(props: {
     return (
       <IconButton
         size="small"
-        // color="primary"
         onClick={() => {
           props.setSortConfig({
             key: props.sortConfigKey,
@@ -75,14 +66,4 @@ export default function SortButton(props: {
       </IconButton>
     );
   }
-
-  //   return (
-  //     <div>
-  //       {/* BUTTON */}
-  //       {props.sortConfigKey !== props.sortConfig.key}
-  //       <IconButton size="small">
-  //         <ArrowUpward fontSize="small" />
-  //       </IconButton>
-  //     </div>
-  //   );
 }

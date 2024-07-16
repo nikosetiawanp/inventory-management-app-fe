@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Divider,
   List,
   ListItem,
@@ -10,9 +9,8 @@ import {
   ListSubheader,
   Skeleton,
   Stack,
-  Typography,
 } from "@mui/material";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -128,12 +126,7 @@ export default function Drawer() {
           </ListItem>
           <Divider sx={{ marginY: 1 }} />
           {/* BUTTON */}
-          <ListItem>
-            {/* <CreateGlobalButton /> */}
-            {/* <Button startIcon={<AddIcon />} variant="contained" size="large">
-              Tambah
-            </Button> */}
-          </ListItem>
+          <ListItem></ListItem>
 
           {links.map((item, index) => (
             <div key={index}>

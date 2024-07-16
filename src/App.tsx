@@ -2,20 +2,21 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material";
 
-import ProductPage from "./pages/ProductPage";
-import ContactPage from "./pages/ContactPage";
 import { QueryClient, QueryClientProvider } from "react-query";
-import PurchaseOrderPage from "./pages/PurchaseOrderPage";
-import InventoryArrivalPage from "./pages/InventoryArrivalPage";
-import InventoryPage from "./pages/InventoryPage";
-import InventoryDeparturePage from "./pages/InventoryDeparturePage";
-import InvoicePage from "./pages/InvoicePage";
-import DebtPage from "./pages/DebtPage";
+import PurchaseOrderPage from "./pages/Transaction/PurchaseOrderPage";
+import DebtPage from "./pages/Debt/DebtPage";
 import DebtPaymentPage from "./pages/DebtPaymentPage";
 import HomePage from "./pages/HomePage";
-import CashPage from "./pages/CashPage";
-import AccountPage from "./pages/AccountPage";
+
 import SalesOrderPage from "./pages/SalesOrderPage";
+import ContactPage from "./pages/Contact/ContactPage";
+import InvoicePage from "./pages/Invoice/InvoicePage";
+import InventoryArrivalPage from "./pages/Inventory/InventoryArrivalPage";
+import InventoryDeparturePage from "./pages/Inventory/InventoryDeparturePage";
+import InventoryPage from "./pages/Inventory/InventoryPage";
+import CashPage from "./pages/Cash/CashPage";
+import AccountPage from "./pages/Account/AccountPage";
+import ProductPage from "./pages/Product/ProductPage";
 
 const queryClient = new QueryClient();
 const theme = createTheme({
@@ -68,6 +69,7 @@ function App() {
                 path="/inventory-departure"
                 element={<InventoryDeparturePage />}
               />
+
               <Route path="/cash" element={<CashPage />} />
               <Route path="/account" element={<AccountPage />} />
             </Routes>
