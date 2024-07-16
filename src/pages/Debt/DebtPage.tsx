@@ -26,6 +26,7 @@ import DateFilter from "../../components/filters/DateFilter";
 import SortButton from "../../components/buttons/SortButton";
 import { sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
+import DebtFilter from "./DebtFilter";
 
 export default function DebtPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -70,7 +71,7 @@ export default function DebtPage() {
     enabled: true,
   });
 
-  const vendors: string[] | any = [
+  const contacts: string[] | any = [
     ...new Set(debtsQuery?.data?.map((debt: Debt) => debt?.contact?.name)),
   ];
   const filteredDebtsQuery =
@@ -203,12 +204,15 @@ export default function DebtPage() {
             label="Tanggal Faktur"
           />{" "}
           <ChecklistFilter
-            data={vendors}
+            data={contacts}
             includedData={includedData}
             setIncludedData={setIncludedData}
-            sortConfig={sortConfig}
-            setSortConfig={setSortConfig}
             label={"Vendor"}
+          />
+          <DebtFilter
+            includedContacts={includedData}
+            setIncludedContacts={setIncludedData}
+            contacts={contacts}
           />
         </Stack>
 

@@ -82,7 +82,6 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
         variant="contained"
         onClick={() => setOpen(true)}
         sx={{ marginLeft: "auto" }}
-        size="small"
       >
         {props.type == "P" ? "Buat Purchase Order" : "Buat Sales Order"}
       </Button>

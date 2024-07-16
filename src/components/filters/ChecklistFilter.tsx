@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { ArrowDropDown } from "@mui/icons-material";
+import { useState } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -20,13 +20,6 @@ export default function StringFilter(props: {
   data: string[];
   includedData: string[];
   setIncludedData: React.Dispatch<React.SetStateAction<any[]>>;
-  sortConfig: { key: string; direction: string };
-  setSortConfig: React.Dispatch<
-    React.SetStateAction<{
-      key: string;
-      direction: string;
-    }>
-  >;
   label: string;
 }) {
   const [searchInput, setSearchInput] = useState("");
@@ -61,9 +54,9 @@ export default function StringFilter(props: {
   return (
     <div>
       {/* BUTTON */}
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button
-          endIcon={props.includedData.length == 0 && <ArrowDropDown />}
+          endIcon={props.includedData.length == 0 && <ExpandMoreIcon />}
           onClick={handleClick}
           color={props.includedData.length > 0 ? "primary" : "inherit"}
           variant="contained"

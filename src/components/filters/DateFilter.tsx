@@ -5,9 +5,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import * as React from "react";
 import { useState } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { ArrowDropDown } from "@mui/icons-material";
 
 export default function StringFilter(props: {
   selectedStartDate: string | number | dayjs.Dayjs | Date | null | undefined;
@@ -41,7 +41,7 @@ export default function StringFilter(props: {
   return (
     <>
       {/* BUTTON */}
-      <ButtonGroup size="small" style={{ borderRadius: 50 }}>
+      <ButtonGroup style={{ borderRadius: 50 }}>
         <Button
           color={
             props.selectedStartDate || props.selectedEndDate
@@ -52,15 +52,16 @@ export default function StringFilter(props: {
           onClick={handleClick}
           endIcon={
             props.selectedStartDate || props.selectedEndDate ? null : (
-              <ArrowDropDown />
+              <ExpandMoreIcon />
             )
           }
         >
-          {props.label}
+          Terbaru
+          {/* {props.label} */}
         </Button>
         {props.selectedStartDate || props.selectedEndDate ? (
           <Button variant="contained" onClick={resetFilter}>
-            <CloseIcon fontSize="small" />
+            <CloseIcon />
           </Button>
         ) : null}
       </ButtonGroup>
