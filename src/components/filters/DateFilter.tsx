@@ -8,6 +8,7 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function StringFilter(props: {
   selectedStartDate: string | number | dayjs.Dayjs | Date | null | undefined;
@@ -56,7 +57,12 @@ export default function StringFilter(props: {
             )
           }
         >
-          Terbaru
+          {props.selectedStartDate && props.selectedEndDate
+            ? `${formatDate(
+                props.selectedStartDate,
+                "DD/MM/YYYY"
+              )} - ${formatDate(props.selectedEndDate, "DD/MM/YYYY")}`
+            : "Terbaru"}
           {/* {props.label} */}
         </Button>
         {props.selectedStartDate || props.selectedEndDate ? (

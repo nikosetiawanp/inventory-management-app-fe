@@ -58,7 +58,6 @@ export default function ProductPage() {
             placeholder="Cari produk"
             variant="outlined"
             size="small"
-            sx={{ width: "400px" }}
             value={searchInput}
             onChange={(event) => {
               setSearchInput(event.target.value);

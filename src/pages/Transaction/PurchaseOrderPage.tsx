@@ -25,6 +25,7 @@ import TransactionRow from "./TransactionRow";
 import DateFilter from "../../components/filters/DateFilter";
 import SortButton from "../../components/buttons/SortButton";
 import ChecklistFilter from "../../components/filters/ChecklistFilter";
+import SelectFilter from "../../components/filters/SelectFilter";
 
 export default function PurchaseOrderPage() {
   const [selectedStartDate, setSelectedStartDate] = useState(null);
@@ -42,10 +43,13 @@ export default function PurchaseOrderPage() {
     const response = await axios.get(
       BACKEND_URL +
         "transactions?" +
-        `type=P` +
+        `type=${selectedType}` +
+        `&isApproved=${selectedApprovalStatus}` +
         `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
-        `&endDate=${selectedEndDate ? formattedEndDate : ""}`
+        `&endDate=${selectedEndDate ? formattedEndDate : ""}` +
+        `&isDone=${selectedDoneStatus}`
     );
+    console.log(response.data.data);
     return response.data.data;
   };
 
@@ -61,12 +65,8 @@ export default function PurchaseOrderPage() {
     transactionsQuery.refetch();
   };
 
+  // CHECKLIST FILTER
   const [includedData, setIncludedData] = useState<string[]>([]);
-  const [sortConfig, setSortConfig] = useState({
-    key: "po-date",
-    direction: "descending",
-  });
-
   const contacts: string[] | any = [
     ...new Set(
       transactionsQuery?.data?.map(
@@ -82,6 +82,33 @@ export default function PurchaseOrderPage() {
           includedData?.includes(transaction?.contact?.name)
         );
 
+  // TYPE FILTER
+  const [selectedType, setSelectedType] = useState("P");
+  const types = [
+    { label: "Pembelian", key: "P" },
+    { label: "Penjualan", key: "S" },
+  ];
+
+  // STATUS FILTER
+  const [selectedApprovalStatus, setSelectedApprovalStatus] = useState(1);
+  const approvalStatuses = [
+    { label: "Approved", key: 1 },
+    { label: "Menunggu Approval", key: 0 },
+  ];
+
+  const [selectedDoneStatus, setSelectedDoneStatus] = useState(0);
+  const doneStatuses = [
+    { label: "Selesai", key: 1 },
+    { label: "Belum Selesai", key: 0 },
+  ];
+
+  const [] = useState();
+
+  // SORTING
+  const [sortConfig, setSortConfig] = useState({
+    key: "po-date",
+    direction: "descending",
+  });
   const sortedData = useMemo(() => {
     // SORT INVOICE DATE ASCENDING
     if (sortConfig.key == "po-date" && sortConfig.direction == "descending") {
@@ -114,8 +141,13 @@ export default function PurchaseOrderPage() {
 
   useEffect(() => {
     refetch();
-    console.log(transactionsQuery.data);
-  }, [selectedStartDate, selectedEndDate]);
+  }, [
+    selectedStartDate,
+    selectedEndDate,
+    selectedType,
+    selectedApprovalStatus,
+    selectedDoneStatus,
+  ]);
 
   return (
     // PAGE
@@ -130,6 +162,16 @@ export default function PurchaseOrderPage() {
         </Typography>
 
         <Stack direction={"row"} gap={2} width={1}>
+          <SelectFilter
+            selected={selectedType}
+            setSelected={setSelectedType}
+            options={types}
+          />
+          <SelectFilter
+            selected={selectedApprovalStatus}
+            setSelected={setSelectedApprovalStatus}
+            options={approvalStatuses}
+          />
           <DateFilter
             selectedStartDate={selectedStartDate}
             selectedEndDate={selectedEndDate}
@@ -142,33 +184,13 @@ export default function PurchaseOrderPage() {
             data={contacts}
             includedData={includedData}
             setIncludedData={setIncludedData}
-            sortConfig={sortConfig}
-            setSortConfig={setSortConfig}
             label={"Vendor"}
           />
-          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              views={["month", "year"]}
-              slotProps={{ textField: { size: "small" } }}
-              value={selectedDate}
-              onChange={(newValue: any) => setSelectedDate(newValue)}
-              format="MMMM YYYY"
-            />
-          </LocalizationProvider> */}
-          {/* <Button
-            size="small"
-            variant="contained"
-            onClick={() => transactionsQuery.refetch()}
-            disabled={
-              transactionsQuery.isRefetching || transactionsQuery.isLoading
-            }
-          >
-            {transactionsQuery.isRefetching || transactionsQuery.isLoading ? (
-              <CircularProgress size={15} color="inherit" />
-            ) : (
-              <RefreshIcon fontSize="small" />
-            )}
-          </Button> */}
+          <SelectFilter
+            selected={selectedDoneStatus}
+            setSelected={setSelectedDoneStatus}
+            options={doneStatuses}
+          />
 
           {/* BUTTON */}
           <CreateTransaction type={"P"} />

@@ -67,32 +67,6 @@ export default function ContactPage() {
           Kontak
         </Typography>
 
-        <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          width={1}
-          gap={2}
-        >
-          {/* BUTTON */}
-          {/* <ButtonGroup size="small" disabled={contactsQuery.isRefetching}>
-            <Button
-              variant="contained"
-              color={selectedType == "V" ? "primary" : "inherit"}
-              size="small"
-              onClick={() => handleTypeChange("V")}
-            >
-              Vendor
-            </Button>
-            <Button
-              variant="contained"
-              color={selectedType == "C" ? "primary" : "inherit"}
-              size="small"
-              onClick={() => handleTypeChange("C")}
-            >
-              Customer
-            </Button>
-          </ButtonGroup> */}
-        </Stack>
         <Stack direction={"row"} justifyContent={"space-between"}>
           <Stack direction={"row"} gap={2}>
             <SelectFilter
@@ -100,13 +74,12 @@ export default function ContactPage() {
               setSelected={setSelectedType}
               options={contactTypes}
             />
-
             <TextField
               id="outlined-basic"
               placeholder="Cari"
               variant="outlined"
               size="small"
-              sx={{ width: "300px" }}
+              // sx={{ width: "300px" }}
               value={searchInput}
               onChange={(event) => {
                 setSearchInput(event.target.value);
@@ -114,9 +87,9 @@ export default function ContactPage() {
               }}
             />
           </Stack>
-
           <CreateContact />
         </Stack>
+
         <TableContainer
           sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
         >
@@ -132,6 +105,14 @@ export default function ContactPage() {
                 zIndex: 50,
               }}
             >
+              {/* SEARCH */}
+              {/* <Stack
+                marginX={2}
+                marginTop={2}
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              ></Stack> */}
               <TableRow>
                 <TableCell>Kode</TableCell>
                 <TableCell>Nama</TableCell>

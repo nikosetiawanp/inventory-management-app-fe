@@ -5,11 +5,11 @@ import * as React from "react";
 import { useState } from "react";
 
 export default function SelectFilter(props: {
-  selected: string;
-  setSelected: (selected: string) => void;
+  selected: any;
+  setSelected: (selected: any) => void;
   options: {
-    label: string;
-    key: string;
+    label: any;
+    key: any;
   }[];
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -28,13 +28,13 @@ export default function SelectFilter(props: {
 
   const label = props.options.filter(
     (option) => option.key == props.selected
-  )[0].label;
+  )[0]?.label;
 
   return (
     <>
       {/* BUTTON */}
       <Button
-        color={"inherit"}
+        color={"primary"}
         variant="contained"
         onClick={handleClick}
         endIcon={<ExpandMoreIcon />}
@@ -59,6 +59,7 @@ export default function SelectFilter(props: {
             key={option.key}
             onClick={() => {
               props.setSelected(option.key);
+              handleClose();
             }}
             selected={props.selected == option.key}
           >
