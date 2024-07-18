@@ -1,26 +1,14 @@
-import {
-  IconButton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Chip, Sheet, Stack, Table, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
 
 import axios from "axios";
 import { useState } from "react";
 import { Product } from "../../interfaces/interfaces";
 import { useQuery } from "react-query";
-import CreateProductButton from "./CreateProductButton";
+import CreateProduct from "./CreateProduct";
 import { Settings } from "@mui/icons-material";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import MoreVertProductButton from "./MoreVertProductButton";
-
+import SearchFilter from "../../components/filters/SearchFilter";
 export default function ProductPage() {
   // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -48,72 +36,94 @@ export default function ProductPage() {
       <Drawer />
 
       {/* CONTENT */}
-      <Stack padding={4} gap={4} width={1}>
-        <Typography fontWeight={"bold"} variant="h4">
-          Produk
-        </Typography>
-        <Stack direction={"row"} justifyContent={"space-between"} width={1}>
-          <TextField
-            id="outlined-basic"
-            placeholder="Cari produk"
-            variant="outlined"
-            size="small"
-            value={searchInput}
-            onChange={(event) => {
-              setSearchInput(event.target.value);
-            }}
-          />
-          {/* BUTTON */}
-          <CreateProductButton />
+      <Stack padding={4} width={1}>
+        {/*TITLE & CREATE PRODUCT */}
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"flex-end"}
+          marginBottom={4}
+        >
+          <Typography fontWeight={"bold"} level="h4">
+            Produk
+          </Typography>
+          <Box>
+            <CreateProduct />
+          </Box>
         </Stack>
 
-        <TableContainer
-          sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
+        {/* SEARCH & FILTER */}
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"flex-end"}
+          spacing={2}
+          marginBottom={2}
         >
-          <Table size="small" sx={{ borderCollapse: "separate" }}>
+          <SearchFilter
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            label={"Cari produk"}
+            placeholder={"Cari"}
+          />
+        </Stack>
+
+        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <Table size="sm" stickyHeader stickyFooter>
             {/* HEAD */}
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                border: 2,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              <TableRow>
-                <TableCell width={80}>Kode</TableCell>
-                <TableCell>Nama</TableCell>
-                <TableCell width={160}>Unit</TableCell>
-                <TableCell width={10}>
-                  <IconButton size="small">
+            <thead>
+              <tr>
+                <th>
+                  <Button size="sm" variant="plain" color="primary">
+                    Kode
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Nama
+                  </Button>
+                </th>
+                <th style={{ textAlign: "center" }}>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Unit
+                  </Button>
+                </th>
+                <th
+                  style={{
+                    textAlign: "center",
+                    width: 60,
+                  }}
+                >
+                  <Button size="sm" variant="plain" color="neutral">
                     <Settings fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                  </Button>
+                </th>
+              </tr>
+            </thead>
 
             {/* ROWS */}
-            <TableBody sx={{ overflowY: "scroll" }}>
+            <tbody>
               {productsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={4} />
               ) : (
                 filteredProductsQuery.map((product: Product, index: number) => (
-                  <TableRow key={index} hover>
-                    <TableCell>{product.code}</TableCell>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.unit}</TableCell>
-
-                    <TableCell>
-                      <MoreVertProductButton product={product} />
-                    </TableCell>
-                  </TableRow>
+                  <tr key={index}>
+                    <td style={{ paddingLeft: 15 }}>{product.code}</td>
+                    <td style={{ paddingLeft: 15 }}>{product.name}</td>
+                    <td style={{ textAlign: "center" }}>
+                      <Chip variant="outlined" size="sm">
+                        {product.unit}
+                      </Chip>
+                    </td>
+                    <td style={{ paddingLeft: 15 }}>
+                      {/* <MoreVertProductButton product={product} /> */}
+                    </td>
+                  </tr>
                 ))
               )}
-            </TableBody>
+            </tbody>
           </Table>
-        </TableContainer>
+        </Sheet>
       </Stack>
     </Stack>
   );

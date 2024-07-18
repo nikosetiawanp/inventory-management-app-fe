@@ -1,8 +1,7 @@
-import { Button, Menu, MenuItem } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Option from "@mui/joy/Option";
 
 import * as React from "react";
-import { useState } from "react";
+import { FormLabel, Select, Stack } from "@mui/joy";
 
 export default function SelectFilter(props: {
   selected: any;
@@ -11,62 +10,28 @@ export default function SelectFilter(props: {
     label: any;
     key: any;
   }[];
+  label: string;
 }) {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleChange = (
+    event: React.SyntheticEvent | null,
+    newValue: string | null
+  ) => {
+    event;
+    props.setSelected(newValue);
   };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleKeyDown = (event: any) => {
-    event.stopPropagation();
-    event.preventDefault();
-  };
-
-  const label = props.options.filter(
-    (option) => option.key == props.selected
-  )[0]?.label;
 
   return (
-    <>
-      {/* BUTTON */}
-      <Button
-        color={"primary"}
-        variant="contained"
-        onClick={handleClick}
-        endIcon={<ExpandMoreIcon />}
-      >
-        {label}
-      </Button>
-
-      {/* SORT */}
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        autoFocus={false}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-        onKeyDown={handleKeyDown}
+    <Stack width={200}>
+      <FormLabel>{props.label}</FormLabel>
+      <Select
+        value={props.selected}
+        defaultValue="Vendor"
+        onChange={handleChange}
       >
         {props.options.map((option) => (
-          <MenuItem
-            key={option.key}
-            onClick={() => {
-              props.setSelected(option.key);
-              handleClose();
-            }}
-            selected={props.selected == option.key}
-          >
-            {option.label}
-          </MenuItem>
+          <Option value={option.key}>{option.label}</Option>
         ))}
-      </Menu>
-    </>
+      </Select>
+    </Stack>
   );
 }

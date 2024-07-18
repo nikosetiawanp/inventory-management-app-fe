@@ -1,18 +1,8 @@
-import {
-  IconButton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Sheet, Stack, Table } from "@mui/joy";
+
+import Typography from "@mui/joy/Typography";
 
 import { useQuery } from "react-query";
-import { Settings } from "@mui/icons-material";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -20,8 +10,11 @@ import { Contact } from "../../interfaces/interfaces";
 import Drawer from "../../components/Drawer";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import CreateContact from "./CreateContact";
-import MoreVertContactButton from "./MoreVertContactButton";
 import SelectFilter from "../../components/filters/SelectFilter";
+
+import { Settings } from "@mui/icons-material";
+import AlertDialogModal from "../../components/AlertModal";
+import SearchFilter from "../../components/filters/SearchFilter";
 
 export default function ContactPage() {
   // FETCHING DATA
@@ -61,96 +54,117 @@ export default function ContactPage() {
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
       {/* DRAWER */}
       <Drawer />
-      {/* CONTENT */}
-      <Stack padding={4} gap={2} width={1}>
-        <Typography fontWeight={"bold"} variant="h4">
-          Kontak
-        </Typography>
 
-        <Stack direction={"row"} justifyContent={"space-between"}>
-          <Stack direction={"row"} gap={2}>
-            <SelectFilter
-              selected={selectedType}
-              setSelected={setSelectedType}
-              options={contactTypes}
-            />
-            <TextField
-              id="outlined-basic"
-              placeholder="Cari"
-              variant="outlined"
-              size="small"
-              // sx={{ width: "300px" }}
-              value={searchInput}
-              onChange={(event) => {
-                setSearchInput(event.target.value);
-                contactsQuery.refetch();
-              }}
-            />
-          </Stack>
-          <CreateContact />
+      {/* CONTENT */}
+      <Stack padding={4} width={1}>
+        {/* TITLE & CREATE CONTACT */}
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"flex-end"}
+          marginBottom={4}
+        >
+          <Typography fontWeight={"bold"} level="h4">
+            Kontak
+          </Typography>
+          <Box>
+            <CreateContact />
+          </Box>
         </Stack>
 
-        <TableContainer
-          sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
+        {/* SEARCH & FILTER */}
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"flex-end"}
+          spacing={2}
+          marginBottom={2}
         >
-          <Table size="small" sx={{ borderCollapse: "separate" }}>
-            {/* HEAD */}
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                border: 2,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              {/* SEARCH */}
-              {/* <Stack
-                marginX={2}
-                marginTop={2}
-                direction={"row"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              ></Stack> */}
-              <TableRow>
-                <TableCell>Kode</TableCell>
-                <TableCell>Nama</TableCell>
-                <TableCell>Alamat</TableCell>
-                <TableCell>Nomor Telepon</TableCell>
-                <TableCell>Email</TableCell>
+          <SearchFilter
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            label={"Cari Kontak"}
+            placeholder={"Cari"}
+          />
+          <SelectFilter
+            selected={selectedType}
+            setSelected={setSelectedType}
+            options={contactTypes}
+            label="Kategori"
+          />
+        </Stack>
 
-                <TableCell width={10}>
-                  <IconButton size="small">
+        {/* TABLE */}
+        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <Table size="sm" stickyHeader stickyFooter>
+            {/* HEAD */}
+            <thead>
+              <tr>
+                <th>
+                  <Button size="sm" variant="soft" color="primary">
+                    Kode
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Nama
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Alamat
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Telepon
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Email
+                  </Button>
+                </th>
+
+                <th
+                  style={{
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    width: 60,
+                  }}
+                >
+                  <Button size="sm" variant="plain" color="neutral">
                     <Settings fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                  </Button>
+                </th>
+              </tr>
+            </thead>
 
             {/* ROWS */}
-            <TableBody sx={{ overflowY: "scroll" }}>
+            <tbody>
               {contactsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={6} />
               ) : (
                 filteredContactsQuery?.map(
                   (contact: Contact, index: number) => (
-                    <TableRow key={index} hover>
-                      <TableCell>{contact.code}</TableCell>
-                      <TableCell>{contact.name}</TableCell>
-                      <TableCell>{contact.address}</TableCell>
-                      <TableCell>{contact.phone}</TableCell>
-                      <TableCell>{contact.email}</TableCell>
-                      <TableCell>
-                        <MoreVertContactButton contact={contact} />
-                      </TableCell>
-                    </TableRow>
+                    <tr key={index}>
+                      <td style={{ paddingLeft: 15 }}>{contact.code}</td>
+                      <td style={{ paddingLeft: 15 }}>{contact.name}</td>
+                      <td style={{ paddingLeft: 15 }}>{contact.address}</td>
+                      <td style={{ paddingLeft: 15 }}>{contact.phone}</td>
+                      <td style={{ paddingLeft: 15 }}>{contact.email}</td>
+                      <td style={{ textAlign: "center" }}>
+                        <AlertDialogModal />
+                        {/* <MoreVertContactButton contact={contact} /> */}
+                      </td>
+                    </tr>
                   )
                 )
               )}
-            </TableBody>
+            </tbody>
           </Table>
-        </TableContainer>
+        </Sheet>
+        {/* </TableContainer> */}
       </Stack>
     </Stack>
   );

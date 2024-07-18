@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, TextField } from "@mui/material";
+import { Autocomplete, Box, TextField } from "@mui/material";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { Product } from "../../interfaces/interfaces";

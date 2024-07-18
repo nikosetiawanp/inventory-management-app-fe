@@ -1,12 +1,12 @@
 interface Province {
-  provinsi: string;
-  kota: string[];
+  name: string;
+  cities: string[];
 }
 
-export const provinceData: Province[] = [
+export const provinces: Province[] = [
   {
-    provinsi: "Aceh",
-    kota: [
+    name: "Aceh",
+    cities: [
       "Kota Banda Aceh",
       "Kota Sabang",
       "Kota Lhokseumawe",
@@ -34,8 +34,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Sumatera Utara",
-    kota: [
+    name: "Sumatera Utara",
+    cities: [
       "Kota Medan",
       "Kota Pematang Siantar",
       "Kota Sibolga",
@@ -73,8 +73,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Sumatera Barat",
-    kota: [
+    name: "Sumatera Barat",
+    cities: [
       "Kota Padang",
       "Kota Solok",
       "Kota Sawahlunto",
@@ -98,8 +98,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Riau",
-    kota: [
+    name: "Riau",
+    cities: [
       "Kota Pekan Baru",
       "Kota Dumai",
       "Kab. Kepulauan Meranti",
@@ -116,8 +116,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Jambi",
-    kota: [
+    name: "Jambi",
+    cities: [
       "Kota Jambi",
       "Kota Sungai Penuh",
       "Kab. Tebo",
@@ -133,8 +133,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Sumatera Selatan",
-    kota: [
+    name: "Sumatera Selatan",
+    cities: [
       "Kota Palembang",
       "Kota Pagar Alam",
       "Kota Lubuk Linggau",
@@ -156,8 +156,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Bengkulu",
-    kota: [
+    name: "Bengkulu",
+    cities: [
       "Kota Bengkulu",
       "Kab. Bengkulu Tengah",
       "Kab. Kepahiang ",
@@ -172,8 +172,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Lampung",
-    kota: [
+    name: "Lampung",
+    cities: [
       "Kota Bandar Lampung",
       "Kota Metro",
       "Kab. Pesisir Barat",
@@ -193,8 +193,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Kepulauan Bangka Belitung",
-    kota: [
+    name: "Kepulauan Bangka Belitung",
+    cities: [
       "Kota Pangkal Pinang",
       "Kab. Belitung Timur",
       "Kab. Bangka Barat",
@@ -206,8 +206,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Kepulauan Riau",
-    kota: [
+    name: "Kepulauan Riau",
+    cities: [
       "Kota Batam",
       "Kota Tanjung Pinang",
       "Kab. Kepulauan Anambas",
@@ -219,8 +219,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "DKI Jakarta",
-    kota: [
+    name: "DKI Jakarta",
+    cities: [
       "Kota Jakarta Timur",
       "Kota Jakarta Selatan",
       "Kota Jakarta Barat",
@@ -231,8 +231,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Jawa Barat",
-    kota: [
+    name: "Jawa Barat",
+    cities: [
       "Kota Bandung",
       "Kota Banjar",
       "Kota Tasikmalaya",
@@ -264,8 +264,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Jawa Tengah",
-    kota: [
+    name: "Jawa Tengah",
+    cities: [
       "Kota Semarang",
       "Kota Tegal",
       "Kota Pekalongan",
@@ -305,8 +305,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "DI Yogyakarta",
-    kota: [
+    name: "DI Yogyakarta",
+    cities: [
       "Kota Yogyakarta",
       "Kab. Sleman",
       "Kab. Gunung Kidul",
@@ -316,8 +316,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Jawa Timur",
-    kota: [
+    name: "Jawa Timur",
+    cities: [
       "Kota Surabaya",
       "Kota Batu",
       "Kota Madiun",
@@ -360,8 +360,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Banten",
-    kota: [
+    name: "Banten",
+    cities: [
       "Kota Serang",
       "Kota Cilegon",
       "Kota Tangerang",
@@ -374,8 +374,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Bali",
-    kota: [
+    name: "Bali",
+    cities: [
       "Kota Denpasar",
       "Kab. Buleleng",
       "Kab. Karangasem",
@@ -389,8 +389,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Nusa Tenggara Barat",
-    kota: [
+    name: "Nusa Tenggara Barat",
+    cities: [
       "Kota Mataram",
       "Kota Bima",
       "Kab. Lombok Utara",
@@ -405,8 +405,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Nusa Tenggara Timur",
-    kota: [
+    name: "Nusa Tenggara Timur",
+    cities: [
       "Kota Kupang",
       "Kab. Malaka",
       "Kab. Sabu Raijua",
@@ -432,8 +432,8 @@ export const provinceData: Province[] = [
     ],
   },
   {
-    provinsi: "Kalimantan Barat",
-    kota: [
+    name: "Kalimantan Barat",
+    cities: [
       "Kota Pontianak",
       "Kota Singkawang",
       "Kab. Kubu Raya",
@@ -452,8 +452,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Kalimantan Tengah",
-    kota: [
+    name: "Kalimantan Tengah",
+    cities: [
       "Kota Palangkaraya",
       "Kab. Barito Timur",
       "Kab. Murung Raya",
@@ -472,8 +472,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Kalimantan Selatan",
-    kota: [
+    name: "Kalimantan Selatan",
+    cities: [
       "Kota Banjarmasin",
       "Kota Banjarbaru",
       "Kab. Balangan",
@@ -491,8 +491,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Kalimantan Timur",
-    kota: [
+    name: "Kalimantan Timur",
+    cities: [
       "Kota Samarinda",
       "Kota Bontang",
       "Kota Balikpapan",
@@ -507,8 +507,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Kalimantan Utara",
-    kota: [
+    name: "Kalimantan Utara",
+    cities: [
       "Kota Tarakan",
       "Kab. Tana Tidung",
       "Kab. Nunukan",
@@ -518,8 +518,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Sulawesi Utara",
-    kota: [
+    name: "Sulawesi Utara",
+    cities: [
       "Kota Manado",
       "Kota Tomohon",
       "Kota Bitung",
@@ -539,8 +539,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Sulawesi Tengah",
-    kota: [
+    name: "Sulawesi Tengah",
+    cities: [
       "Kota Palu",
       "Kab. Morowali Utara",
       "Kab. Banggai Laut",
@@ -558,8 +558,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Sulawesi Selatan",
-    kota: [
+    name: "Sulawesi Selatan",
+    cities: [
       "Kota Makasar",
       "Kota Palopo",
       "Kota Pare Pare",
@@ -588,8 +588,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Sulawesi Tenggara",
-    kota: [
+    name: "Sulawesi Tenggara",
+    cities: [
       "Kota Kendari",
       "Kota Bau Bau",
       "Kab. Buton Selatan",
@@ -611,8 +611,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Gorontalo",
-    kota: [
+    name: "Gorontalo",
+    cities: [
       "Kota Gorontalo",
       "Kab. Pohuwato",
       "Kab. Bone Bolango",
@@ -623,8 +623,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Sulawesi Barat",
-    kota: [
+    name: "Sulawesi Barat",
+    cities: [
       "Kab. Majene",
       "Kab. Polowali Mandar",
       "Kab. Mamasa",
@@ -635,8 +635,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Maluku",
-    kota: [
+    name: "Maluku",
+    cities: [
       "Kota Ambon",
       "Kota Tual",
       "Kab. Buru Selatan",
@@ -652,8 +652,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Maluku Utara",
-    kota: [
+    name: "Maluku Utara",
+    cities: [
       "Kota Ternate",
       "Kota Tidore Kepulauan",
       "Kab. Pulau Taliabu",
@@ -668,8 +668,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Papua",
-    kota: [
+    name: "Papua",
+    cities: [
       "Kota Jayapura",
       "Kab. Deiyai",
       "Kab. Intan Jaya",
@@ -703,8 +703,8 @@ export const provinceData: Province[] = [
   },
 
   {
-    provinsi: "Papua Barat",
-    kota: [
+    name: "Papua Barat",
+    cities: [
       "Kota Sorong",
       "Kab. Pegunungan Arfak",
       "Kab. Manokwari Selatan",

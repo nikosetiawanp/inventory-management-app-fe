@@ -1,28 +1,27 @@
 import {
   Autocomplete,
   Button,
-  Dialog,
+  DialogTitle,
   FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
+  Modal,
+  ModalDialog,
   Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+} from "@mui/joy";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Contact } from "../../interfaces/interfaces";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { provinceData } from "../../public/ProvinceData";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { provinces } from "../../public/ProvinceData";
+import { FormHelperText, FormLabel, Input } from "@mui/joy";
+import AddIcon from "@mui/icons-material/Add";
+import { InfoOutlined } from "@mui/icons-material";
+import { Select, Option } from "@mui/joy";
 
 export default function CreateContact() {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<Contact>();
 
@@ -30,9 +29,20 @@ export default function CreateContact() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
 
-  const [selectedProvince, setSelectedProvince] = useState<any>();
+  const [selectedProvince, setSelectedProvince] = useState<string>();
   const [selectedCity, setSelectedCity] = useState<any>();
-  const [type, setType] = useState<"V" | "C">("V");
+  const [selectedType, setSelectedType] = useState<"V" | "C" | null>("V");
+  const cities =
+    provinces.find((province) => province.name == selectedProvince)?.cities ||
+    [];
+
+  const handleTypeChange = (
+    event: React.SyntheticEvent | null,
+    newValue: "V" | "C" | null
+  ) => {
+    event;
+    setSelectedType(newValue);
+  };
 
   const createContact = useMutation(
     async (data: Contact) => {
@@ -41,12 +51,11 @@ export default function CreateContact() {
         name: data.name,
         email: data.email,
         phone: data.phone,
-        province: selectedProvince.provinsi,
+        province: selectedProvince,
         city: selectedCity,
         address: data.address,
-        type: type,
+        type: selectedType,
       };
-      console.log(dataToSubmit);
 
       try {
         const response = await axios.post(
@@ -83,24 +92,54 @@ export default function CreateContact() {
   return (
     <>
       <Button
-        startIcon={<AddIcon />}
-        variant="contained"
+        startDecorator={<AddIcon />}
+        variant="solid"
         onClick={() => setOpen(true)}
-        sx={{ height: "auto" }}
       >
         Tambah Kontak
       </Button>
 
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        fullWidth
-        maxWidth={"xs"}
-      >
-        <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Stack gap={3} padding={4}>
-            <Typography variant="h6">Tambah Kontak</Typography>
-            <TextField
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>Tambah Kontak</DialogTitle>
+          <form
+            action="submit"
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            style={{ overflow: "scroll" }}
+          >
+            <Stack spacing={2}>
+              <Stack spacing={1}>
+                <FormLabel>Jenis</FormLabel>
+                <Select
+                  size="md"
+                  value={selectedType}
+                  onChange={handleTypeChange}
+                >
+                  <Option value={"V"}>Vendor</Option>
+                  <Option value={"C"}>Customer</Option>
+                </Select>
+              </Stack>
+
+              <FormControl error={errors.code?.message !== ""}>
+                <Stack spacing={1}>
+                  <FormLabel>Kode</FormLabel>
+                  <Input
+                    id="kode"
+                    placeholder="Kode"
+                    {...register("code", { required: "Tidak boleh kosong" })}
+                    error={!!errors.code}
+                    size="md"
+                  />
+                  {errors.code?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.code?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+              {/* <TextField
               id="kode"
               label="Kode"
               variant="outlined"
@@ -108,86 +147,111 @@ export default function CreateContact() {
               error={!!errors.code}
               helperText={errors.code?.message}
               required
-            />
-            <TextField
-              id="name"
-              label="Nama"
-              variant="outlined"
-              {...register("name", { required: "Tidak boleh kosong" })}
-              error={!!errors.name}
-              helperText={errors.name?.message}
-              required
-            />
-            <TextField
-              id="email"
-              label="Email"
-              variant="outlined"
-              {...register("email", {
-                pattern: {
-                  value: /\S+@\S+\.\S+/,
-                  message: "Masukkan format email yang benar",
-                },
-              })}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-            <TextField
-              id="phone"
-              label="Nomor telepon"
-              variant="outlined"
-              {...register("phone")}
-              error={!!errors.phone}
-              helperText={errors.phone?.message}
-            />
-            {/* PROVINSI */}
-            <Stack direction={"row"} width={1} gap={2}>
-              <Autocomplete
-                options={provinceData}
-                getOptionLabel={(option) => option.provinsi}
-                renderInput={(params) => (
-                  <TextField {...params} label="Provinsi" />
-                )}
-                value={selectedProvince || null} // Ensure value is either a defined value or null
-                onChange={(_, newValue) => setSelectedProvince(newValue as any)}
-                ListboxProps={{
-                  style: {
-                    maxHeight: "150px",
-                  },
-                }}
-                fullWidth
-              />
+            /> */}
 
-              {/* KOTA */}
-              <Controller
-                name="city"
-                control={control}
-                defaultValue={selectedCity}
-                disabled={selectedProvince?.kota.length == 0}
-                render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    fullWidth
-                    defaultValue={selectedCity}
-                    options={
-                      selectedProvince?.kota ? selectedProvince?.kota : []
-                    }
-                    value={selectedCity as any}
-                    getOptionLabel={(option) => option}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Kota/Kabupaten" />
-                    )}
-                    onChange={(_, newValue) => setSelectedCity(newValue as any)}
-                    ListboxProps={{
-                      style: {
-                        maxHeight: "150px",
-                      },
-                    }}
+              <FormControl error={errors.name?.message !== ""}>
+                <Stack spacing={1}>
+                  <FormLabel>Nama</FormLabel>
+                  <Input
+                    id="name"
+                    placeholder="Nama"
+                    {...register("name", { required: "Tidak boleh kosong" })}
+                    error={!!errors.name}
+                    size="md"
                   />
-                )}
-              />
-            </Stack>
-            {/* ALAMAT */}
-            <TextField
+                  {errors.name?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.name?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+
+              <FormControl error={errors.email?.message !== ""}>
+                <Stack spacing={1}>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    id="email"
+                    placeholder="Email"
+                    {...register("email", { required: "Tidak boleh kosong" })}
+                    error={!!errors.email}
+                    size="md"
+                  />
+                  {errors.email?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.email?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+
+              <FormControl error={errors.phone?.message !== ""}>
+                <Stack spacing={1}>
+                  <FormLabel>Nomor Telepon</FormLabel>
+                  <Input
+                    id="phone"
+                    placeholder="Nomor Telepon"
+                    {...register("phone", { required: "Tidak boleh kosong" })}
+                    error={!!errors.phone}
+                    size="md"
+                  />
+                  {errors.phone?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.phone?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+
+              {/* PROVINSI */}
+              <Stack direction={"row"} width={1} gap={2}>
+                <Stack spacing={1}>
+                  <FormLabel>Provinsi</FormLabel>{" "}
+                  <Autocomplete
+                    autoComplete
+                    size="md"
+                    placeholder="Provinsi"
+                    options={provinces.map((province) => province.name)}
+                    onChange={(_, newValue) =>
+                      setSelectedProvince(newValue as any)
+                    }
+                  />
+                </Stack>
+
+                <Stack spacing={1}>
+                  <FormLabel>Kota</FormLabel>
+                  <Autocomplete
+                    size="md"
+                    placeholder="Kota"
+                    value={selectedCity}
+                    options={cities}
+                    onChange={(_, newValue) => setSelectedCity(newValue as any)}
+                  />
+                </Stack>
+              </Stack>
+              {/* ALAMAT */}
+              <FormControl error={errors.address?.message !== ""}>
+                <Stack spacing={1}>
+                  <FormLabel>Alamat</FormLabel>
+                  <Input
+                    id="address"
+                    placeholder="Alamat"
+                    {...register("address", { required: "Tidak boleh kosong" })}
+                    error={!!errors.address}
+                    size="md"
+                  />
+                  {errors.address?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.address?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+              {/* <TextField
               id="address"
               label="Alamat"
               variant="outlined"
@@ -195,13 +259,14 @@ export default function CreateContact() {
               error={!!errors.address}
               helperText={errors.address?.message}
               rows={3}
-            />
-            {/* SUPPLIER? */}
-            <FormControl>
-              {/* <FormLabel id="demo-row-radio-buttons-group-label">
+            /> */}
+              {/* SUPPLIER? */}
+              <FormControl>
+                {/* <FormLabel id="demo-row-radio-buttons-group-label">
                 Jenis
               </FormLabel> */}
-              <RadioGroup
+
+                {/* <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="row-radio-buttons-group"
@@ -218,30 +283,35 @@ export default function CreateContact() {
                   control={<Radio />}
                   label="Customer"
                 />
-              </RadioGroup>
-            </FormControl>
-            {/* ACTIONS */}
-            <Stack
-              direction={"row"}
-              width={1}
-              justifyContent={"flex-end"}
-              gap={1}
-            >
-              <Button onClick={() => setOpen(false)} type="button">
-                Batal
-              </Button>
-              <Button
-                variant={"contained"}
-                disabled={createContact.isLoading}
-                type="button"
-                onClick={handleSubmit(onSubmit)}
-              >
-                {createContact.isLoading ? "Menyimpan" : "Simpan"}
-              </Button>
+              </RadioGroup> */}
+              </FormControl>
+              {/* ACTIONS */}
             </Stack>
+          </form>
+          <Stack
+            direction={"row"}
+            width={1}
+            justifyContent={"flex-end"}
+            gap={1}
+          >
+            <Button
+              onClick={() => setOpen(false)}
+              type="button"
+              variant="plain"
+            >
+              Batal
+            </Button>
+            <Button
+              variant={"solid"}
+              disabled={createContact.isLoading}
+              type="button"
+              onClick={handleSubmit(onSubmit)}
+            >
+              {createContact.isLoading ? "Menyimpan" : "Simpan"}
+            </Button>
           </Stack>
-        </form>
-      </Dialog>
+        </ModalDialog>
+      </Modal>
     </>
   );
 }

@@ -1,16 +1,17 @@
 import {
-  Button,
-  Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
-  ListItemIcon,
-  ListItemText,
+  Divider,
   MenuItem,
-} from "@mui/material";
+  Modal,
+  ModalDialog,
+  Button,
+} from "@mui/joy";
 import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
+
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 export default function DeleteRecord(props: {
@@ -23,15 +24,6 @@ export default function DeleteRecord(props: {
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const [open, setOpen] = useState(false);
-  const handleClickOpen = (event: any) => {
-    event.stopPropagation();
-    setOpen(true);
-  };
-  const handleClose = (event: any) => {
-    event.stopPropagation();
-    event.preventDefault();
-    setOpen(false);
-  };
 
   const queryClient = useQueryClient();
   const deleteRecord = useMutation(
@@ -54,45 +46,52 @@ export default function DeleteRecord(props: {
     }
   );
 
-  const { isLoading } = deleteRecord;
-
   return (
     <>
       {props.variant == "menu-item" ? (
-        <MenuItem onClick={handleClickOpen}>
-          <ListItemIcon>
-            <DeleteIcon fontSize="small" color="error" />
-          </ListItemIcon>
-          <ListItemText sx={{ color: "error.main" }}>Hapus</ListItemText>
+        <MenuItem
+          onClick={() => {
+            setOpen(true);
+            setOpen(true);
+
+            alert(open);
+          }}
+        >
+          <DeleteIcon fontSize="small" color="error" />
+          Hapus
         </MenuItem>
       ) : null}
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Hapus {props.label}?</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Data yang sudah dihapus tidak dapat dikembalikan.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Batal</Button>
-          <Button
-            color={isLoading ? "inherit" : "error"}
-            onClick={() => {
-              deleteRecord.mutateAsync(props.id);
-            }}
-            autoFocus
-            disabled={isLoading}
-          >
-            {isLoading ? "Menghapus" : "Hapus"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog variant="outlined" role="alertdialog" layout="center">
+          <DialogTitle>
+            <WarningRoundedIcon />
+            Confirmation
+          </DialogTitle>
+          <Divider />
+          <DialogContent>
+            Are you sure you want to discard all of your notes?
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="solid"
+              color="danger"
+              onClick={() => setOpen(false)}
+              loading={deleteRecord.isLoading}
+            >
+              Discard notes
+            </Button>
+            <Button
+              variant="plain"
+              color="neutral"
+              onClick={() => setOpen(false)}
+              disabled={deleteRecord.isLoading}
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </ModalDialog>
+      </Modal>
     </>
   );
 }

@@ -17,7 +17,7 @@ import { useQuery } from "react-query";
 import { Product } from "../../interfaces/interfaces";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import axios from "axios";
-import CreateProductButton from "../Product/CreateProductButton";
+import CreateProductButton from "../Product/CreateProduct";
 import MoreVertProductButton from "../Product/MoreVertProductButton";
 
 export default function InventoryPage() {

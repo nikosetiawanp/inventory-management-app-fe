@@ -14,7 +14,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Product } from "../../interfaces/interfaces";
-import CreateProductButton from "../../pages/Product/CreateProductButton";
+import CreateProductButton from "../../pages/Product/CreateProduct";
 
 export default function SelectProduct(props: {
   selectedProduct: Product | null;

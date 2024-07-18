@@ -1,14 +1,4 @@
-import {
-  IconButton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
 
 import Drawer from "../../components/Drawer";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
@@ -49,7 +39,6 @@ export default function PurchaseOrderPage() {
         `&endDate=${selectedEndDate ? formattedEndDate : ""}` +
         `&isDone=${selectedDoneStatus}`
     );
-    console.log(response.data.data);
     return response.data.data;
   };
 
@@ -110,17 +99,43 @@ export default function PurchaseOrderPage() {
     direction: "descending",
   });
   const sortedData = useMemo(() => {
-    // SORT INVOICE DATE ASCENDING
+    // // SORT INVOICE DATE ASCENDING
+    // if (sortConfig.key == "po-date" && sortConfig.direction == "descending") {
+    //   return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
+    //     b?.date.localeCompare(a?.date)
+    //   );
+    // }
+
+    // // SORT INVOICE DATE ASCENDING
+    // if (sortConfig.key == "po-date" && sortConfig.direction == "ascending") {
+    //   return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
+    //     a?.date.localeCompare(b?.date)
+    //   );
+    // }
+
+    // SORT INVOICE DATE DESCENDING
     if (sortConfig.key == "po-date" && sortConfig.direction == "descending") {
-      return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
-        b?.date.localeCompare(a?.date)
+      return filteredTransactionsQuery?.sort(
+        (a: Transaction, b: Transaction) => {
+          const dateComparison = b?.date.localeCompare(a?.date);
+          if (dateComparison !== 0) {
+            return dateComparison;
+          }
+          return b?.id - a?.id; // Sort by id if dates are equal
+        }
       );
     }
 
     // SORT INVOICE DATE ASCENDING
     if (sortConfig.key == "po-date" && sortConfig.direction == "ascending") {
-      return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
-        a?.date.localeCompare(b?.date)
+      return filteredTransactionsQuery?.sort(
+        (a: Transaction, b: Transaction) => {
+          const dateComparison = a?.date.localeCompare(b?.date);
+          if (dateComparison !== 0) {
+            return dateComparison;
+          }
+          return a?.id - b?.id; // Sort by id if dates are equal
+        }
       );
     }
 
@@ -156,21 +171,32 @@ export default function PurchaseOrderPage() {
       <Drawer />
 
       {/* CONTENT */}
-      <Stack padding={4} gap={4} width={1}>
-        <Typography fontWeight={"bold"} variant="h4">
-          Purchase Order
-        </Typography>
+      <Stack padding={4} width={1}>
+        {/*TITLE & CREATE PRODUCT */}
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"flex-end"}
+          marginBottom={4}
+        >
+          <Typography fontWeight={"bold"} level="h4">
+            Purchase Order
+          </Typography>
+          <CreateTransaction type={"purchase"} />
+        </Stack>
 
-        <Stack direction={"row"} gap={2} width={1}>
+        <Stack direction={"row"} marginBottom={2} gap={2} width={1}>
           <SelectFilter
             selected={selectedType}
             setSelected={setSelectedType}
             options={types}
+            label={"Kategori"}
           />
           <SelectFilter
             selected={selectedApprovalStatus}
             setSelected={setSelectedApprovalStatus}
             options={approvalStatuses}
+            label={"Approval"}
           />
           <DateFilter
             selectedStartDate={selectedStartDate}
@@ -190,57 +216,56 @@ export default function PurchaseOrderPage() {
             selected={selectedDoneStatus}
             setSelected={setSelectedDoneStatus}
             options={doneStatuses}
+            label={"Status"}
           />
 
           {/* BUTTON */}
-          <CreateTransaction type={"P"} />
         </Stack>
 
-        <TableContainer
-          sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
-        >
-          <Table sx={{ borderCollapse: "separate" }} size="small">
+        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <Table size="sm" stickyHeader stickyFooter>
             {/* HEAD */}
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                border: 2,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              <TableRow>
-                <TableCell>Nomor PO </TableCell>
-                <TableCell>
-                  Vendor{" "}
+            <thead>
+              <tr>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Nomor PO
+                  </Button>
+                </th>
+                <th>
                   <SortButton
+                    label="Vendor"
                     sortConfigKey="contact"
                     sortConfig={sortConfig}
                     setSortConfig={setSortConfig}
                   />
-                </TableCell>
-                <TableCell>
-                  Tanggal PO{" "}
+                </th>
+                <th>
                   <SortButton
+                    label="Tanggal PO"
                     sortConfigKey="po-date"
                     sortConfig={sortConfig}
                     setSortConfig={setSortConfig}
                   />
-                </TableCell>
-                <TableCell>Status Approval</TableCell>
-                <TableCell>Status Selesai</TableCell>
-                <TableCell width={10}>
-                  <IconButton size="small">
+                </th>
+                <th>Status Approval</th>
+                <th style={{ textAlign: "center" }}>Status Selesai</th>
+                <th
+                  style={{
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    width: 60,
+                  }}
+                >
+                  <IconButton size="sm">
                     <Settings fontSize="small" />
                   </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                </th>
+              </tr>
+            </thead>
 
             {/* ROWS */}
-            <TableBody sx={{ overflowY: "scroll" }}>
+            <tbody>
               {transactionsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={5} />
               ) : (
@@ -254,9 +279,9 @@ export default function PurchaseOrderPage() {
                   />
                 ))
               )}
-            </TableBody>
+            </tbody>
           </Table>
-        </TableContainer>
+        </Sheet>
       </Stack>
     </Stack>
   );

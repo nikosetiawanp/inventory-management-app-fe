@@ -1,38 +1,57 @@
-import { Dialog, Stack, Typography, TextField, Button } from "@mui/material";
+import {
+  Stack,
+  Button,
+  Modal,
+  ModalDialog,
+  DialogTitle,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  Input,
+  Autocomplete,
+  AutocompleteOption,
+  ListItemContent,
+} from "@mui/joy";
 import { Transaction, Contact } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import { useState } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import SelectContact from "../../components/select/SelectContact";
 import AddIcon from "@mui/icons-material/Add";
+import { InfoOutlined } from "@mui/icons-material";
 
-export default function CreateTransaction(props: { type: "P" | "S" }) {
+export default function CreateTransaction(props: {
+  type: "purchase" | "sales";
+}) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm<Transaction>();
 
   const [open, setOpen] = useState(false);
+  const getContacts = async () => {
+    const response = await axios.get(
+      BACKEND_URL + `contacts?type=${props.type == "purchase" ? "V" : "C"}`
+    );
+    return response.data.data;
+  };
+  const contactsQuery = useQuery({
+    queryKey: ["contacts"],
+    queryFn: getContacts,
+    refetchOnWindowFocus: false,
+    enabled: open,
+  });
 
   // CONTACT
-  const [selectedContact, setSelectedContact] = useState<Contact>();
-  const handleContactChange = (value: Contact) => {
-    setSelectedContact(value);
-    setValue("contact" as any, value ? value.id : "");
-  };
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   // DATE
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  // const [expectedArrival, setExpectedArrival] = useState(null);
-
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-  // const formattedExpectedArrival = dayjs(expectedArrival).format("YYYY-MM-DD");
 
   // POST
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -57,7 +76,7 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
   const onSubmit: SubmitHandler<Transaction> = async (data) => {
     const dataToSubmit: any = {
       number: data.number,
-      type: props.type,
+      type: props.type == "purchase" ? "P" : props.type == "sales" ? "S" : null,
       date: formattedDate,
       expectedArrival: null,
       isApproved: false,
@@ -78,79 +97,128 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
   return (
     <>
       <Button
-        startIcon={<AddIcon />}
-        variant="contained"
+        startDecorator={<AddIcon />}
+        variant="solid"
         onClick={() => setOpen(true)}
-        sx={{ marginLeft: "auto" }}
       >
-        {props.type == "P" ? "Buat Purchase Order" : "Buat Sales Order"}
+        {props.type == "purchase" ? "Buat Purchase Order" : "Buat Sales Order"}
       </Button>
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        fullWidth
-        maxWidth={"xs"}
-      >
-        <form
-          action="submit"
-          onSubmit={handleSubmit(onSubmit as any)}
-          noValidate
-        >
-          <Stack gap={3} padding={4}>
-            <Typography variant="h6">
-              {props.type == "P" ? "Buat Purchase Order" : "Buat Sales Order"}
-            </Typography>
-            {/* DATE PICKER */}
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Tanggal"
-                value={selectedDate}
-                onChange={(newValue: any) => setSelectedDate(newValue)}
-                format="DD/MM/YYYY"
-                slotProps={{
-                  field: { clearable: true },
-                }}
-              />
-            </LocalizationProvider>
 
-            {/* AUTOCOMPLETE */}
-            <SelectContact
-              selectedContact={selectedContact}
-              setSelectedContact={setSelectedContact}
-              handleContactChange={handleContactChange}
-              type={props.type}
-            />
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>
+            {props.type == "purchase"
+              ? "Buat Purchase Order"
+              : "Buat Sales Order"}
+          </DialogTitle>
+          <form
+            action="submit"
+            onSubmit={handleSubmit(onSubmit as any)}
+            noValidate
+            style={{ overflow: "scroll" }}
+          >
+            <Stack spacing={2}>
+              {/* DATE PICKER */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Tanggal"
+                  value={selectedDate}
+                  onChange={(newValue: any) => setSelectedDate(newValue)}
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    field: { clearable: true },
+                  }}
+                />
+              </LocalizationProvider>
 
-            {/* NOMOR SURAT */}
-            <TextField
-              id="number"
-              label="Nomor"
-              variant="outlined"
-              {...register("number", { required: "Tidak boleh kosong" })}
-              error={!!errors.number}
-              helperText={errors.number?.message}
-              required
-            />
-            <Stack
-              direction={"row"}
-              width={1}
-              justifyContent={"flex-end"}
-              gap={1}
-            >
-              <Button onClick={() => setOpen(false)} type="button">
-                Batal
-              </Button>
-              <Button
-                variant={"contained"}
-                type="submit"
-                disabled={createTransaction.isLoading}
+              {/* AUTOCOMPLETE */}
+              <FormControl>
+                <Stack spacing={1}>
+                  <FormLabel>
+                    {props.type == "purchase" ? "Vendor" : "Customer"}
+                  </FormLabel>{" "}
+                  <Autocomplete
+                    id="contact"
+                    placeholder={
+                      props.type == "purchase"
+                        ? "Pilih Vendor"
+                        : "Pilih Customer"
+                    }
+                    value={selectedContact}
+                    onChange={(event, newValue) => {
+                      event;
+                      setSelectedContact(newValue);
+                    }}
+                    inputValue={selectedContact?.name}
+                    getOptionLabel={(option: Contact) => option.name}
+                    options={contactsQuery.data}
+                    renderOption={(props, option: Contact) => (
+                      <AutocompleteOption {...props} key={option.id}>
+                        <ListItemContent sx={{ fontSize: "sm" }}>
+                          {option.name}
+                        </ListItemContent>
+                      </AutocompleteOption>
+                    )}
+                    // {...register("contact", { required: "Tidak boleh kosong" })}
+                    // error={!!errors.contact}
+                  />
+                  {/* ----------------- */}
+                  {errors.contact?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.contact?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+
+              {/* NOMOR */}
+              <FormControl error={errors.number?.message !== ""}>
+                <Stack spacing={1}>
+                  <FormLabel>Nomor</FormLabel>
+                  <Input
+                    id="number"
+                    placeholder="Nomor"
+                    {...register("number", { required: "Tidak boleh kosong" })}
+                    error={!!errors.number}
+                    size="md"
+                  />
+                  {errors.number?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.number?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+
+              <Stack
+                direction={"row"}
+                width={1}
+                justifyContent={"flex-end"}
+                gap={1}
               >
-                {createTransaction.isLoading ? "Menyimpan" : "Simpan"}
-              </Button>
+                <Button
+                  variant="plain"
+                  onClick={() => setOpen(false)}
+                  type="button"
+                  disabled={createTransaction.isLoading}
+                >
+                  Batal
+                </Button>
+                <Button
+                  variant={"solid"}
+                  type="submit"
+                  disabled={createTransaction.isLoading}
+                  loading={createTransaction.isLoading}
+                >
+                  Simpan
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-        </form>
-      </Dialog>
+          </form>
+        </ModalDialog>
+      </Modal>
     </>
   );
 }

@@ -1,62 +1,29 @@
 import { MoreVert } from "@mui/icons-material";
 import {
-  IconButton,
-  ListItemIcon,
-  ListItemText,
+  Dropdown,
+  ListItemDecorator,
   Menu,
+  MenuButton,
   MenuItem,
-} from "@mui/material";
-import { useState } from "react";
-
+} from "@mui/joy";
 import EditIcon from "@mui/icons-material/Edit";
 import { Contact } from "../../interfaces/interfaces";
 import DeleteRecord from "../../components/DeleteRecord";
+import AlertDialogModal from "../../components/AlertModal";
 
 export default function MoreVertContactButton(props: { contact: Contact }) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
-    <>
-      <IconButton
-        size="small"
-        onClick={handleClick}
-        aria-controls={open ? "demo-positioned-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-      >
+    <Dropdown>
+      <MenuButton variant="plain">
         <MoreVert fontSize="small" />
-      </IconButton>
+      </MenuButton>
 
-      <Menu
-        id="demo-positioned-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-      >
+      <Menu>
         <MenuItem>
-          <ListItemIcon>
-            <EditIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Ubah</ListItemText>
+          <ListItemDecorator>
+            <EditIcon fontSize="small" color="inherit" />
+          </ListItemDecorator>
+          Ubah
         </MenuItem>
         <DeleteRecord
           id={props.contact.id}
@@ -65,7 +32,10 @@ export default function MoreVertContactButton(props: { contact: Contact }) {
           label={props.contact.name}
           variant={"menu-item"}
         />
+        {/* <MenuItem>
+          <AlertDialogModal />
+        </MenuItem> */}
       </Menu>
-    </>
+    </Dropdown>
   );
 }

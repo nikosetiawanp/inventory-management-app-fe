@@ -20,7 +20,7 @@ export default function SelectContact(props: {
   selectedContact: Contact | null | undefined;
   setSelectedContact: any;
   handleContactChange: any;
-  type: "P" | "S";
+  type: "purchase" | "sales";
 }) {
   const [open, setOpen] = useState(false);
 
@@ -28,7 +28,7 @@ export default function SelectContact(props: {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getContacts = async () => {
     const response = await axios.get(
-      BACKEND_URL + `contacts?type=${props.type == "P" ? "V" : "C"}`
+      BACKEND_URL + `contacts?type=${props.type == "purchase" ? "V" : "C"}`
     );
     return response.data.data;
   };
@@ -50,7 +50,7 @@ export default function SelectContact(props: {
     <>
       <TextField
         id="outlined-basic"
-        label={props.type == "P" ? "Vendor" : "Customer"}
+        label={props.type == "purchase" ? "Vendor" : "Customer"}
         variant="outlined"
         sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
@@ -72,7 +72,7 @@ export default function SelectContact(props: {
               marginBottom={2}
               marginRight={"auto"}
             >
-              {props.type == "P" ? "Pilih Vendor" : "Pilih Customer"}
+              {props.type == "purchase" ? "Pilih Vendor" : "Pilih Customer"}
             </Typography>
             <CreateContact />
           </Stack>
