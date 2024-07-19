@@ -101,7 +101,7 @@ export default function ContactPage() {
             <thead>
               <tr>
                 <th>
-                  <Button size="sm" variant="soft" color="primary">
+                  <Button size="sm" variant="plain" color="neutral">
                     Kode
                   </Button>
                 </th>

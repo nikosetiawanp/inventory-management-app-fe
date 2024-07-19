@@ -21,7 +21,7 @@ export default function SelectFilter(props: {
   };
 
   return (
-    <Stack width={200}>
+    <Stack>
       <FormLabel>{props.label}</FormLabel>
       <Select
         value={props.selected}

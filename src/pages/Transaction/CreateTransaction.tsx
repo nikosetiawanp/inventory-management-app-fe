@@ -119,21 +119,26 @@ export default function CreateTransaction(props: {
           >
             <Stack spacing={2}>
               {/* DATE PICKER */}
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Tanggal"
-                  value={selectedDate}
-                  onChange={(newValue: any) => setSelectedDate(newValue)}
-                  format="DD/MM/YYYY"
-                  slotProps={{
-                    field: { clearable: true },
-                  }}
-                />
-              </LocalizationProvider>
+              <Stack>
+                <FormLabel>Tanggal</FormLabel>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={selectedDate}
+                    onChange={(newValue: any) => setSelectedDate(newValue)}
+                    format="DD/MM/YYYY"
+                    slotProps={{
+                      field: { clearable: true },
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </Stack>
 
               {/* AUTOCOMPLETE */}
               <FormControl>
-                <Stack spacing={1}>
+                <Stack>
                   <FormLabel>
                     {props.type == "purchase" ? "Vendor" : "Customer"}
                   </FormLabel>{" "}
@@ -174,7 +179,7 @@ export default function CreateTransaction(props: {
 
               {/* NOMOR */}
               <FormControl error={errors.number?.message !== ""}>
-                <Stack spacing={1}>
+                <Stack>
                   <FormLabel>Nomor</FormLabel>
                   <Input
                     id="number"

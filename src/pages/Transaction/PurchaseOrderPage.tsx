@@ -12,10 +12,10 @@ import { useQuery } from "react-query";
 import { Transaction } from "../../interfaces/interfaces";
 import dayjs from "dayjs";
 import TransactionRow from "./TransactionRow";
-import DateFilter from "../../components/filters/DateFilter";
 import SortButton from "../../components/buttons/SortButton";
 import ChecklistFilter from "../../components/filters/ChecklistFilter";
 import SelectFilter from "../../components/filters/SelectFilter";
+import DateFilterCopy from "../../components/filters/DateFilterCopy";
 
 export default function PurchaseOrderPage() {
   const [selectedStartDate, setSelectedStartDate] = useState(null);
@@ -198,14 +198,22 @@ export default function PurchaseOrderPage() {
             options={approvalStatuses}
             label={"Approval"}
           />
-          <DateFilter
+          <DateFilterCopy
+            selectedStartDate={selectedStartDate}
+            setSelectedStartDate={setSelectedStartDate}
+            selectedEndDate={selectedEndDate}
+            setSelectedEndDate={setSelectedEndDate}
+            refetch={refetch}
+            label={""}
+          />
+          {/* <DateFilter
             selectedStartDate={selectedStartDate}
             selectedEndDate={selectedEndDate}
             setSelectedStartDate={setSelectedStartDate}
             setSelectedEndDate={setSelectedEndDate}
             refetch={refetch}
             label="Tanggal PO"
-          />
+          /> */}
           <ChecklistFilter
             data={contacts}
             includedData={includedData}

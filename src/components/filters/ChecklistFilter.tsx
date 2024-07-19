@@ -1,22 +1,151 @@
+// import {
+//   Button,
+//   ButtonGroup,
+//   Checkbox,
+//   FormControlLabel,
+//   FormGroup,
+//   Menu,
+//   Stack,
+//   TextField,
+//   Typography,
+// } from "@mui/material";
+
+// import * as React from "react";
+// import { useState } from "react";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+// import CloseIcon from "@mui/icons-material/Close";
+
+// export default function StringFilter(props: {
+//   data: string[];
+//   includedData: string[];
+//   setIncludedData: React.Dispatch<React.SetStateAction<any[]>>;
+//   label: string;
+// }) {
+//   const [searchInput, setSearchInput] = useState("");
+//   const searchResult = props.data?.filter(
+//     (item: string) =>
+//       item.toLowerCase().includes(searchInput.toLowerCase()) ||
+//       item.toLowerCase().includes(searchInput.toLowerCase())
+//   );
+
+//   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+//   const open = Boolean(anchorEl);
+//   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+//     setAnchorEl(event.currentTarget);
+//   };
+
+//   const handleClose = () => {
+//     setAnchorEl(null);
+//   };
+
+// const check = (data: string) => {
+//   !props.includedData?.includes(data)
+//     ? props.setIncludedData([...props.includedData, data])
+//     : props.setIncludedData(
+//         [...props.includedData].filter((item) => item !== data)
+//       );
+// };
+
+//   const resetFilter = () => {
+//     props.setIncludedData([]);
+//   };
+
+//   return (
+//     <div>
+//       {/* BUTTON */}
+//       <ButtonGroup>
+//         <Button
+//           endIcon={props.includedData.length == 0 && <ExpandMoreIcon />}
+//           onClick={handleClick}
+//           color={props.includedData.length > 0 ? "primary" : "inherit"}
+//           variant="contained"
+//           disabled={props.data.length == 0}
+//         >
+//           {props.label}
+//         </Button>
+//         {props.includedData.length > 0 && (
+//           <Button
+//             // sx={{ borderRadius: 99 }}
+//             variant="contained"
+//             onClick={resetFilter}
+//           >
+//             <CloseIcon fontSize="small" />
+//           </Button>
+//         )}
+//       </ButtonGroup>
+
+//       {/* SORT */}
+//       <Menu
+//         id="basic-menu"
+//         anchorEl={anchorEl}
+//         open={open}
+//         onClose={handleClose}
+//         MenuListProps={{
+//           "aria-labelledby": "basic-button",
+//         }}
+//       >
+//         {/* FILTER */}
+//         {props.data.length > 0 && (
+//           <div>
+//             <Stack padding={2} gap={2}>
+//               <Typography>Filter {props.label}</Typography>
+
+//               <TextField
+//                 id="outlined-basic"
+//                 placeholder="Cari"
+//                 variant="outlined"
+//                 size="small"
+//                 value={searchInput}
+//                 onChange={(event) => {
+//                   setSearchInput(event.target.value);
+//                 }}
+//                 onKeyDown={(e) => e.stopPropagation()}
+//               />
+//             </Stack>
+
+//             {/* CHECKLIST */}
+//             <FormGroup sx={{ paddingX: 2 }}>
+//               {searchResult?.map((data: string, index: number) => (
+//                 <FormControlLabel
+//                   key={index}
+//                   checked={props.includedData.includes(data)}
+//                   control={<Checkbox size="small" />}
+//                   label={data}
+//                   onClick={() => check(data)}
+//                 />
+//               ))}
+//             </FormGroup>
+
+//             <Stack direction={"row"} gap={2} padding={2} justifyContent={"end"}>
+//               <Button size="small" variant="text" onClick={() => resetFilter()}>
+//                 Reset
+//               </Button>
+//             </Stack>
+//           </div>
+//         )}
+//       </Menu>
+//     </div>
+//   );
+// }
+
+import Select from "@mui/joy/Select";
+import Option from "@mui/joy/Option";
 import {
-  Button,
-  ButtonGroup,
+  Box,
   Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Menu,
+  Chip,
+  Divider,
+  FormLabel,
+  IconButton,
+  Input,
   Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-
-import * as React from "react";
+} from "@mui/joy";
 import { useState } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SearchIcon from "@mui/icons-material/Search";
+import { CloseRounded } from "@mui/icons-material";
 
-import CloseIcon from "@mui/icons-material/Close";
-
-export default function StringFilter(props: {
+export default function ChecklistFilter(props: {
   data: string[];
   includedData: string[];
   setIncludedData: React.Dispatch<React.SetStateAction<any[]>>;
@@ -29,102 +158,104 @@ export default function StringFilter(props: {
       item.toLowerCase().includes(searchInput.toLowerCase())
   );
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const check = (data: string) => {
-    !props.includedData?.includes(data)
-      ? props.setIncludedData([...props.includedData, data])
-      : props.setIncludedData(
-          [...props.includedData].filter((item) => item !== data)
-        );
-  };
-
-  const resetFilter = () => {
-    props.setIncludedData([]);
-  };
-
   return (
-    <div>
-      {/* BUTTON */}
-      <ButtonGroup>
-        <Button
-          endIcon={props.includedData.length == 0 && <ExpandMoreIcon />}
-          onClick={handleClick}
-          color={props.includedData.length > 0 ? "primary" : "inherit"}
-          variant="contained"
-          disabled={props.data.length == 0}
-        >
-          {props.label}
-        </Button>
-        {props.includedData.length > 0 && (
-          <Button
-            // sx={{ borderRadius: 99 }}
-            variant="contained"
-            onClick={resetFilter}
-          >
-            <CloseIcon fontSize="small" />
-          </Button>
-        )}
-      </ButtonGroup>
-
-      {/* SORT */}
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
+    <Stack>
+      <FormLabel>{props.label}</FormLabel>
+      <Select
+        multiple
+        disabled={props.data.length == 0}
+        placeholder={`Pilih ${props.label}`}
+        defaultValue={props.includedData}
+        value={props.includedData}
+        onChange={(e, newValue) => {
+          e;
+          props.setIncludedData(newValue);
+        }}
+        {...(props.includedData.length > 0 && {
+          endDecorator: (
+            <IconButton
+              size="sm"
+              variant="plain"
+              color="neutral"
+              onMouseDown={(event) => {
+                event.stopPropagation();
+              }}
+              onClick={() => {
+                props.setIncludedData([]);
+              }}
+            >
+              <CloseRounded fontSize="small" />
+            </IconButton>
+          ),
+          indicator: null,
+        })}
+        renderValue={() =>
+          props.includedData.length == 0 ? (
+            `Pilih ${props.label}`
+          ) : (
+            <Box sx={{ display: "flex", gap: "0.25rem" }}>
+              {props.includedData.map((data) => (
+                <Chip variant="soft" color="primary">
+                  {data}
+                </Chip>
+              ))}
+            </Box>
+          )
+        }
+        sx={{
+          minWidth: "15rem",
+        }}
+        slotProps={{
+          listbox: {
+            sx: {
+              width: "100%",
+            },
+          },
         }}
       >
-        {/* FILTER */}
-        {props.data.length > 0 && (
-          <div>
-            <Stack padding={2} gap={2}>
-              <Typography>Filter {props.label}</Typography>
-
-              <TextField
-                id="outlined-basic"
-                placeholder="Cari"
-                variant="outlined"
-                size="small"
-                value={searchInput}
-                onChange={(event) => {
-                  setSearchInput(event.target.value);
-                }}
-                onKeyDown={(e) => e.stopPropagation()}
-              />
-            </Stack>
-
-            {/* CHECKLIST */}
-            <FormGroup sx={{ paddingX: 2 }}>
-              {searchResult?.map((data: string, index: number) => (
-                <FormControlLabel
-                  key={index}
-                  checked={props.includedData.includes(data)}
-                  control={<Checkbox size="small" />}
-                  label={data}
-                  onClick={() => check(data)}
-                />
-              ))}
-            </FormGroup>
-
-            <Stack direction={"row"} gap={2} padding={2} justifyContent={"end"}>
-              <Button size="small" variant="text" onClick={() => resetFilter()}>
-                Reset
-              </Button>
-            </Stack>
-          </div>
-        )}
-      </Menu>
-    </div>
+        <Input
+          sx={{ marginX: 1, marginBottom: 1, marginTop: 0.5 }}
+          onChange={(event) => {
+            setSearchInput(event.target.value);
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+          variant="outlined"
+          placeholder="Cari"
+          startDecorator={<SearchIcon fontSize="small" />}
+        />
+        <Divider />
+        {searchResult.map((data, index) => (
+          <Option
+            value={data}
+            // sx={{
+            //   "&.Mui-selected": {
+            //     backgroundColor: "inherit", // Prevent background color change when selected
+            //   },
+            //   "&.Mui-selected:hover": {
+            //     backgroundColor: "inherit", // Prevent background color change on hover when selected
+            //   },
+            // }}
+          >
+            <Checkbox
+              key={index}
+              label={data}
+              color="primary"
+              variant="outlined"
+              checked={props.includedData.includes(data)}
+            />
+          </Option>
+        ))}
+        {/* <Divider />
+        <Button
+          variant="plain"
+          sx={{ marginX: 1, marginBottom: 1, marginTop: 1.5 }}
+          onClick={() => {
+            resetFilter();
+          }}
+        >
+          Reset Filter
+        </Button> */}
+      </Select>
+    </Stack>
   );
 }
