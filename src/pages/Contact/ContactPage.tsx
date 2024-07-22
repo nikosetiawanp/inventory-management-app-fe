@@ -49,6 +49,10 @@ export default function ContactPage() {
     contactsQuery.refetch();
   }, [selectedType]);
 
+  useEffect(() => {
+    console.log(contactsQuery.data);
+  }, [contactsQuery.data]);
+
   return (
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>

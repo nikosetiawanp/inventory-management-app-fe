@@ -2,6 +2,7 @@ import {
   Divider,
   Dropdown,
   FormLabel,
+  IconButton,
   Menu,
   MenuButton,
   Sheet,
@@ -13,6 +14,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { formatDate } from "../../helpers/dateHelpers";
 import DateRangeIcon from "@mui/icons-material/DateRange";
+import { CloseRounded } from "@mui/icons-material";
 
 export default function DateFilterCopy(props: {
   selectedStartDate: string | number | dayjs.Dayjs | Date | null | undefined;
@@ -24,12 +26,33 @@ export default function DateFilterCopy(props: {
 }) {
   return (
     <Stack>
-      <FormLabel>Tanggal</FormLabel>
+      <FormLabel>{props.label}</FormLabel>
       <Dropdown>
         <Sheet>
           <MenuButton
-            endDecorator={<DateRangeIcon fontSize="small" />}
-            sx={{ gap: 0.5 }}
+            endDecorator={
+              props.selectedStartDate || props.selectedEndDate ? (
+                <IconButton
+                  size="sm"
+                  color="neutral"
+                  variant="soft"
+                  onClick={(e) => {
+                    props.setSelectedStartDate();
+                    props.setSelectedEndDate();
+                    e.stopPropagation();
+                  }}
+                >
+                  <CloseRounded fontSize="small" />
+                </IconButton>
+              ) : (
+                <DateRangeIcon fontSize="small" />
+              )
+            }
+            sx={
+              props.selectedStartDate || props.selectedEndDate
+                ? { gap: 0.5, paddingY: 0, paddingRight: 0 }
+                : { gap: 0.5 }
+            }
           >
             <Typography color={props.selectedStartDate ? "primary" : "neutral"}>
               {props.selectedStartDate

@@ -74,7 +74,7 @@ export default function ProductPage() {
             <thead>
               <tr>
                 <th>
-                  <Button size="sm" variant="plain" color="primary">
+                  <Button size="sm" variant="plain" color="neutral">
                     Kode
                   </Button>
                 </th>

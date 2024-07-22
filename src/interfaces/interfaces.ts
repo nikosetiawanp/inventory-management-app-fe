@@ -59,6 +59,7 @@ export interface Inventory {
   transaction: Transaction;
   contact: Contact;
   inventoryItems: InventoryItem[];
+  invoices: Invoice[];
 }
 
 export interface InventoryItem {

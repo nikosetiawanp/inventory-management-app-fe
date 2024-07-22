@@ -1,11 +1,14 @@
 import {
   Button,
-  Dialog,
-  InputAdornment,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Modal,
+  ModalDialog,
   Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+} from "@mui/joy";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -14,8 +17,8 @@ import { Cash, Debt } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
-import CompleteDebt from "./CompleteDebt";
 import { formatDate } from "../../helpers/dateHelpers";
+import { InfoOutlined } from "@mui/icons-material";
 
 export default function CreatePayment(props: { debt: Debt }) {
   const [open, setOpen] = useState(false);
@@ -91,91 +94,143 @@ export default function CreatePayment(props: { debt: Debt }) {
 
   return (
     <>
-      <Button variant="contained" size="small" onClick={() => setOpen(true)}>
+      <Button variant="solid" size="sm" onClick={() => setOpen(true)}>
         Bayar
       </Button>
 
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        fullWidth
-        maxWidth={"xs"}
-      >
-        <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Stack gap={3} padding={4}>
-            <Typography variant="h6">Buat Pembayaran</Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Tanggal pembayaran"
-                value={selectedDate}
-                onChange={(newValue: any) => setSelectedDate(newValue)}
-                format="DD/MM/YYYY"
-                slotProps={{
-                  field: { clearable: true },
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>Buat Pembayaran</DialogTitle>
+          <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Stack spacing={2}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Tanggal pembayaran"
+                  value={selectedDate}
+                  onChange={(newValue: any) => setSelectedDate(newValue)}
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    field: { clearable: true },
+                  }}
+                />
+              </LocalizationProvider>
+              <FormControl error={errors.amount?.message !== ""}>
+                <Stack spacing={0}>
+                  <FormLabel>Jumlah</FormLabel>
+                  <Input
+                    id="amount"
+                    placeholder="Jumlah"
+                    {...register("amount", { required: "Tidak boleh kosong" })}
+                    error={!!errors.amount}
+                    size="lg"
+                    startDecorator="Rp"
+                  />
+                  {errors.amount?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.amount?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+              {/* <Input
+                id="amount"
+                label="Jumlah Pembayaran"
+                variant="outlined"
+                InputProps={{
+                  startDecorator: "Rp",
                 }}
-              />
-            </LocalizationProvider>
+                {...register("amount", { required: "Tidak boleh kosong" })}
+                error={!!errors.amount}
+                helperText={errors.amount?.message}
+                required
+              /> */}
 
-            <TextField
-              id="amount"
-              label="Jumlah Pembayaran"
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">Rp</InputAdornment>
-                ),
-              }}
-              {...register("amount", { required: "Tidak boleh kosong" })}
-              error={!!errors.amount}
-              helperText={errors.amount?.message}
-              required
-            />
+              <FormControl error={errors.number?.message !== ""}>
+                <Stack spacing={0}>
+                  <FormLabel>Nomor Kas</FormLabel>
+                  <Input
+                    id="nama"
+                    placeholder="Nomor Kas"
+                    {...register("number", { required: "Tidak boleh kosong" })}
+                    error={!!errors.number}
+                    size="lg"
+                  />
+                  {errors.number?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.number?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+              {/* <TextField
+                id="amount"
+                label="Nomor Kas"
+                variant="outlined"
+                {...register("number", { required: "Tidak boleh kosong" })}
+                error={!!errors.number}
+                helperText={errors.number?.message}
+                required
+              /> */}
 
-            <TextField
-              id="amount"
-              label="Nomor Kas"
-              variant="outlined"
-              {...register("number", { required: "Tidak boleh kosong" })}
-              error={!!errors.number}
-              helperText={errors.number?.message}
-              required
-            />
+              <FormControl error={errors.description?.message !== ""}>
+                <Stack spacing={0}>
+                  <FormLabel>Deskripsi</FormLabel>
+                  <Input
+                    id="description"
+                    placeholder="Deskripsi"
+                    {...register("description", {
+                      required: "Tidak boleh kosong",
+                    })}
+                    error={!!errors.description}
+                    size="lg"
+                  />
+                  {errors.description?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.description?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+              {/* <TextField
+                id="amount"
+                label="Deskripsi"
+                variant="outlined"
+                {...register("description")}
+                error={!!errors.description}
+                helperText={errors.description?.message}
+              /> */}
 
-            <TextField
-              id="amount"
-              label="Deskripsi"
-              variant="outlined"
-              {...register("description")}
-              error={!!errors.description}
-              helperText={errors.description?.message}
-            />
-
-            {/* ACTIONS */}
-            <Stack
-              direction={"row"}
-              width={1}
-              justifyContent={"flex-end"}
-              gap={1}
-            >
-              <CompleteDebt debt={props.debt} />
-              <Button
-                onClick={() => setOpen(false)}
-                type="button"
-                sx={{ marginLeft: "auto" }}
+              {/* ACTIONS */}
+              <Stack
+                direction={"row"}
+                width={1}
+                justifyContent={"flex-end"}
+                gap={1}
               >
-                Batal
-              </Button>
-              <Button
-                variant={"contained"}
-                type="submit"
-                disabled={createPayment.isLoading}
-              >
-                {createPayment.isLoading ? "Menunggu" : "Bayar"}
-              </Button>
+                <Button
+                  onClick={() => setOpen(false)}
+                  type="button"
+                  variant="outlined"
+                  color="neutral"
+                  sx={{ marginLeft: "auto" }}
+                >
+                  Batal
+                </Button>
+                <Button
+                  variant="solid"
+                  type="submit"
+                  disabled={createPayment.isLoading}
+                >
+                  {createPayment.isLoading ? "Menunggu" : "Bayar"}
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-        </form>
-      </Dialog>
+          </form>
+        </ModalDialog>
+      </Modal>
     </>
   );
 }

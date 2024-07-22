@@ -1,22 +1,30 @@
 import {
+  Autocomplete,
+  AutocompleteOption,
   Button,
-  CircularProgress,
-  Dialog,
+  Chip,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  ListItemContent,
+  Modal,
+  ModalDialog,
   Stack,
-  TextField,
   Typography,
-} from "@mui/material";
+} from "@mui/joy";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { Inventory, Transaction } from "../../interfaces/interfaces";
-import SelectInventory from "../../components/select/SelectInventory";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import { formatDate } from "../../helpers/dateHelpers";
+import { InfoOutlined } from "@mui/icons-material";
 
 export default function CreateInvoice(props: {
   inventories: Inventory[];
@@ -25,7 +33,9 @@ export default function CreateInvoice(props: {
   const [open, setOpen] = useState(false);
 
   // INVENTORY
-  const [selectedInventory, setSelectedInventory] = useState<Inventory>();
+  const [selectedInventory, setSelectedInventory] = useState<Inventory | null>(
+    null
+  );
 
   // DATE
   const [selectedDueDate, setSelectedDueDate] = useState();
@@ -77,80 +87,133 @@ export default function CreateInvoice(props: {
     setOpen(false);
   };
 
+  useEffect(() => {
+    console.log(props.inventories);
+  }, [props.inventories]);
+
   return (
     <>
       <Button
-        variant="contained"
+        variant="solid"
         onClick={() => {
           setOpen(true);
         }}
-        startIcon={<ReceiptIcon />}
+        startDecorator={<ReceiptIcon />}
       >
         Buat Faktur
       </Button>
 
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        fullWidth
-        maxWidth={"xs"}
-      >
-        <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Stack gap={3} padding={4}>
-            <Typography variant="h6">Buat Faktur</Typography>
-            {/* TANGGAL JATUH TEMPO */}
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Tanggal Jatuh Tempo"
-                value={selectedDueDate}
-                onChange={(newValue: any) => setSelectedDueDate(newValue)}
-                format="DD/MM/YYYY"
-                slotProps={{
-                  field: { clearable: true },
-                }}
-              />
-            </LocalizationProvider>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>Buat Faktur</DialogTitle>
 
-            {/* NOMOR PO */}
-            <TextField
-              id="invoiceNumber"
-              label="Nomor Faktur"
-              variant="outlined"
-              {...register("number", { required: "Tidak boleh kosong" })}
-              error={!!errors.number}
-              helperText={errors.number?.message as any}
-              required
-            />
-            <SelectInventory
-              selectedInventory={selectedInventory}
-              setSelectedInventory={setSelectedInventory}
-              inventories={props.inventories}
-            />
+          <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Stack spacing={2}>
+              {/* TANGGAL JATUH TEMPO */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Stack>
+                  <FormLabel>Tanggal Jatuh Tempo</FormLabel>
 
-            <Stack
-              direction={"row"}
-              width={1}
-              justifyContent={"flex-end"}
-              gap={1}
-            >
-              <Button onClick={() => setOpen(false)} type="button">
-                Batal
-              </Button>
-              <Button
-                variant={"contained"}
-                type="submit"
-                disabled={createInvoice.isLoading}
+                  <DatePicker
+                    value={selectedDueDate}
+                    onChange={(newValue: any) => setSelectedDueDate(newValue)}
+                    slotProps={{
+                      field: { clearable: true },
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                    format="DD/MM/YYYY"
+                  />
+                </Stack>
+              </LocalizationProvider>
+
+              {/* NOMOR PO */}
+              <FormControl>
+                <Stack spacing={0}>
+                  <FormLabel>Nomor Faktur</FormLabel>
+                  <Input
+                    id="number"
+                    placeholder="Nomor Faktur"
+                    {...register("number", {
+                      required: "Tidak boleh kosong",
+                    })}
+                    error={!!errors.number}
+                    size="lg"
+                  />
+                  {errors?.number?.message && (
+                    <FormHelperText>
+                      <InfoOutlined color="error" />
+                      <Typography color="danger">{`${errors.number?.message}`}</Typography>
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+
+              <FormControl
+              // error={errors.inventory?.message !== ""}
               >
-                {createInvoice.isLoading ? (
-                  <CircularProgress color="inherit" size={15} />
-                ) : (
-                  "Simpan"
-                )}
-              </Button>
+                <Stack>
+                  <FormLabel>Nomor Surat Jalan</FormLabel>{" "}
+                  <Autocomplete
+                    id="number"
+                    size="lg"
+                    placeholder={"Nomor Surat Jalan"}
+                    value={selectedInventory}
+                    onChange={(event, newValue) => {
+                      event;
+                      setSelectedInventory(newValue);
+                    }}
+                    inputValue={selectedInventory?.number}
+                    getOptionLabel={(option: Inventory) => option.number}
+                    options={props.inventories && props.inventories}
+                    getOptionDisabled={(option: Inventory) =>
+                      option.invoices.length > 0
+                    }
+                    renderOption={(props, option: Inventory) => (
+                      <AutocompleteOption {...props} key={option.id}>
+                        <ListItemContent>
+                          <Stack direction="column">
+                            <h3>{option.number}</h3>
+                            <Typography>{option.receiptNumber}</Typography>
+                          </Stack>
+                        </ListItemContent>
+                        <Chip variant="outlined" size="sm">
+                          {formatDate(option.date, "DD MMM YYYY")}
+                        </Chip>
+                      </AutocompleteOption>
+                    )}
+                  />
+                </Stack>
+              </FormControl>
+
+              <Stack
+                direction={"row"}
+                width={1}
+                justifyContent={"flex-end"}
+                gap={1}
+              >
+                <Button
+                  onClick={() => setOpen(false)}
+                  type="button"
+                  variant="outlined"
+                  color="neutral"
+                >
+                  Batal
+                </Button>
+                <Button
+                  variant={"solid"}
+                  type="submit"
+                  disabled={createInvoice.isLoading}
+                  loading={createInvoice.isLoading}
+                >
+                  Simpan
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-        </form>
-      </Dialog>
+          </form>
+        </ModalDialog>
+      </Modal>
     </>
   );
 }

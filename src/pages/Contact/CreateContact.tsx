@@ -109,10 +109,10 @@ export default function CreateContact() {
             style={{ overflow: "scroll" }}
           >
             <Stack spacing={2}>
-              <Stack spacing={1}>
+              <Stack spacing={0}>
                 <FormLabel>Jenis</FormLabel>
                 <Select
-                  size="md"
+                  size="lg"
                   value={selectedType}
                   onChange={handleTypeChange}
                 >
@@ -122,14 +122,14 @@ export default function CreateContact() {
               </Stack>
 
               <FormControl error={errors.code?.message !== ""}>
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Kode</FormLabel>
                   <Input
                     id="kode"
                     placeholder="Kode"
                     {...register("code", { required: "Tidak boleh kosong" })}
                     error={!!errors.code}
-                    size="md"
+                    size="lg"
                   />
                   {errors.code?.message && (
                     <FormHelperText>
@@ -150,14 +150,14 @@ export default function CreateContact() {
             /> */}
 
               <FormControl error={errors.name?.message !== ""}>
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Nama</FormLabel>
                   <Input
                     id="name"
                     placeholder="Nama"
                     {...register("name", { required: "Tidak boleh kosong" })}
                     error={!!errors.name}
-                    size="md"
+                    size="lg"
                   />
                   {errors.name?.message && (
                     <FormHelperText>
@@ -169,14 +169,14 @@ export default function CreateContact() {
               </FormControl>
 
               <FormControl error={errors.email?.message !== ""}>
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Email</FormLabel>
                   <Input
                     id="email"
                     placeholder="Email"
                     {...register("email", { required: "Tidak boleh kosong" })}
                     error={!!errors.email}
-                    size="md"
+                    size="lg"
                   />
                   {errors.email?.message && (
                     <FormHelperText>
@@ -188,14 +188,14 @@ export default function CreateContact() {
               </FormControl>
 
               <FormControl error={errors.phone?.message !== ""}>
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Nomor Telepon</FormLabel>
                   <Input
                     id="phone"
                     placeholder="Nomor Telepon"
                     {...register("phone", { required: "Tidak boleh kosong" })}
                     error={!!errors.phone}
-                    size="md"
+                    size="lg"
                   />
                   {errors.phone?.message && (
                     <FormHelperText>
@@ -208,11 +208,11 @@ export default function CreateContact() {
 
               {/* PROVINSI */}
               <Stack direction={"row"} width={1} gap={2}>
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Provinsi</FormLabel>{" "}
                   <Autocomplete
                     autoComplete
-                    size="md"
+                    size="lg"
                     placeholder="Provinsi"
                     options={provinces.map((province) => province.name)}
                     onChange={(_, newValue) =>
@@ -221,10 +221,10 @@ export default function CreateContact() {
                   />
                 </Stack>
 
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Kota</FormLabel>
                   <Autocomplete
-                    size="md"
+                    size="lg"
                     placeholder="Kota"
                     value={selectedCity}
                     options={cities}
@@ -234,14 +234,14 @@ export default function CreateContact() {
               </Stack>
               {/* ALAMAT */}
               <FormControl error={errors.address?.message !== ""}>
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Alamat</FormLabel>
                   <Input
                     id="address"
                     placeholder="Alamat"
                     {...register("address", { required: "Tidak boleh kosong" })}
                     error={!!errors.address}
-                    size="md"
+                    size="lg"
                   />
                   {errors.address?.message && (
                     <FormHelperText>
@@ -297,7 +297,8 @@ export default function CreateContact() {
             <Button
               onClick={() => setOpen(false)}
               type="button"
-              variant="plain"
+              variant="outlined"
+              color="neutral"
             >
               Batal
             </Button>

@@ -1,11 +1,11 @@
 import {
+  Box,
   Button,
-  Dialog,
-  DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
-} from "@mui/material";
+  Modal,
+  ModalDialog,
+} from "@mui/joy";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { Debt } from "../../interfaces/interfaces";
@@ -16,10 +16,6 @@ export default function CompleteDebt(props: { debt: Debt }) {
   const handleClickOpen = (event: any) => {
     event.stopPropagation();
     setOpen(true);
-  };
-  const handleClose = (event: any) => {
-    event.stopPropagation();
-    setOpen(false);
   };
 
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -53,20 +49,59 @@ export default function CompleteDebt(props: { debt: Debt }) {
 
   return (
     <>
-      <Button onClick={handleClickOpen}>Selesaikan Hutang</Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Selesaikan Hutang?</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+      <Button variant="solid" onClick={handleClickOpen}>
+        Selesaikan
+      </Button>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog
+          aria-labelledby="nested-modal-title"
+          aria-describedby="nested-modal-description"
+          sx={(theme) => ({
+            [theme.breakpoints.only("xs")]: {
+              top: "unset",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderRadius: 0,
+              transform: "none",
+              maxWidth: "unset",
+            },
+          })}
+        >
+          <DialogTitle> Selesaikan Hutang?</DialogTitle>
+          <DialogContent>
             Anda yakin ingin menyelesaikan hutang ini?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
+          </DialogContent>
+          <Box
+            sx={{
+              mt: 1,
+              display: "flex",
+              gap: 1,
+              justifyContent: "flex-end",
+              flexDirection: { xs: "column", sm: "row" },
+            }}
+          >
+            <Button
+              variant="outlined"
+              color="neutral"
+              onClick={() => setOpen(false)}
+              disabled={completeDebt.isLoading}
+            >
+              Batal
+            </Button>
+            <Button
+              variant="solid"
+              color="primary"
+              onClick={() => {
+                completeDebt.mutateAsync(props.debt);
+              }}
+              loading={completeDebt.isLoading}
+            >
+              Selesaikan
+            </Button>
+          </Box>
+        </ModalDialog>
+        {/* <DialogActions>
           <Button onClick={handleClose}>Batal</Button>
           <Button
             variant="contained"
@@ -79,8 +114,8 @@ export default function CompleteDebt(props: { debt: Debt }) {
           >
             {completeDebt.isLoading ? "Menunggu" : "Selesaikan"}
           </Button>
-        </DialogActions>
-      </Dialog>
+        </DialogActions> */}
+      </Modal>
     </>
   );
 }

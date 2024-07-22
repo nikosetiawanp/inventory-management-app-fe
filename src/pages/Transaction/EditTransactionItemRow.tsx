@@ -19,18 +19,14 @@ import { useMutation, useQueryClient } from "react-query";
 
 export default function EditTransactionItemRow(props: {
   transactionItem: TransactionItem;
-  editing: boolean;
-  setEditing: any;
+  isEditing: boolean;
+  setIsEditing: any;
   inventories: Inventory[];
   transaction: Transaction;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
-  const {
-    register,
-    handleSubmit,
-    // formState: { errors },
-  } = useForm();
+  const { register, handleSubmit } = useForm();
 
   const updateTransactionItem = useMutation(
     async (data: TransactionItem) => {
@@ -68,7 +64,7 @@ export default function EditTransactionItemRow(props: {
   const onSubmit: SubmitHandler<TransactionItem> = async (data) => {
     try {
       await updateTransactionItem.mutateAsync(data);
-      props.setEditing(false);
+      props.setIsEditing(false);
     } catch (error) {
       console.log(error);
     }
@@ -156,7 +152,7 @@ export default function EditTransactionItemRow(props: {
           <IconButton
             size="small"
             color="error"
-            onClick={() => props.setEditing(false)}
+            onClick={() => props.setIsEditing(false)}
           >
             <CloseIcon fontSize="small" />
           </IconButton>

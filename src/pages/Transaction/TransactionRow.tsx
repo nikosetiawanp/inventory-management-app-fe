@@ -25,7 +25,7 @@ export default function TransactionRow(props: {
         <td style={{ paddingLeft: 15 }}>
           {formatDate(props.transaction?.date, "DD MMMM YYYY")}
         </td>
-        <td style={{ paddingLeft: 15 }}>
+        <td style={{ textAlign: "center" }}>
           <Chip
             variant="soft"
             size="sm"
@@ -34,7 +34,7 @@ export default function TransactionRow(props: {
             {props.transaction?.isApproved ? "Approved" : "Pending"}{" "}
           </Chip>
         </td>
-        <td style={{ paddingLeft: 15, textAlign: "center" }}>
+        <td style={{ textAlign: "center" }}>
           <Chip
             size="sm"
             variant="soft"

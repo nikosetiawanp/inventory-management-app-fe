@@ -1,15 +1,15 @@
 import {
+  Button,
+  Chip,
   IconButton,
-  Paper,
+  Sheet,
   Stack,
+  Tab,
+  TabList,
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Tabs,
   Typography,
-} from "@mui/material";
+} from "@mui/joy";
 import Drawer from "../../components/Drawer";
 
 import dayjs from "dayjs";
@@ -22,11 +22,10 @@ import { Debt, Payment } from "../../interfaces/interfaces";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import DebtRow from "./DebtRow";
 import ChecklistFilter from "../../components/filters/ChecklistFilter";
-import DateFilter from "../../components/filters/DateFilter";
 import SortButton from "../../components/buttons/SortButton";
 import { sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
-import DebtFilter from "./DebtFilter";
+import DateFilterCopy from "../../components/filters/DateFilterCopy";
 
 export default function DebtPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -65,7 +64,7 @@ export default function DebtPage() {
   };
 
   const debtsQuery = useQuery({
-    queryKey: ["debts", formattedStartDate, formattedEndDate],
+    queryKey: ["debts", selectedStartDate, selectedEndDate],
     queryFn: getDebts,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -131,7 +130,7 @@ export default function DebtPage() {
     : [];
 
   useEffect(() => {
-    setIncludedData([]);
+    console.log(debtsQuery.data);
   }, [selectedStartDate, selectedEndDate]);
 
   return (
@@ -143,62 +142,82 @@ export default function DebtPage() {
     >
       <Drawer />
       <Stack padding={4} gap={2} width={1}>
-        <Typography fontWeight={"bold"} variant="h4">
+        <Typography fontWeight={"bold"} level="h4">
           Hutang
         </Typography>
+        <Tabs sx={{ backgroundColor: "transparent" }}>
+          <TabList>
+            <Tab color="primary">Per Vendor</Tab>
+            <Tab color="primary">
+              Belum Lunas{" "}
+              <Chip color="primary" variant="soft">
+                2
+              </Chip>
+            </Tab>
+          </TabList>
+        </Tabs>
 
         <Stack direction={"row"} gap={2} width={1}>
-          <Paper
+          <Sheet
             sx={{
               border: 1,
               borderColor: "divider",
               boxShadow: 0,
               padding: 2,
+              borderRadius: 2,
             }}
           >
-            <Typography variant="subtitle2" color={"inherit"}>
+            <Typography level="body-md" color={"neutral"}>
               Total Tagihan
             </Typography>
-            <Typography variant="h5">{formatIDR(sum(arrayOfDebts))}</Typography>
-          </Paper>
-          <Paper
+            <h2>{formatIDR(sum(arrayOfDebts))}</h2>
+          </Sheet>
+
+          <Sheet
             sx={{
               border: 1,
               borderColor: "divider",
               boxShadow: 0,
               padding: 2,
+              borderRadius: 2,
             }}
           >
-            <Typography variant="subtitle2" color={"inherit"}>
+            <Typography level="body-md" color={"neutral"}>
               Total Dibayar
             </Typography>
-            <Typography variant="h5" color={"success.main"}>
-              {formatIDR(sum(arrayOfPayments))}
-            </Typography>
-          </Paper>
-          <Paper
+            <h2>
+              <Typography color="success">
+                {formatIDR(sum(arrayOfPayments))}
+              </Typography>
+            </h2>
+          </Sheet>
+
+          <Sheet
             sx={{
               border: 1,
               borderColor: "divider",
               boxShadow: 0,
               padding: 2,
+              borderRadius: 2,
             }}
           >
-            <Typography variant="subtitle2" color={"inherit"}>
+            <Typography level="body-md" color={"neutral"}>
               Sisa Hutang
             </Typography>
-            <Typography variant="h5" color={"error.main"}>
-              {formatIDR(sum(arrayOfDebts) - sum(arrayOfPayments))}
-            </Typography>
-          </Paper>
+            <h2>
+              <Typography color="danger">
+                {formatIDR(sum(arrayOfDebts) - sum(arrayOfPayments))}
+              </Typography>
+            </h2>
+          </Sheet>
         </Stack>
 
         {/* FILTERS */}
         <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
-          <DateFilter
+          <DateFilterCopy
             selectedStartDate={selectedStartDate}
-            selectedEndDate={selectedEndDate}
             setSelectedStartDate={setSelectedStartDate}
+            selectedEndDate={selectedEndDate}
             setSelectedEndDate={setSelectedEndDate}
             refetch={refetch}
             label="Tanggal Faktur"
@@ -209,111 +228,62 @@ export default function DebtPage() {
             setIncludedData={setIncludedData}
             label={"Vendor"}
           />
-          <DebtFilter
-            includedContacts={includedData}
-            setIncludedContacts={setIncludedData}
-            contacts={contacts}
-          />
         </Stack>
 
-        {/* NAVS */}
-        {/* <Stack direction={"row"} gap={2} width={1}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              views={["day", "month", "year"]}
-              slotProps={{ textField: { size: "small" } }}
-              value={selectedStartDate}
-              onChange={(newValue: any) => setSelectedStartDate(newValue)}
-              format="DD MMMM YYYY"
-              label="Setelah"
-            />
-            <DatePicker
-              views={["day", "month", "year"]}
-              slotProps={{ textField: { size: "small" } }}
-              value={selectedEndDate}
-              onChange={(newValue: any) => setSelectedEndDate(newValue)}
-              format="DD MMMM YYYY"
-              label="Sebelum"
-            />
-          </LocalizationProvider>
-          <Button
-            size="small"
-            variant="contained"
-            onClick={() => refresh()}
-            disabled={debtsQuery.isRefetching || debtsQuery.isLoading}
-          >
-            {debtsQuery.isRefetching || debtsQuery.isLoading ? (
-              <CircularProgress size={15} color="inherit" />
-            ) : (
-              <RefreshIcon fontSize="small" />
-            )}
-          </Button>
-        </Stack> */}
-
-        <TableContainer
-          sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
-        >
-          <Table sx={{ borderCollapse: "separate" }} size="small">
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                border: 2,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              <TableRow>
-                <TableCell>
-                  Tanggal Faktur{" "}
-                  {/* <DateFilter
-                    sortConfigKey={"invoice-date"}
-                    selectedStartDate={selectedStartDate}
-                    selectedEndDate={selectedEndDate}
-                    setSelectedStartDate={setSelectedStartDate}
-                    setSelectedEndDate={setSelectedEndDate}
-                    sortConfig={sortConfig}
-                    setSortConfig={setSortConfig}
-                    refetch={refetch}
-                  /> */}
+        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <Table size="sm" stickyHeader stickyFooter>
+            <thead>
+              <tr>
+                <th>
                   <SortButton
                     sortConfigKey="invoice-date"
                     sortConfig={sortConfig}
                     setSortConfig={setSortConfig}
+                    label={"Tanggal Faktur"}
                   />
-                </TableCell>
-                <TableCell>Tanggal Jatuh Tempo</TableCell>
-                <TableCell>Nomor Faktur</TableCell>
-                <TableCell width={100}>
-                  Vendor{" "}
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Tanggal Jatuh Tempo
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Nomor Faktur
+                  </Button>
+                </th>
+                <th style={{ width: 100 }}>
                   <SortButton
                     sortConfigKey="vendor"
                     sortConfig={sortConfig}
                     setSortConfig={setSortConfig}
+                    label={"Vendor"}
                   />
-                  {/* <StringFilter
-                    sortConfigKey={"contact"}
-                    data={vendors}
-                    excludedData={excludedData}
-                    setExcludedData={setExcludedData}
-                    sortConfig={sortConfig}
-                    setSortConfig={setSortConfig}
-                  /> */}
-                </TableCell>
-                <TableCell>Jumlah Tagihan</TableCell>
-                <TableCell>Jumlah Dibayar</TableCell>
-                <TableCell align="center">Pembayaran</TableCell>
-                {/* <TableCell align="center">Status</TableCell> */}
-                <TableCell width={10} align="center">
-                  <IconButton size="small">
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Jumlah Tagihan
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Jumlah Dibayar
+                  </Button>
+                </th>
+                <th align="center">
+                  <Button size="sm" variant="plain" color="neutral">
+                    Pembayaran
+                  </Button>
+                </th>
+                <th style={{ textAlign: "center" }}>
+                  <IconButton size="sm">
                     <Settings fontSize="small" />
                   </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                </th>
+              </tr>
+            </thead>
 
-            <TableBody>
+            <tbody>
               {debtsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={6} />
               ) : (
@@ -321,9 +291,9 @@ export default function DebtPage() {
                   <DebtRow key={index} index={index} debt={debt} />
                 ))
               )}
-            </TableBody>
+            </tbody>
           </Table>
-        </TableContainer>
+        </Sheet>
       </Stack>
     </Stack>
   );

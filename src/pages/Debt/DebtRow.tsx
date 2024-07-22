@@ -1,4 +1,4 @@
-import { TableRow, TableCell, Chip, Typography } from "@mui/material";
+import { Chip, Typography } from "@mui/joy";
 import { Debt, Payment } from "../../interfaces/interfaces";
 import PaymentListDialog from "./PaymentListDialog";
 import CreatePayment from "./CreatePayment";
@@ -6,6 +6,7 @@ import { sum } from "../../helpers/calculationHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
 import "dayjs/locale/id";
 import { formatIDR } from "../../helpers/currencyHelpers";
+import CompleteDebt from "./CompleteDebt";
 
 export default function DebtRow(props: { index: number; debt: Debt }) {
   const arrayOfPayments = props.debt.payments.map(
@@ -16,59 +17,44 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
   const dueDate = new Date(props.debt?.invoice?.dueDate);
 
   return (
-    <TableRow key={props.index} hover>
-      <TableCell>
-        {formatDate(props.debt?.invoice?.date, "D MMMM YYYY")}
-      </TableCell>
-      <TableCell>
+    <tr key={props.index}>
+      <td>{formatDate(props.debt?.invoice?.date, "D MMMM YYYY")}</td>
+      <td>
         <Chip
-          variant="outlined"
-          size="small"
-          label={formatDate(props.debt?.invoice?.dueDate, "D MMMM YYYY")}
-          color={today <= dueDate ? "primary" : "error"}
-        />
-      </TableCell>
-      <TableCell>{props.debt?.invoice?.number}</TableCell>
-      <TableCell>{props.debt?.contact?.name}</TableCell>
+          variant="soft"
+          size="sm"
+          color={today <= dueDate ? "neutral" : "danger"}
+        >
+          {formatDate(props.debt?.invoice?.dueDate, "D MMMM YYYY")}
+        </Chip>
+      </td>
+      <td>{props.debt?.invoice?.number}</td>
+      <td>{props.debt?.contact?.name}</td>
 
-      <TableCell>{formatIDR(props.debt?.amount)}</TableCell>
-      <TableCell>
+      <td>{formatIDR(props.debt?.amount)}</td>
+      <td>
         <Typography
-          variant="body2"
+          level="body-md"
           color={
-            sum(arrayOfPayments) == 0
-              ? "error.main"
-              : sum(arrayOfPayments) >= props.debt?.amount
-              ? "success.main"
-              : "warning.main"
+            sum(arrayOfPayments) >= props.debt?.amount ? "success" : "danger"
           }
         >
           {formatIDR(sum(arrayOfPayments))}
         </Typography>
-      </TableCell>
+      </td>
 
-      <TableCell>
+      <td>
         <PaymentListDialog debt={props.debt} />
-        {/* <Chip
-          label={`${props.debt?.payments?.length} pembayaran`}
-          variant="filled"
-          color="primary"
-          size="small"
-        /> */}
-      </TableCell>
-      {/* <TableCell align="center">
-        {totalPaid >= debtAmount}
-        <Chip
-          label={props.debt?.isPaid ? "Selesai" : "Belum selesai"}
-          variant="filled"
-          color={props.debt?.isPaid ? "success" : "warning"}
-          size="small"
-        />
-      </TableCell> */}
+      </td>
 
-      <TableCell>
-        {props.debt?.isPaid ? null : <CreatePayment debt={props.debt} />}
-      </TableCell>
-    </TableRow>
+      <td>
+        {sum(arrayOfPayments) >= props.debt?.amount ? (
+          <CompleteDebt debt={props.debt} />
+        ) : (
+          <CreatePayment debt={props.debt} />
+        )}
+      </td>
+      {/* <td>{props.debt?.isPaid ? null : <CreatePayment debt={props.debt} />}</td> */}
+    </tr>
   );
 }

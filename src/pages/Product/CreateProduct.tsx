@@ -101,7 +101,7 @@ export default function CreateProductButton() {
           >
             <Stack spacing={2}>
               <FormControl error={errors.code?.message !== ""}>
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Kode</FormLabel>
                   <Input
                     id="kode"
@@ -118,18 +118,9 @@ export default function CreateProductButton() {
                   )}
                 </Stack>
               </FormControl>
-              {/* <Input
-                id="kode"
-                label="Kode"
-                variant="outlined"
-                {...register("code", { required: "Tidak boleh kosong" })}
-                error={!!errors.code}
-                helperText={errors.code?.message}
-                required
-              /> */}
 
               <FormControl error={errors.name?.message !== ""}>
-                <Stack spacing={1}>
+                <Stack spacing={0}>
                   <FormLabel>Nama</FormLabel>
                   <Input
                     id="nama"
@@ -157,7 +148,7 @@ export default function CreateProductButton() {
               /> */}
 
               {/* SELECT */}
-              <Stack spacing={1}>
+              <Stack spacing={0}>
                 <FormLabel>Unit</FormLabel>
                 <Select
                   value={selectedUnit}
@@ -194,7 +185,8 @@ export default function CreateProductButton() {
                 <Button
                   onClick={() => setOpen(false)}
                   type="button"
-                  variant="plain"
+                  variant="outlined"
+                  color="neutral"
                   disabled={createProduct.isLoading}
                 >
                   Batal

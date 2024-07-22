@@ -137,13 +137,14 @@ export default function CreateTransaction(props: {
               </Stack>
 
               {/* AUTOCOMPLETE */}
-              <FormControl>
+              <FormControl error={!selectedContact}>
                 <Stack>
                   <FormLabel>
                     {props.type == "purchase" ? "Vendor" : "Customer"}
                   </FormLabel>{" "}
                   <Autocomplete
                     id="contact"
+                    size="lg"
                     placeholder={
                       props.type == "purchase"
                         ? "Pilih Vendor"
@@ -164,10 +165,7 @@ export default function CreateTransaction(props: {
                         </ListItemContent>
                       </AutocompleteOption>
                     )}
-                    // {...register("contact", { required: "Tidak boleh kosong" })}
-                    // error={!!errors.contact}
                   />
-                  {/* ----------------- */}
                   {errors.contact?.message && (
                     <FormHelperText>
                       <InfoOutlined />
@@ -186,7 +184,7 @@ export default function CreateTransaction(props: {
                     placeholder="Nomor"
                     {...register("number", { required: "Tidak boleh kosong" })}
                     error={!!errors.number}
-                    size="md"
+                    size="lg"
                   />
                   {errors.number?.message && (
                     <FormHelperText>
@@ -204,7 +202,8 @@ export default function CreateTransaction(props: {
                 gap={1}
               >
                 <Button
-                  variant="plain"
+                  variant="outlined"
+                  color="neutral"
                   onClick={() => setOpen(false)}
                   type="button"
                   disabled={createTransaction.isLoading}

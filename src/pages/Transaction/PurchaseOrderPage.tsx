@@ -204,7 +204,7 @@ export default function PurchaseOrderPage() {
             selectedEndDate={selectedEndDate}
             setSelectedEndDate={setSelectedEndDate}
             refetch={refetch}
-            label={""}
+            label={"Tanggal"}
           />
           {/* <DateFilter
             selectedStartDate={selectedStartDate}
@@ -256,8 +256,16 @@ export default function PurchaseOrderPage() {
                     setSortConfig={setSortConfig}
                   />
                 </th>
-                <th>Status Approval</th>
-                <th style={{ textAlign: "center" }}>Status Selesai</th>
+                <th style={{ textAlign: "center" }}>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Status Approval
+                  </Button>
+                </th>
+                <th style={{ textAlign: "center" }}>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Status Selesai
+                  </Button>
+                </th>
                 <th
                   style={{
                     textAlign: "center",

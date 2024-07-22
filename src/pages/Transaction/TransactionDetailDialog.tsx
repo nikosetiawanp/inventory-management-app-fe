@@ -1,17 +1,14 @@
-import { Settings } from "@mui/icons-material";
 import {
-  Dialog,
   Stack,
   Typography,
   Button,
-  TableContainer,
   Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  IconButton,
-  TableBody,
-} from "@mui/material";
+  Modal,
+  ModalDialog,
+  Sheet,
+  Divider,
+  Chip,
+} from "@mui/joy";
 
 import { TransactionItem, Transaction } from "../../interfaces/interfaces";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
@@ -143,198 +140,219 @@ export default function TransactionDetailDialog(props: {
   };
 
   return (
-    <Dialog
-      open={props.open}
-      onClose={() => props.setOpen(false)}
-      fullWidth
-      maxWidth={"lg"}
-    >
-      <Stack padding={3}>
-        {/* HEADER */}
-        <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          marginBottom={2}
-        >
-          {/* TITLE */}
-          <Stack>
-            <Typography variant="body1">Purchase Order</Typography>
-            <Typography variant="h3" fontWeight="bold">
-              {props.transaction?.number}
-            </Typography>
-            <Stack direction={"row"} gap={0.5}>
-              <Typography variant="body1">Vendor :</Typography>
-              <Typography>{props.transaction?.contact?.name}</Typography>
-            </Stack>
-            <Typography variant="body1">
-              {/* Tanggal :  */}
-              {formatDate(props.transaction?.date, "DD MMMM YYYY")}
-            </Typography>
-            {/* <Typography variant="body1">
-              Estimasi Kedatangan :{" "}
-              {formatDate(props.transaction?.expectedArrival)}
-            </Typography> */}
-          </Stack>
-
-          {/* BUTTONS */}
-          <Stack direction="row" alignItems={"center"} gap={2}>
-            {/* SAVE BUTTON */}
-            {fields.length > 0 ? (
-              <Button
-                variant="contained"
-                onClick={handleSubmit(onSubmit as any)}
-                type="submit"
-                disabled={isSubmitting}
-                sx={{ minHeight: "100%" }}
-              >
-                {isSubmitting ? "Menyimpan" : "Simpan"}
-              </Button>
-            ) : (
-              <>
+    <Modal open={props.open} onClose={() => props.setOpen(false)}>
+      <ModalDialog
+        size="sm"
+        sx={{ height: 1, width: 1, maxHeight: "90vh", maxWidth: "70vw" }}
+      >
+        <Stack height={1} padding={2} sx={{ backgroundColor: "primary.main" }}>
+          {/* HEADER */}
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            marginBottom={2}
+          >
+            {/* TITLE */}
+            <Stack>
+              <Typography level="body-md">Purchase Order</Typography>
+              <Typography level="h3" fontWeight="bold">
+                {props.transaction?.number}
+              </Typography>
+              <Stack direction={"row"} gap={0.5}>
+                <Typography level="body-sm">Vendor :</Typography>
+                <Typography>{props.transaction?.contact?.name}</Typography>
+              </Stack>
+              <Typography level="body-sm">
+                {/* Tanggal :  */}
+                {formatDate(props.transaction?.date, "DD MMMM YYYY")}
+              </Typography>
+              <Stack direction={"row"} spacing={1}>
                 {props.transaction?.isApproved ? (
-                  <>
-                    {/* <Button variant="outlined">2 Faktur</Button> */}
-                    <CreateInvoice
-                      inventories={inventoriesQuery.data}
-                      transaction={props.transaction}
-                    />
-                  </>
+                  <Chip color="success">Approved</Chip>
                 ) : (
-                  <ApprovePurchase
-                    refetch={props.refetch}
-                    transaction={props.transaction}
-                  />
+                  <Chip color="danger">Menunggu Approval</Chip>
                 )}
-                <MoreTransactionButton />
-              </>
-            )}
-          </Stack>
-        </Stack>
+                {props.transaction?.isDone ? (
+                  <Chip color="success">Selesai</Chip>
+                ) : (
+                  <Chip color="danger">Belum Selesai</Chip>
+                )}
+              </Stack>
+              {/* <Typography level="body-sm">
+                Estimasi Kedatangan :{" "}
+                {formatDate(props.transaction?.expectedArrival, "DD MMMM YYYY")}
+              </Typography> */}
+            </Stack>
 
-        {/* TABLE */}
-        <TableContainer
-          sx={{
-            backgroundColor: "white",
-            height: 500,
-          }}
-        >
-          <Table stickyHeader size="small">
-            {/* TABLE HEAD */}
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                borderBottom: 1,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              <TableRow>
-                <TableCell>Produk</TableCell>
-                <TableCell align="center">Quantity</TableCell>
-                <TableCell align="center">Datang</TableCell>
-
-                <TableCell align="right" width={100}>
-                  Harga
-                </TableCell>
-
-                <TableCell align="center">Diskon</TableCell>
-                <TableCell align="center">Pajak</TableCell>
-                <TableCell align="right">Total</TableCell>
-
-                <TableCell width={10}>
-                  <IconButton size="small">
-                    <Settings fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                borderColor: "divider",
-                width: 1,
-                overflowY: "scroll",
-                maxHeight: 100,
-              }}
-            >
-              {/* NEW ITEM */}
-              {transactionItemsQuery.isLoading ? (
-                <RowSkeleton rows={15} columns={8} />
+            {/* BUTTONS */}
+            <Stack direction="row" alignItems={"center"} gap={2}>
+              {/* SAVE BUTTON */}
+              {fields.length > 0 ? (
+                <Button
+                  variant="solid"
+                  onClick={handleSubmit(onSubmit as any)}
+                  type="submit"
+                  disabled={isSubmitting}
+                  sx={{ minHeight: "100%" }}
+                >
+                  {isSubmitting ? "Menyimpan" : "Simpan"}
+                </Button>
               ) : (
-                transactionItemsQuery.data?.map(
-                  (transactionItem: TransactionItem, index: number) => (
-                    <TransactionDetailRow
-                      key={index}
-                      transactionItem={transactionItem}
-                      index={index}
+                <>
+                  {props.transaction?.isApproved ? (
+                    <>
+                      {/* <Button variant="outlined">2 Faktur</Button> */}
+                      <CreateInvoice
+                        inventories={inventoriesQuery.data}
+                        transaction={props.transaction}
+                      />
+                    </>
+                  ) : (
+                    <ApprovePurchase
+                      refetch={props.refetch}
                       transaction={props.transaction}
-                      inventories={inventoriesQuery.data}
                     />
-                  )
-                )
+                  )}
+                  <MoreTransactionButton />
+                </>
               )}
-              {fields.map((field, index) => (
-                <NewTransactionItem
-                  key={field.id}
-                  control={control}
-                  update={update}
-                  index={index}
-                  value={field}
-                  remove={remove}
-                  products={productsQuery.data}
-                  purchase={props.transaction}
-                  watch={watch}
-                  fields={fields}
-                  setValue={setValue}
-                />
-              ))}
-              {!props.transaction?.isApproved && (
-                <div>
-                  <Button
-                    variant="text"
-                    onClick={() => {
-                      append({
-                        quantity: 0,
-                        price: "",
-                        discount: "",
-                        tax: "",
-                        transactionId: props.transaction?.id,
-                        productId: "",
-                      });
-                    }}
-                  >
-                    Tambah Produk
-                  </Button>
-                </div>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </Stack>
+          </Stack>
 
-        {/* FOOTER */}
-        <Stack
-          position={"sticky"}
-          bottom={0}
-          direction={"row"}
-          justifyContent={"space-between"}
-          bgcolor={"white"}
-          padding={2}
-          borderTop={1}
-          borderColor={"divider"}
-        >
-          <Typography fontWeight={"bold"} variant="body1">
-            Total
-          </Typography>
-          <Typography fontWeight={"bold"} variant="body1">
-            {formatIDR(sum(arrayOfNetPrice))}
-          </Typography>
+          {/* TABLE */}
+          <Sheet
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              position: "relative",
+              overflow: "auto",
+              height: 1,
+              width: 1,
+            }}
+          >
+            <Table size="sm" stickyHeader stickyFooter>
+              {/* TABLE HEAD */}
+              <thead>
+                <tr style={{ overflowX: "scroll" }}>
+                  <th>Produk</th>
+                  <th style={{ textAlign: "center", width: 100 }}>Quantity</th>
+                  <th style={{ textAlign: "center", width: 100 }}>Datang</th>
+
+                  <th style={{ textAlign: "right" }}>Harga</th>
+
+                  <th style={{ textAlign: "center", width: 100 }}>Diskon</th>
+                  <th style={{ textAlign: "center", width: 100 }}>Pajak</th>
+                  <th style={{ textAlign: "right" }}>Total</th>
+
+                  <th style={{ textAlign: "center", width: 50 }}>
+                    {/* <IconButton size="sm"> */}
+                    {/* <Settings fontSize="small" /> */}
+                    {/* </IconButton> */}
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody
+                style={{
+                  position: "sticky",
+                  borderColor: "divider",
+                  width: 1,
+                  height: 1,
+                  overflow: "scroll",
+                  backgroundColor: "transparent",
+                }}
+              >
+                {/* TRANSACTION ITEMS */}
+                {transactionItemsQuery.isLoading ? (
+                  <RowSkeleton rows={15} columns={8} />
+                ) : (
+                  transactionItemsQuery.data?.map(
+                    (transactionItem: TransactionItem, index: number) => (
+                      <TransactionDetailRow
+                        key={index}
+                        transactionItem={transactionItem}
+                        index={index}
+                        transaction={props.transaction}
+                        inventories={inventoriesQuery.data}
+                      />
+                    )
+                  )
+                )}
+                {fields.map((field, index) => (
+                  <NewTransactionItem
+                    key={field.id}
+                    control={control}
+                    update={update}
+                    index={index}
+                    value={field}
+                    remove={remove}
+                    products={productsQuery.data}
+                    purchase={props.transaction}
+                    watch={watch}
+                    fields={fields}
+                    setValue={setValue}
+                  />
+                ))}
+                {!props.transaction?.isApproved && (
+                  <div>
+                    <Button
+                      variant="plain"
+                      onClick={() => {
+                        append({
+                          quantity: 0,
+                          price: "",
+                          discount: "",
+                          tax: "",
+                          transactionId: props.transaction?.id,
+                          productId: "",
+                        });
+                      }}
+                    >
+                      Tambah Produk
+                    </Button>
+                  </div>
+                )}
+              </tbody>
+              {/* FOOTER */}
+              {/* <tfoot style={{ position: "absolute", bottom: 0, width: "auto" }}>
+                <tr>
+                  <td>
+                    <Typography fontWeight={"bold"} level="body-md">
+                      Total
+                    </Typography>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <Typography fontWeight={"bold"} level="body-md">
+                      {formatIDR(sum(arrayOfNetPrice))}
+                    </Typography>
+                  </td>
+                  <td></td>
+                </tr>
+              </tfoot> */}
+            </Table>
+            <Divider sx={{ marginTop: "auto" }} />
+            <Sheet
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                borderColor: "neutral",
+                paddingTop: 2,
+                // borderTop: 1,
+              }}
+            >
+              <h3>Total</h3>
+              <h3>{formatIDR(sum(arrayOfNetPrice))}</h3>
+            </Sheet>
+          </Sheet>
         </Stack>
-      </Stack>
-    </Dialog>
+      </ModalDialog>
+    </Modal>
   );
 }
