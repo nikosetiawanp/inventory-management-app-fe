@@ -1,41 +1,33 @@
-import {
-  Button,
-  CircularProgress,
-  IconButton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import RefreshIcon from "@mui/icons-material/Refresh";
+
 import { Settings } from "@mui/icons-material";
 import Drawer from "../../components/Drawer";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import { Invoice } from "../../interfaces/interfaces";
 import InvoiceRow from "./InvoiceRow";
+import DateFilterCopy from "../../components/filters/DateFilterCopy";
 
 export default function InvoicePage() {
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-  const selectedYear = formattedDate.split("-")[0];
-  const selectedMonth = formattedDate.split("-")[1];
+  // DATE
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const formattedStartDate = selectedStartDate
+    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
+    : "";
+  const formattedEndDate = selectedEndDate
+    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
+    : "";
 
   // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getInvoices = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `invoices?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31`
+        `invoices?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
     );
     console.log(response.data.data);
 
@@ -43,84 +35,100 @@ export default function InvoicePage() {
   };
 
   const invoicesQuery = useQuery({
-    queryKey: ["invoices"],
+    queryKey: ["invoices", selectedStartDate, selectedEndDate],
     queryFn: () => getInvoices(),
     refetchOnWindowFocus: false,
+    enabled: true,
   });
+
+  const refetch = () => {
+    getInvoices();
+    invoicesQuery.refetch();
+  };
+
+  useEffect(() => {
+    getInvoices();
+  }, [selectedStartDate, selectedEndDate]);
   return (
     <>
+      {/* PAGE */}
       <Stack direction={"row"} height={"100vh"} width={"100vw"}>
+        {/* DRAWER */}
         <Drawer />
-        <Stack padding={4} gap={4} width={1}>
-          <Typography fontWeight={"bold"} variant="h4">
+        {/* TITLE */}
+        <Stack padding={4} width={1} spacing={2}>
+          <Typography fontWeight={"bold"} level="h4">
             Faktur
           </Typography>
+
+          {/* DATE FILTER */}
           <Stack direction={"row"} gap={2} width={1}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                views={["month", "year"]}
-                slotProps={{ textField: { size: "small" } }}
-                value={selectedDate}
-                onChange={(newValue: any) => setSelectedDate(newValue)}
-                format="MMMM YYYY"
-              />
-            </LocalizationProvider>
-            <Button
-              size="small"
-              variant="contained"
-              onClick={() => invoicesQuery.refetch()}
-              disabled={invoicesQuery.isRefetching || invoicesQuery.isLoading}
-            >
-              {invoicesQuery.isRefetching || invoicesQuery.isLoading ? (
-                <CircularProgress size={15} color="inherit" />
-              ) : (
-                <RefreshIcon fontSize="small" />
-              )}
-            </Button>
+            <DateFilterCopy
+              selectedStartDate={selectedStartDate}
+              setSelectedStartDate={setSelectedStartDate}
+              selectedEndDate={selectedEndDate}
+              setSelectedEndDate={setSelectedEndDate}
+              refetch={refetch}
+              label="Tanggal Faktur"
+            />{" "}
           </Stack>
 
-          <TableContainer
-            sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
+          <Sheet
+            variant="outlined"
+            sx={{ borderRadius: 2, overflow: "hidden" }}
           >
-            <Table sx={{ borderCollapse: "separate" }} size="small">
+            <Table size="sm" stickyHeader stickyFooter>
               {/* HEAD */}
-              <TableHead
-                sx={{
-                  position: "sticky",
-                  backgroundColor: "white",
-                  top: 0,
-                  border: 2,
-                  borderColor: "divider",
-                  zIndex: 50,
-                }}
-              >
-                <TableRow>
-                  <TableCell>Tanggal Faktur</TableCell>
-                  <TableCell>Nomor Faktur</TableCell>
-                  <TableCell>Nama Vendor</TableCell>
-                  <TableCell>Tanggal Jatuh Tempo</TableCell>
-                  <TableCell>Status Hutang</TableCell>
+              <thead>
+                <tr>
+                  <th>
+                    <Button size="sm" variant="plain" color="neutral">
+                      Tanggal Faktur
+                    </Button>
+                  </th>
+                  <th>
+                    <Button size="sm" variant="plain" color="neutral">
+                      Nomor Faktur
+                    </Button>
+                  </th>
+                  <th>
+                    <Button size="sm" variant="plain" color="neutral">
+                      Nama Vendor
+                    </Button>
+                  </th>
+                  <th>
+                    <Button size="sm" variant="plain" color="neutral">
+                      Jatuh Tempo
+                    </Button>
+                  </th>
+                  <th>
+                    <Button size="sm" variant="plain" color="neutral">
+                      Status Hutang
+                    </Button>
+                  </th>
 
-                  <TableCell width={10}>
-                    <IconButton size="small">
+                  <th style={{ width: 10 }}>
+                    <IconButton size="sm">
                       <Settings fontSize="small" />
                     </IconButton>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
+                  </th>
+                </tr>
+              </thead>
 
               {/* ROWS */}
-              <TableBody sx={{ overflowY: "scroll" }}>
+              <tbody>
                 {invoicesQuery.isLoading ? (
                   <RowSkeleton rows={15} columns={5} />
                 ) : (
-                  invoicesQuery.data?.map((invoice: Invoice, index: number) => (
-                    <InvoiceRow index={index} key={index} invoice={invoice} />
-                  ))
+                  invoicesQuery?.data?.map(
+                    (invoice: Invoice, index: number) => (
+                      <InvoiceRow index={index} key={index} invoice={invoice} />
+                    )
+                  )
                 )}
-              </TableBody>
+              </tbody>
             </Table>
-          </TableContainer>
+          </Sheet>
         </Stack>
       </Stack>
     </>

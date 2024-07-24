@@ -1,138 +1,10 @@
-import {
-  Button,
-  Chip,
-  IconButton,
-  Sheet,
-  Stack,
-  Tab,
-  TabList,
-  Table,
-  Tabs,
-  Typography,
-} from "@mui/joy";
+import { Stack, Tab, TabList, TabPanel, Tabs, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
 
-import dayjs from "dayjs";
-import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
-import { useQuery } from "react-query";
-
-import { Settings } from "@mui/icons-material";
-import { Debt, Payment } from "../../interfaces/interfaces";
-import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import DebtRow from "./DebtRow";
-import ChecklistFilter from "../../components/filters/ChecklistFilter";
-import SortButton from "../../components/buttons/SortButton";
-import { sum } from "../../helpers/calculationHelpers";
-import { formatIDR } from "../../helpers/currencyHelpers";
-import DateFilterCopy from "../../components/filters/DateFilterCopy";
+import UnpaidDebtTab from "./UnpaidDebtTab";
+import VendorDebtTab from "./VendorDebtTab";
 
 export default function DebtPage() {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-
-  // DATE
-  const [selectedStartDate, setSelectedStartDate] = useState(null);
-  const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const formattedStartDate = selectedStartDate
-    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
-    : "";
-  const formattedEndDate = selectedEndDate
-    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
-    : "";
-
-  const [includedData, setIncludedData] = useState<string[]>([]);
-  const [sortConfig, setSortConfig] = useState({
-    key: "invoice-date",
-    direction: "ascending",
-  });
-
-  // GET DEBTS
-  const getDebts = async () => {
-    const response = await axios.get(
-      BACKEND_URL +
-        "debts?" +
-        "isPaid=0" +
-        `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
-        `&endDate=${selectedEndDate ? formattedEndDate : ""}`
-    );
-    return response.data.data;
-  };
-
-  const refetch = () => {
-    getDebts();
-    debtsQuery.refetch();
-  };
-
-  const debtsQuery = useQuery({
-    queryKey: ["debts", selectedStartDate, selectedEndDate],
-    queryFn: getDebts,
-    refetchOnWindowFocus: false,
-    enabled: true,
-  });
-
-  const contacts: string[] | any = [
-    ...new Set(debtsQuery?.data?.map((debt: Debt) => debt?.contact?.name)),
-  ];
-  const filteredDebtsQuery =
-    includedData.length == 0
-      ? debtsQuery?.data
-      : debtsQuery?.data?.filter((debt: Debt) =>
-          includedData?.includes(debt?.contact?.name)
-        );
-
-  // SORT DATA
-  const sortedData = useMemo(() => {
-    // SORT INVOICE DATE ASCENDING
-    if (
-      sortConfig.key == "invoice-date" &&
-      sortConfig.direction == "descending"
-    ) {
-      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
-        b?.invoice?.date.localeCompare(a?.invoice?.date)
-      );
-    }
-
-    // SORT INVOICE DATE ASCENDING
-    if (
-      sortConfig.key == "invoice-date" &&
-      sortConfig.direction == "ascending"
-    ) {
-      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
-        a?.invoice?.date.localeCompare(b?.invoice?.date)
-      );
-    }
-
-    // SORT CONTACT ASCENDING
-    if (sortConfig.key == "vendor" && sortConfig.direction == "ascending") {
-      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
-        a?.contact?.name?.localeCompare(b?.contact?.name)
-      );
-    }
-
-    // SORT CONTACT ASCENDING
-    if (sortConfig.key == "vendor" && sortConfig.direction == "descending") {
-      return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
-        b?.contact?.name?.localeCompare(a?.contact?.name)
-      );
-    }
-  }, [debtsQuery, includedData, sortConfig]);
-
-  const arrayOfDebts = filteredDebtsQuery
-    ? filteredDebtsQuery.map((debt: Debt) => debt?.amount)
-    : [];
-
-  const arrayOfPayments = filteredDebtsQuery
-    ? filteredDebtsQuery
-        ?.map((debt: Debt) =>
-          debt.payments.map((payment: Payment) => payment.amount)
-        )
-        .flat()
-    : [];
-
-  useEffect(() => {
-    console.log(debtsQuery.data);
-  }, [selectedStartDate, selectedEndDate]);
-
   return (
     <Stack
       direction={"row"}
@@ -145,18 +17,24 @@ export default function DebtPage() {
         <Typography fontWeight={"bold"} level="h4">
           Hutang
         </Typography>
-        <Tabs sx={{ backgroundColor: "transparent" }}>
+        <Tabs defaultValue={0} sx={{ backgroundColor: "transparent" }}>
           <TabList>
-            <Tab color="primary">Per Vendor</Tab>
-            <Tab color="primary">
-              Belum Lunas{" "}
-              <Chip color="primary" variant="soft">
-                2
-              </Chip>
+            <Tab color="primary" value={0}>
+              Belum Lunas
+            </Tab>
+            <Tab color="primary" value={1}>
+              Vendor
             </Tab>
           </TabList>
+          <TabPanel value={0} sx={{ paddingX: 0 }}>
+            <UnpaidDebtTab />
+          </TabPanel>
+          <TabPanel value={1} sx={{ paddingX: 0 }}>
+            <VendorDebtTab />
+          </TabPanel>
         </Tabs>
 
+        {/* STATUS
         <Stack direction={"row"} gap={2} width={1}>
           <Sheet
             sx={{
@@ -210,9 +88,9 @@ export default function DebtPage() {
               </Typography>
             </h2>
           </Sheet>
-        </Stack>
+        </Stack> */}
 
-        {/* FILTERS */}
+        {/* FILTERS
         <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
           <DateFilterCopy
             selectedStartDate={selectedStartDate}
@@ -228,9 +106,9 @@ export default function DebtPage() {
             setIncludedData={setIncludedData}
             label={"Vendor"}
           />
-        </Stack>
+        </Stack> */}
 
-        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+        {/* <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
           <Table size="sm" stickyHeader stickyFooter>
             <thead>
               <tr>
@@ -293,7 +171,7 @@ export default function DebtPage() {
               )}
             </tbody>
           </Table>
-        </Sheet>
+        </Sheet> */}
       </Stack>
     </Stack>
   );

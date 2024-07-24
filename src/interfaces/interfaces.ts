@@ -16,6 +16,7 @@ export interface Contact {
   city: string;
   address: string;
   type: "V" | "C";
+  debts: Debt[];
 }
 
 export interface TransactionItem {

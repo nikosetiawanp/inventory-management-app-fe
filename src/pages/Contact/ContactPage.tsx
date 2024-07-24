@@ -34,7 +34,7 @@ export default function ContactPage() {
 
   const [selectedType, setSelectedType] = useState("V");
   const [searchInput, setSearchInput] = useState("");
-  const filteredContactsQuery = contactsQuery?.data?.filter(
+  const searchResult = contactsQuery?.data?.filter(
     (vendor: Contact) =>
       vendor.name.toLowerCase().includes(searchInput.toLowerCase()) ||
       vendor.code.toLowerCase().includes(searchInput.toLowerCase())
@@ -149,21 +149,19 @@ export default function ContactPage() {
               {contactsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={6} />
               ) : (
-                filteredContactsQuery?.map(
-                  (contact: Contact, index: number) => (
-                    <tr key={index}>
-                      <td style={{ paddingLeft: 15 }}>{contact.code}</td>
-                      <td style={{ paddingLeft: 15 }}>{contact.name}</td>
-                      <td style={{ paddingLeft: 15 }}>{contact.address}</td>
-                      <td style={{ paddingLeft: 15 }}>{contact.phone}</td>
-                      <td style={{ paddingLeft: 15 }}>{contact.email}</td>
-                      <td style={{ textAlign: "center" }}>
-                        <AlertDialogModal />
-                        {/* <MoreVertContactButton contact={contact} /> */}
-                      </td>
-                    </tr>
-                  )
-                )
+                searchResult?.map((contact: Contact, index: number) => (
+                  <tr key={index}>
+                    <td style={{ paddingLeft: 15 }}>{contact.code}</td>
+                    <td style={{ paddingLeft: 15 }}>{contact.name}</td>
+                    <td style={{ paddingLeft: 15 }}>{contact.address}</td>
+                    <td style={{ paddingLeft: 15 }}>{contact.phone}</td>
+                    <td style={{ paddingLeft: 15 }}>{contact.email}</td>
+                    <td style={{ textAlign: "center" }}>
+                      <AlertDialogModal />
+                      {/* <MoreVertContactButton contact={contact} /> */}
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </Table>

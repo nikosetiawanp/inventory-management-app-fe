@@ -18,8 +18,10 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
 
   return (
     <tr key={props.index}>
-      <td>{formatDate(props.debt?.invoice?.date, "D MMMM YYYY")}</td>
-      <td>
+      <td style={{ paddingLeft: 15 }}>
+        {formatDate(props.debt?.invoice?.date, "D MMMM YYYY")}
+      </td>
+      <td style={{ paddingLeft: 15 }}>
         <Chip
           variant="soft"
           size="sm"
@@ -28,11 +30,11 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
           {formatDate(props.debt?.invoice?.dueDate, "D MMMM YYYY")}
         </Chip>
       </td>
-      <td>{props.debt?.invoice?.number}</td>
-      <td>{props.debt?.contact?.name}</td>
+      <td style={{ paddingLeft: 15 }}>{props.debt?.invoice?.number}</td>
+      <td style={{ paddingLeft: 15 }}>{props.debt?.contact?.name}</td>
 
-      <td>{formatIDR(props.debt?.amount)}</td>
-      <td>
+      <td style={{ paddingLeft: 15 }}>{formatIDR(props.debt?.amount)}</td>
+      <td style={{ paddingLeft: 15 }}>
         <Typography
           level="body-md"
           color={
@@ -43,11 +45,11 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
         </Typography>
       </td>
 
-      <td>
+      <td style={{ textAlign: "center" }}>
         <PaymentListDialog debt={props.debt} />
       </td>
 
-      <td>
+      <td style={{ textAlign: "center" }}>
         {sum(arrayOfPayments) >= props.debt?.amount ? (
           <CompleteDebt debt={props.debt} />
         ) : (
