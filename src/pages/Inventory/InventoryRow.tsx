@@ -1,8 +1,8 @@
-import { TableCell, TableRow } from "@mui/material";
 import ArrivalHistoryOptionButton from "./ArrivalHistoryOptionButton";
 import { Inventory } from "../../interfaces/interfaces";
 import { useState } from "react";
 import InventoryDetailDialog from "./InventoryDetailDialog";
+import { formatDate } from "../../helpers/dateHelpers";
 // import { useState } from "react";
 
 export default function InventoryRow(props: {
@@ -10,59 +10,24 @@ export default function InventoryRow(props: {
   inventory: Inventory;
 }) {
   const [open, setOpen] = useState(false);
-  const formatDate = (inputDate: string) => {
-    const date = new Date(inputDate);
-    const options: any = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-
-    const formattedDate = date.toLocaleDateString("id-ID", options);
-    const [day, month, year] = formattedDate.split(" ");
-    const monthNames = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const monthIndex = monthNames.indexOf(month);
-
-    if (monthIndex !== -1) {
-      const indonesianMonth = monthNames[monthIndex];
-      return `${day} ${indonesianMonth} ${year}`;
-    }
-
-    return formattedDate;
-  };
 
   return (
     <>
-      <TableRow
+      <tr
         key={props.index}
-        hover
-        sx={{ cursor: "pointer" }}
+        style={{ cursor: "pointer" }}
         onClick={() => setOpen(true)}
       >
-        <TableCell>{props.inventory?.number}</TableCell>
-        <TableCell>{props.inventory?.receiptNumber}</TableCell>
-        <TableCell>{props.inventory?.transaction?.contact?.name}</TableCell>
-        <TableCell>{formatDate(props.inventory?.date)}</TableCell>
-        <TableCell>{props.inventory?.transaction?.number}</TableCell>
-        <TableCell>{props.inventory?.description}</TableCell>
-        <TableCell align="center" width={10}>
+        <td>{props.inventory?.number}</td>
+        <td>{props.inventory?.receiptNumber}</td>
+        <td>{props.inventory?.transaction?.contact?.name}</td>
+        <td>{formatDate(props.inventory?.date, "DD MMMM YYYY")}</td>
+        <td>{props.inventory?.transaction?.number}</td>
+        <td>{props.inventory?.description}</td>
+        <td align="center" width={10}>
           <ArrivalHistoryOptionButton inventory={props.inventory} />
-        </TableCell>
-      </TableRow>
+        </td>
+      </tr>
 
       <InventoryDetailDialog
         open={open}

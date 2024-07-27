@@ -94,7 +94,7 @@ export default function CreatePayment(props: { debt: Debt }) {
 
   return (
     <>
-      <Button variant="solid" size="sm" onClick={() => setOpen(true)}>
+      <Button variant="plain" size="sm" onClick={() => setOpen(true)}>
         Bayar
       </Button>
 

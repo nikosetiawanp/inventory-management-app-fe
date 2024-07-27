@@ -84,8 +84,6 @@ export default function CreateTransaction(props: {
       contactId: selectedContact?.id,
     };
 
-    console.log(dataToSubmit);
-
     try {
       await createTransaction.mutateAsync(dataToSubmit);
       setOpen(false);
@@ -137,7 +135,9 @@ export default function CreateTransaction(props: {
               </Stack>
 
               {/* AUTOCOMPLETE */}
-              <FormControl error={!selectedContact}>
+              <FormControl
+              // error={!selectedContact}
+              >
                 <Stack>
                   <FormLabel>
                     {props.type == "purchase" ? "Vendor" : "Customer"}
@@ -157,7 +157,7 @@ export default function CreateTransaction(props: {
                     }}
                     inputValue={selectedContact?.name}
                     getOptionLabel={(option: Contact) => option.name}
-                    options={contactsQuery.data}
+                    options={contactsQuery.data ? contactsQuery.data : []}
                     renderOption={(props, option: Contact) => (
                       <AutocompleteOption {...props} key={option.id}>
                         <ListItemContent sx={{ fontSize: "sm" }}>

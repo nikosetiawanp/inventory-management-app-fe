@@ -1,15 +1,15 @@
 import {
-  TableRow,
-  TableCell,
-  TextField,
-  InputAdornment,
+  Autocomplete,
+  AutocompleteOption,
+  FormControl,
   IconButton,
-} from "@mui/material";
+  Input,
+  ListItemContent,
+  Stack,
+} from "@mui/joy";
 import { ClearIcon } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import { Product } from "../../interfaces/interfaces";
-import SelectProduct from "../../components/select/SelectProduct";
-import SelectProductCopy from "../../components/select/SelectProductCopy";
 
 export default function NewTransactionItem(props: {
   update: any;
@@ -34,10 +34,11 @@ export default function NewTransactionItem(props: {
   }, [selectedProduct]);
 
   return (
-    <TableRow>
-      {/* PRODUCT */}
-      <TableCell>
-        {/* <SelectProduct
+    <>
+      <tr>
+        {/* PRODUCT */}
+        <td>
+          {/* <SelectProduct
           selectedProduct={selectedProduct}
           setSelectedProduct={setSelectedProduct}
           control={props.control}
@@ -45,104 +46,117 @@ export default function NewTransactionItem(props: {
           update={props.update}
           setValue={props.setValue}
         /> */}
-        <SelectProductCopy
+          {/* <SelectProductCopy
           selectedProduct={selectedProduct}
           setSelectedProduct={setSelectedProduct}
           control={props.control}
           index={props.index}
           update={props.update}
           setValue={props.setValue}
-        />
-      </TableCell>
+        /> */}
+          {/* AUTOCOMPLETE */}
+          <FormControl>
+            <Stack>
+              {/* <FormLabel></FormLabel>{" "} */}
+              <Autocomplete
+                id="product"
+                size="md"
+                placeholder={"Pilih produk"}
+                value={selectedProduct}
+                onChange={(event, newValue) => {
+                  event;
+                  setSelectedProduct(newValue);
+                }}
+                inputValue={selectedProduct?.name}
+                getOptionLabel={(option: Product) => option.name}
+                options={props.products ? props.products : []}
+                renderOption={(props, option: Product) => (
+                  <AutocompleteOption {...props} key={option.id}>
+                    <ListItemContent sx={{ fontSize: "sm" }}>
+                      {option.name}
+                    </ListItemContent>
+                  </AutocompleteOption>
+                )}
+              />
+            </Stack>
+          </FormControl>
+        </td>
 
-      {/* QUANTITY */}
-      <TableCell width={100}>
-        <TextField
-          id={`items[${props.index}].quantity`}
-          variant="outlined"
-          size="small"
-          autoFocus
-          onFocus={(e) => {
-            e.target.select();
-          }}
-          {...register(`transactionItems[${props.index}].quantity`, {
-            required: "Tidak boleh kosong",
-          })}
-          sx={{ textAlign: "center" }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                {selectedProduct?.unit}
-              </InputAdornment>
-            ),
-          }}
-        />
-      </TableCell>
-      {/* UNIT */}
-      <TableCell></TableCell>
-      {/* HARGA */}
-      <TableCell width={200}>
-        <TextField
-          id={`transactionItems[${props.index}].price`}
-          variant="outlined"
-          size="small"
-          autoFocus
-          onFocus={(e) => {
-            e.target.select();
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">Rp</InputAdornment>
-            ),
-          }}
-          {...register(`transactionItems[${props.index}].price`)}
-        />
-      </TableCell>
+        {/* QUANTITY */}
+        <td>
+          <Input
+            id={`items[${props.index}].quantity`}
+            variant="outlined"
+            size="md"
+            autoFocus
+            onFocus={(e) => {
+              e.target.select();
+            }}
+            {...register(`transactionItems[${props.index}].quantity`, {
+              required: "Tidak boleh kosong",
+            })}
+            sx={{ textAlign: "center" }}
+            endDecorator={selectedProduct?.unit}
+          />
+        </td>
+        {/* UNIT */}
+        <td></td>
+        {/* HARGA */}
+        <td>
+          <Input
+            id={`transactionItems[${props.index}].price`}
+            variant="outlined"
+            size="md"
+            autoFocus
+            onFocus={(e) => {
+              e.target.select();
+            }}
+            startDecorator="Rp"
+            {...register(`transactionItems[${props.index}].price`)}
+          />
+        </td>
 
-      {/* DISCOUNT */}
-      <TableCell width={80}>
-        <TextField
-          id={`transactionItems[${props.index}].discount`}
-          variant="outlined"
-          size="small"
-          autoFocus
-          onFocus={(e) => {
-            e.target.select();
-          }}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">%</InputAdornment>,
-          }}
-          {...register(`transactionItems[${props.index}].discount`, {
-            required: "Tidak boleh kosong",
-          })}
-        />
-      </TableCell>
-      {/* TAX */}
-      <TableCell width={80}>
-        <TextField
-          id={`items[${props.index}].tax`}
-          variant="outlined"
-          size="small"
-          autoFocus
-          onFocus={(e) => {
-            e.target.select();
-          }}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">%</InputAdornment>,
-          }}
-          {...register(`transactionItems[${props.index}].tax`, {
-            required: "Tidak boleh kosong",
-          })}
-        />
-      </TableCell>
+        {/* DISCOUNT */}
+        <td>
+          <Input
+            id={`transactionItems[${props.index}].discount`}
+            variant="outlined"
+            size="md"
+            autoFocus
+            onFocus={(e) => {
+              e.target.select();
+            }}
+            endDecorator="%"
+            {...register(`transactionItems[${props.index}].discount`, {
+              required: "Tidak boleh kosong",
+            })}
+          />
+        </td>
+        {/* TAX */}
+        <td>
+          <Input
+            id={`items[${props.index}].tax`}
+            variant="outlined"
+            size="md"
+            autoFocus
+            onFocus={(e: any) => {
+              e.target.select();
+            }}
+            endDecorator="%"
+            {...register(`transactionItems[${props.index}].tax`, {
+              required: "Tidak boleh kosong",
+            })}
+          />
+        </td>
 
-      {/* REMOVE */}
-      <TableCell></TableCell>
-      <TableCell width={10}>
-        <IconButton size="small" onClick={() => props.remove(props.index)}>
-          <ClearIcon fontSize="small" />
-        </IconButton>
-      </TableCell>
-    </TableRow>
+        {/* REMOVE */}
+        <td></td>
+        <td width={10}>
+          <IconButton size="sm" onClick={() => props.remove(props.index)}>
+            <ClearIcon fontSize="small" />
+          </IconButton>
+        </td>
+      </tr>
+    </>
   );
 }

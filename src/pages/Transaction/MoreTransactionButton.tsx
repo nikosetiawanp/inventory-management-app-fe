@@ -1,15 +1,10 @@
-import {
-  Button,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-} from "@mui/material";
+import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { IconButton } from "@mui/joy";
+import { MoreVert } from "@mui/icons-material";
 
 export default function MoreTransactionButton() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -26,16 +21,16 @@ export default function MoreTransactionButton() {
 
   return (
     <>
-      <Button
+      <IconButton
         variant="outlined"
-        endIcon={<ArrowDropDownIcon />}
         onClick={handleClick}
         aria-controls={open ? "demo-positioned-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
+        color="neutral"
       >
-        Lainnya
-      </Button>
+        <MoreVert />
+      </IconButton>
 
       <Menu
         id="demo-positioned-menu"

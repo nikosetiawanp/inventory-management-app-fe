@@ -1,12 +1,12 @@
 import { Chip, Typography } from "@mui/joy";
 import { Debt, Payment } from "../../interfaces/interfaces";
-import PaymentListDialog from "./PaymentListDialog";
 import CreatePayment from "./CreatePayment";
 import { sum } from "../../helpers/calculationHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
 import "dayjs/locale/id";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import CompleteDebt from "./CompleteDebt";
+import PaymentListModal from "./PaymentListModal";
 
 export default function DebtRow(props: { index: number; debt: Debt }) {
   const arrayOfPayments = props.debt.payments.map(
@@ -46,7 +46,7 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
       </td>
 
       <td style={{ textAlign: "center" }}>
-        <PaymentListDialog debt={props.debt} />
+        <PaymentListModal debt={props.debt} />
       </td>
 
       <td style={{ textAlign: "center" }}>

@@ -1,42 +1,33 @@
-import {
-  Button,
-  CircularProgress,
-  IconButton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
 import { Settings } from "@mui/icons-material";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import CreateInventory from "./CreateInventory";
 import axios from "axios";
 import { useQuery } from "react-query";
-
 import { Inventory } from "../../interfaces/interfaces";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import InventoryRow from "./InventoryRow";
+import DateFilterCopy from "../../components/filters/DateFilterCopy";
 
 export default function InventoryArrivalPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-  const selectedYear = formattedDate.split("-")[0];
-  const selectedMonth = formattedDate.split("-")[1];
+
+  // DATE
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const formattedStartDate = selectedStartDate
+    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
+    : "";
+  const formattedEndDate = selectedEndDate
+    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
+    : "";
 
   // GET INVENTORY HISTORY
   const getInventories = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `inventories?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&type=A`
+        `inventories?startDate=${formattedStartDate}&endDate=${formattedEndDate}&type=A`
     );
     console.log(response.data.data);
 
@@ -44,79 +35,92 @@ export default function InventoryArrivalPage() {
   };
 
   const inventoriesQuery = useQuery({
-    queryKey: ["inventories"],
+    queryKey: ["inventories", selectedStartDate, selectedEndDate],
     queryFn: getInventories,
     refetchOnWindowFocus: false,
     enabled: true,
   });
 
+  const refetch = () => {
+    getInventories();
+    inventoriesQuery.refetch();
+  };
+
+  useEffect(() => {
+    getInventories();
+  }, [selectedStartDate, selectedEndDate]);
+
   return (
+    // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
       <Drawer />
-      <Stack padding={4} gap={4} width={1}>
-        <Typography fontWeight={"bold"} variant="h4">
+      <Stack padding={4} width={1} spacing={2}>
+        <Typography fontWeight={"bold"} level="h4">
           Gudang Masuk
         </Typography>
 
-        {/* NAVS */}
+        {/* DATE FILTER */}
         <Stack direction={"row"} gap={2} width={1}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              views={["month", "year"]}
-              slotProps={{ textField: { size: "small" } }}
-              value={selectedDate}
-              onChange={(newValue: any) => setSelectedDate(newValue)}
-              format="MMMM YYYY"
-            />
-          </LocalizationProvider>
-          <Button
-            size="small"
-            variant="contained"
-            onClick={() => inventoriesQuery?.refetch()}
-            disabled={
-              inventoriesQuery.isRefetching || inventoriesQuery.isLoading
-            }
-          >
-            {inventoriesQuery.isRefetching || inventoriesQuery.isLoading ? (
-              <CircularProgress size={15} color="inherit" />
-            ) : (
-              <RefreshIcon fontSize="small" />
-            )}
-          </Button>
-
-          {/* BUTTON */}
+          <DateFilterCopy
+            selectedStartDate={selectedStartDate}
+            setSelectedStartDate={setSelectedStartDate}
+            selectedEndDate={selectedEndDate}
+            setSelectedEndDate={setSelectedEndDate}
+            refetch={refetch}
+            label="Tanggal Faktur"
+          />{" "}
           <CreateInventory type="A" />
         </Stack>
 
-        <TableContainer
-          sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
-        >
-          <Table sx={{ borderCollapse: "separate" }} size="small">
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                border: 2,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              <TableRow>
-                <TableCell>Nomor LPB</TableCell>
-                <TableCell>Nomor Faktur</TableCell>
-                <TableCell>Vendor</TableCell>
-                <TableCell>Tanggal Masuk</TableCell>
-                <TableCell>Purchase Order</TableCell>
-                <TableCell>Deskripsi</TableCell>
-                <TableCell width={10} align="center">
-                  <IconButton size="small">
+        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <Table size="sm" stickyHeader stickyFooter>
+            <thead>
+              <tr>
+                <th>
+                  {" "}
+                  <Button size="sm" variant="plain" color="neutral">
+                    Nomor LPB
+                  </Button>
+                </th>
+                <th>
+                  {" "}
+                  <Button size="sm" variant="plain" color="neutral">
+                    Nomor Faktur
+                  </Button>
+                </th>
+                <th>
+                  {" "}
+                  <Button size="sm" variant="plain" color="neutral">
+                    Vendor
+                  </Button>
+                </th>
+                <th>
+                  {" "}
+                  <Button size="sm" variant="plain" color="neutral">
+                    Tanggal Faktur
+                  </Button>
+                </th>
+                <th>
+                  {" "}
+                  <Button size="sm" variant="plain" color="neutral">
+                    Purchase Order
+                  </Button>
+                </th>
+                <th>
+                  {" "}
+                  <Button size="sm" variant="plain" color="neutral">
+                    Deskripsi
+                  </Button>
+                </th>
+                <th style={{ width: 60, textAlign: "center" }}>
+                  <IconButton size="sm">
                     <Settings fontSize="small" />
                   </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
               {inventoriesQuery?.data?.map(
                 (inventory: Inventory, index: number) => (
                   <InventoryRow
@@ -126,9 +130,9 @@ export default function InventoryArrivalPage() {
                   />
                 )
               )}
-            </TableBody>
+            </tbody>
           </Table>
-        </TableContainer>
+        </Sheet>
       </Stack>
     </Stack>
   );

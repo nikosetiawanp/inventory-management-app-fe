@@ -56,13 +56,13 @@ export default function DateFilterCopy(props: {
           >
             <Typography color={props.selectedStartDate ? "primary" : "neutral"}>
               {props.selectedStartDate
-                ? formatDate(props.selectedStartDate, "D/MM/YYYY")
+                ? formatDate(props.selectedStartDate, "DD MMM YYYY")
                 : "Start date"}{" "}
             </Typography>{" "}
             <Typography> -</Typography>
             <Typography color={props.selectedEndDate ? "primary" : "neutral"}>
               {props.selectedEndDate
-                ? formatDate(props.selectedEndDate, "D/MM/YYYY")
+                ? formatDate(props.selectedEndDate, "DD MMM YYYY")
                 : "End date"}
             </Typography>
           </MenuButton>

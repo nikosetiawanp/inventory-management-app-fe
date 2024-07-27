@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
-import { Contact } from "../../interfaces/interfaces";
+import { Alert, Contact } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { provinces } from "../../public/ProvinceData";
 import { FormHelperText, FormLabel, Input } from "@mui/joy";
@@ -18,7 +18,9 @@ import AddIcon from "@mui/icons-material/Add";
 import { InfoOutlined } from "@mui/icons-material";
 import { Select, Option } from "@mui/joy";
 
-export default function CreateContact() {
+export default function CreateContact(props: {
+  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
+}) {
   const {
     register,
     handleSubmit,
@@ -62,9 +64,19 @@ export default function CreateContact() {
           BACKEND_URL + "contacts/",
           dataToSubmit
         );
+        props.setAlert({
+          open: true,
+          color: "success",
+          message: "Kontak berhasil disimpan",
+        });
         return response.data;
       } catch (error: any) {
         console.log(error);
+        props.setAlert({
+          open: true,
+          color: "danger",
+          message: `${error}`,
+        });
         if (error?.code == "ERR_BAD_RESPONSE")
           throw new Error("Network response was not ok");
       }

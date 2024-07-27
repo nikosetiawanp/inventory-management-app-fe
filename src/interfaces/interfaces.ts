@@ -28,6 +28,7 @@ export interface TransactionItem {
   tax: number;
   transactionId: string | number;
   productId: string | number;
+  arrivedQuantity: number;
 
   transaction: Transaction;
   product: Product;
@@ -121,10 +122,9 @@ export interface Cash {
 
   account: Account;
 }
-// export interface CreatePurchase {
-//   number: data.number,
-//   date: formattedDate,
-//   expectedArrival: null,
-//   isApproved: false,
-//   contactId: selectedContact?.id,
-// }
+
+export interface Alert {
+  open: boolean;
+  color: "neutral" | "success" | "danger";
+  message: string;
+}

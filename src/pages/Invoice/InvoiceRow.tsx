@@ -44,7 +44,11 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
 
   return (
     <>
-      <tr key={props.index}>
+      <tr
+        key={props.index}
+        onClick={() => setOpen(true)}
+        style={{ cursor: "pointer" }}
+      >
         <td style={{ paddingLeft: 15 }}>{formatDate(props.invoice?.date)}</td>
         <td style={{ paddingLeft: 15 }}>{props.invoice?.number}</td>
         <td style={{ paddingLeft: 15 }}>

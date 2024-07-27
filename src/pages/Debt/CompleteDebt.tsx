@@ -49,7 +49,12 @@ export default function CompleteDebt(props: { debt: Debt }) {
 
   return (
     <>
-      <Button variant="solid" onClick={handleClickOpen}>
+      <Button
+        variant="solid"
+        size="sm"
+        color="success"
+        onClick={handleClickOpen}
+      >
         Selesaikan
       </Button>
       <Modal open={open} onClose={() => setOpen(false)}>

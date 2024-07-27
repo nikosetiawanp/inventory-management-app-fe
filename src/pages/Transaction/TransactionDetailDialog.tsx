@@ -145,7 +145,7 @@ export default function TransactionDetailDialog(props: {
         size="sm"
         sx={{ height: 1, width: 1, maxHeight: "90vh", maxWidth: "70vw" }}
       >
-        <Stack height={1} padding={2} sx={{ backgroundColor: "primary.main" }}>
+        <Stack height={1} padding={2}>
           {/* HEADER */}
           <Stack
             direction={"row"}
@@ -246,11 +246,7 @@ export default function TransactionDetailDialog(props: {
                   <th style={{ textAlign: "center", width: 100 }}>Pajak</th>
                   <th style={{ textAlign: "right" }}>Total</th>
 
-                  <th style={{ textAlign: "center", width: 50 }}>
-                    {/* <IconButton size="sm"> */}
-                    {/* <Settings fontSize="small" /> */}
-                    {/* </IconButton> */}
-                  </th>
+                  <th style={{ textAlign: "center", width: 50 }}></th>
                 </tr>
               </thead>
 
@@ -296,46 +292,23 @@ export default function TransactionDetailDialog(props: {
                   />
                 ))}
                 {!props.transaction?.isApproved && (
-                  <div>
-                    <Button
-                      variant="plain"
-                      onClick={() => {
-                        append({
-                          quantity: 0,
-                          price: "",
-                          discount: "",
-                          tax: "",
-                          transactionId: props.transaction?.id,
-                          productId: "",
-                        });
-                      }}
-                    >
-                      Tambah Produk
-                    </Button>
-                  </div>
+                  <Button
+                    variant="plain"
+                    onClick={() => {
+                      append({
+                        quantity: 0,
+                        price: "",
+                        discount: "",
+                        tax: "",
+                        transactionId: props.transaction?.id,
+                        productId: "",
+                      });
+                    }}
+                  >
+                    Tambah Produk
+                  </Button>
                 )}
               </tbody>
-              {/* FOOTER */}
-              {/* <tfoot style={{ position: "absolute", bottom: 0, width: "auto" }}>
-                <tr>
-                  <td>
-                    <Typography fontWeight={"bold"} level="body-md">
-                      Total
-                    </Typography>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>
-                    <Typography fontWeight={"bold"} level="body-md">
-                      {formatIDR(sum(arrayOfNetPrice))}
-                    </Typography>
-                  </td>
-                  <td></td>
-                </tr>
-              </tfoot> */}
             </Table>
             <Divider sx={{ marginTop: "auto" }} />
             <Sheet

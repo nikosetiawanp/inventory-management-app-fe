@@ -1,14 +1,12 @@
 import {
-  Dialog,
   Stack,
   Typography,
-  TableContainer,
   Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from "@mui/material";
+  Modal,
+  ModalDialog,
+  Sheet,
+  Divider,
+} from "@mui/joy";
 
 import {
   TransactionItem,
@@ -21,8 +19,9 @@ import RowSkeleton from "../../components/skeletons/RowSkeleton";
 
 import CreateDebt from "./CreateDebt";
 import { formatIDR } from "../../helpers/currencyHelpers";
-import { sum } from "../../helpers/calculationHelpers";
+import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
 import MoreInvoiceButton from "./MoreInvoiceButton";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function InvoiceDetailDialog(props: {
   open: boolean;
@@ -54,235 +53,181 @@ export default function InvoiceDetailDialog(props: {
 
     return response.data.data;
   };
-  const purchaseItemsQuery = useQuery({
+  const transactionItemsQuery = useQuery({
     queryKey: [`purchaseItems.${props.invoice?.transactionId}`],
     queryFn: () => getTransactionItems(),
     refetchOnWindowFocus: false,
     enabled: props.open,
   });
 
-  // FORMAT DATE
-  const formatDate = (inputDate: string) => {
-    const date = new Date(inputDate);
-    const options: any = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
+  const mergedArray =
+    transactionItemsQuery?.data?.map((transactionItem: TransactionItem) => {
+      const arrivedQuantity =
+        inventoryItemsQuery?.data?.find(
+          (inventoryItem: InventoryItem) =>
+            inventoryItem?.id == transactionItem?.id
+        )?.quantity || 0;
 
-    const formattedDate = date.toLocaleDateString("id-ID", options);
-    const [day, month, year] = formattedDate.split(" ");
-    const monthNames = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
+      return { ...transactionItem, arrivedQuantity };
+    }) || transactionItemsQuery?.data;
 
-    const monthIndex = monthNames.indexOf(month);
-    if (monthIndex !== -1) {
-      const indonesianMonth = monthNames[monthIndex];
-      return `${day} ${indonesianMonth} ${year}`;
-    }
-
-    return formattedDate;
-  };
-
-  // FIND PURCHASE ITEM
-  const findPurchaseItem = (inventoryItem: InventoryItem) => {
-    const foundPurchaseItem: TransactionItem = purchaseItemsQuery?.data?.find(
-      (transactionItem: TransactionItem) =>
-        transactionItem.productId == inventoryItem.productId
-    );
-
-    return foundPurchaseItem;
-  };
-
-  // TOTAL PRICE
-  const calculateTotal = (
-    quantity: number,
-    price: number,
-    discount: number,
-    tax: number
-  ) => {
-    const priceTotal = quantity * price;
-    const discountTotal = priceTotal * (discount / 100);
-    const taxTotal = priceTotal * (tax / 100);
-
-    const result = priceTotal - discountTotal + taxTotal;
-    return result;
-  };
-
-  const calculateSum = (inventoryItems: InventoryItem[]) => {
-    if (!inventoryItems) return 0;
-    const totals = inventoryItems?.map((inventoryItem: InventoryItem) =>
-      calculateTotal(
-        inventoryItem.quantity,
-        findPurchaseItem(inventoryItem)?.price,
-        findPurchaseItem(inventoryItem)?.discount,
-        findPurchaseItem(inventoryItem)?.tax
-      )
-    );
-
-    let sum = 0;
-    totals.forEach((price: number) => {
-      sum += price;
-    });
-    return sum;
-  };
+  const arrayOfNetPrice = mergedArray?.map((item: TransactionItem) =>
+    calculateNetPrice(
+      item?.arrivedQuantity,
+      item?.price,
+      item?.discount,
+      item?.tax
+    )
+  );
 
   return (
-    <Dialog
-      open={props.open}
-      onClose={() => props.setOpen(false)}
-      fullWidth
-      maxWidth={"lg"}
-    >
-      <Stack padding={3}>
-        {/* HEADER */}
-        <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          marginBottom={2}
-        >
-          {/* TITLE */}
-          <Stack>
-            <Typography variant="h4">{props.invoice?.number}</Typography>
-            <Typography variant="body1">
-              {formatDate(props.invoice?.inventory.date)}
-            </Typography>
-            <Typography variant="body1">
-              Jatuh tempo : {formatDate(props.invoice?.dueDate)}
-            </Typography>
-            <Typography variant="body1">
-              {props.invoice?.inventory.number}
-            </Typography>
-          </Stack>
-          {/* BUTTONS */}
-          <Stack direction="row" gap={2}>
-            {/* <Typography>{props.inventory.invoiceNumber}</Typography> */}
-            <CreateDebt
-              debtAmount={calculateSum(inventoryItemsQuery?.data)}
-              invoice={props.invoice}
-            />
-            {/* <Button variant="contained" onClick={() => {}}>
+    <Modal open={props.open} onClose={() => props.setOpen(false)}>
+      <ModalDialog
+        size="sm"
+        sx={{ height: 1, width: 1, maxHeight: "90vh", maxWidth: "70vw" }}
+      >
+        <Stack height={1} padding={2}>
+          {/* HEADER */}
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            marginBottom={2}
+          >
+            {/* TITLE */}
+            <Stack>
+              <Typography level="h4">{props.invoice?.number}</Typography>
+              <Typography level="body-sm">
+                {formatDate(props.invoice?.inventory.date, "DD MMMM YYYY")}
+              </Typography>
+              <Typography level="body-sm">
+                Jatuh tempo :{" "}
+                {formatDate(props.invoice?.dueDate, "DD MMMM YYYY")}
+              </Typography>
+              <Typography level="body-sm">
+                {props.invoice?.inventory.number}
+              </Typography>
+            </Stack>
+            {/* BUTTONS */}
+            <Stack direction="row" gap={2}>
+              {/* <Typography>{props.inventory.invoiceNumber}</Typography> */}
+              <CreateDebt
+                debtAmount={sum(arrayOfNetPrice)}
+                invoice={props.invoice}
+              />
+              {/* <Button variant="contained" onClick={() => {}}>
               Buat Hutang
             </Button> */}
-            <MoreInvoiceButton />
+              <MoreInvoiceButton />
+            </Stack>
           </Stack>
-        </Stack>
 
-        {/* TABLE */}
-        <TableContainer
-          sx={{
-            backgroundColor: "white",
-            height: 500,
-          }}
-        >
-          <Table stickyHeader size="small">
-            {/* TABLE HEAD */}
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                borderBottom: 1,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              <TableRow>
-                <TableCell>Produk</TableCell>
-                <TableCell align="center">Quantity</TableCell>
+          {/* TABLE */}
+          <Sheet
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              position: "relative",
+              overflow: "auto",
+              height: 1,
+              width: 1,
+            }}
+          >
+            <Table size="sm" stickyHeader stickyFooter>
+              {/* TABLE HEAD */}
+              <thead>
+                <tr>
+                  <th>Produk</th>
+                  <th align="center">Quantity</th>
 
-                <TableCell align="right">Harga</TableCell>
-                <TableCell align="center">Diskon</TableCell>
-                <TableCell align="center">Pajak</TableCell>
-                <TableCell align="right">Total</TableCell>
-              </TableRow>
-            </TableHead>
+                  <th align="right">Harga</th>
+                  <th align="center">Diskon</th>
+                  <th align="center">Pajak</th>
+                  <th align="right">Total</th>
+                </tr>
+              </thead>
 
-            <TableBody
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                borderColor: "divider",
-                width: 1,
-                overflowY: "scroll",
-                maxHeight: 100,
-              }}
-            >
-              {/* NEW ITEM */}
-              {inventoryItemsQuery.isLoading ? (
-                <RowSkeleton rows={15} columns={8} />
-              ) : (
-                inventoryItemsQuery.data?.map(
-                  (inventoryItem: InventoryItem, index: number) => (
-                    <TableRow key={index}>
+              <tbody
+                style={{
+                  position: "sticky",
+                  borderColor: "divider",
+                  width: 1,
+                  height: 1,
+                  overflow: "scroll",
+                  backgroundColor: "transparent",
+                }}
+              >
+                {/* NEW ITEM */}
+                {inventoryItemsQuery.isLoading ? (
+                  <RowSkeleton rows={15} columns={8} />
+                ) : (
+                  mergedArray?.map((item: TransactionItem, index: number) => (
+                    <tr key={index}>
                       {/* PRODUK */}
-                      <TableCell>{inventoryItem.product.name}</TableCell>
+                      <td>{item.product.name}</td>
                       {/* QUANTITY */}
-                      <TableCell align="center">
-                        {inventoryItem.quantity} {inventoryItem.product.unit}
-                      </TableCell>
+                      <td style={{ textAlign: "center" }}>
+                        {item.arrivedQuantity} {item.product.unit}
+                      </td>
 
                       {/* HARGA */}
-                      <TableCell align="right">
-                        {formatIDR(findPurchaseItem(inventoryItem)?.price)}
-                      </TableCell>
+                      <td style={{ textAlign: "right" }}>
+                        {formatIDR(item.price)}
+                      </td>
 
-                      <TableCell align="center">
-                        {findPurchaseItem(inventoryItem)?.discount}%
-                      </TableCell>
-                      <TableCell align="center">
-                        {findPurchaseItem(inventoryItem)?.tax}%
-                      </TableCell>
-                      <TableCell align="right">
+                      <td style={{ textAlign: "center" }}>{item.discount}%</td>
+                      <td style={{ textAlign: "center" }}>{item.tax}%</td>
+                      <td style={{ textAlign: "center" }}>
                         {formatIDR(
-                          calculateTotal(
-                            inventoryItem.quantity,
-                            findPurchaseItem(inventoryItem)?.price,
-                            findPurchaseItem(inventoryItem)?.discount,
-                            findPurchaseItem(inventoryItem)?.tax
+                          calculateNetPrice(
+                            item.arrivedQuantity,
+                            item.price,
+                            item.discount,
+                            item.tax
                           )
                         )}
-                      </TableCell>
-                    </TableRow>
-                  )
-                )
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </Table>
+            <Divider sx={{ marginTop: "auto" }} />
+            <Sheet
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                borderColor: "neutral",
+                paddingTop: 2,
+                // borderTop: 1,
+              }}
+            >
+              <h3>Total</h3>
+              <h3>{formatIDR(sum(arrayOfNetPrice))}</h3>
+            </Sheet>
+          </Sheet>
 
-        {/* FOOTER */}
-        <Stack
-          position={"sticky"}
-          bottom={0}
-          direction={"row"}
-          justifyContent={"space-between"}
-          bgcolor={"white"}
-          padding={2}
-          borderTop={1}
-          borderColor={"divider"}
-        >
-          <Typography fontWeight={"bold"} variant="body1">
-            Total
-          </Typography>
-          <Typography fontWeight={"bold"} variant="body1">
-            {formatIDR(sum(inventoryItemsQuery.data))}
-          </Typography>
+          {/* FOOTER */}
+          {/* <Stack
+            position={"sticky"}
+            bottom={0}
+            direction={"row"}
+            justifyContent={"space-between"}
+            bgcolor={"white"}
+            padding={2}
+            borderTop={1}
+            borderColor={"divider"}
+          >
+            <Typography fontWeight={"bold"} level="body-sm">
+              Total
+            </Typography>
+            <Typography fontWeight={"bold"} level="body-sm">
+              {formatIDR(sum(inventoryItemsQuery.data))}
+            </Typography>
+          </Stack> */}
         </Stack>
-      </Stack>
-    </Dialog>
+      </ModalDialog>
+    </Modal>
   );
 }

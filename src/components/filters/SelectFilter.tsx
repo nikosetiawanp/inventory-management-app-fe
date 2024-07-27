@@ -28,8 +28,10 @@ export default function SelectFilter(props: {
         defaultValue="Vendor"
         onChange={handleChange}
       >
-        {props.options.map((option) => (
-          <Option value={option.key}>{option.label}</Option>
+        {props.options.map((option, index) => (
+          <Option key={index} value={option.key}>
+            {option.label}
+          </Option>
         ))}
       </Select>
     </Stack>

@@ -3,10 +3,9 @@ import { Box, Button, Sheet, Stack, Table } from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 
 import { useQuery } from "react-query";
-
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Contact } from "../../interfaces/interfaces";
+import { Alert, Contact } from "../../interfaces/interfaces";
 import Drawer from "../../components/Drawer";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import CreateContact from "./CreateContact";
@@ -15,6 +14,7 @@ import SelectFilter from "../../components/filters/SelectFilter";
 import { Settings } from "@mui/icons-material";
 import AlertDialogModal from "../../components/AlertModal";
 import SearchFilter from "../../components/filters/SearchFilter";
+import AlertSnackbar from "../../components/AlertSnackbar";
 
 export default function ContactPage() {
   // FETCHING DATA
@@ -25,13 +25,13 @@ export default function ContactPage() {
     );
     return response.data.data;
   };
-
   const contactsQuery = useQuery({
     queryKey: ["contacts"],
     queryFn: () => getContacts(),
     refetchOnWindowFocus: false,
   });
 
+  // FILTER
   const [selectedType, setSelectedType] = useState("V");
   const [searchInput, setSearchInput] = useState("");
   const searchResult = contactsQuery?.data?.filter(
@@ -49,9 +49,11 @@ export default function ContactPage() {
     contactsQuery.refetch();
   }, [selectedType]);
 
-  useEffect(() => {
-    console.log(contactsQuery.data);
-  }, [contactsQuery.data]);
+  const [alert, setAlert] = useState<Alert>({
+    open: false,
+    color: "success",
+    message: "Data created successfully",
+  });
 
   return (
     // PAGE
@@ -72,7 +74,7 @@ export default function ContactPage() {
             Kontak
           </Typography>
           <Box>
-            <CreateContact />
+            <CreateContact setAlert={setAlert} />
           </Box>
         </Stack>
 
@@ -168,6 +170,7 @@ export default function ContactPage() {
         </Sheet>
         {/* </TableContainer> */}
       </Stack>
+      <AlertSnackbar alert={alert} setAlert={setAlert} />
     </Stack>
   );
 }

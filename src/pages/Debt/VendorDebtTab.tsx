@@ -35,11 +35,6 @@ export default function VendorDebtTab() {
     direction: "ascending",
   });
 
-  // const refetch = () => {
-  //   getContacts();
-  //   contactsQuery.refetch();
-  // };
-
   const totalDebt = (debts: Debt[]) => {
     return sum(debts?.map((debt: Debt) => debt.amount));
   };
@@ -80,7 +75,7 @@ export default function VendorDebtTab() {
       );
 
   useEffect(() => {
-    console.log(sortedData);
+    // console.log(debts);
   }, [sortConfig]);
 
   return (
@@ -93,12 +88,6 @@ export default function VendorDebtTab() {
           label={"Cari Vendor"}
           placeholder={"Cari"}
         />
-        {/* <ChecklistFilter
-          data={contacts}
-          includedData={includedData}
-          setIncludedData={setIncludedData}
-          label={"Vendor"}
-        /> */}
       </Stack>
 
       <Sheet
@@ -108,11 +97,6 @@ export default function VendorDebtTab() {
         <Table size="sm" stickyHeader stickyFooter>
           <thead>
             <tr>
-              <th>
-                <Button size="sm" variant="plain" color="neutral">
-                  Kode
-                </Button>
-              </th>
               <th>
                 <SortButton
                   sortConfigKey="vendor"
@@ -126,18 +110,23 @@ export default function VendorDebtTab() {
               </th>
               <th>
                 <Button size="sm" variant="plain" color="neutral">
-                  Total Hutang
+                  Saldo Awal
                 </Button>
               </th>
               <th>
                 <Button size="sm" variant="plain" color="neutral">
-                  Total Dibayar
+                  Pembelian
                 </Button>
               </th>
 
               <th>
                 <Button size="sm" variant="plain" color="neutral">
-                  Sisa Hutang
+                  Pembayaran
+                </Button>
+              </th>
+              <th>
+                <Button size="sm" variant="plain" color="neutral">
+                  Saldo Akhir
                 </Button>
               </th>
 
@@ -155,8 +144,8 @@ export default function VendorDebtTab() {
             ) : (
               searchResult?.map((contact: Contact, index: number) => (
                 <tr key={index}>
-                  <td style={{ paddingLeft: 15 }}>{contact.code}</td>
                   <td style={{ paddingLeft: 15 }}>{contact.name}</td>
+                  <td></td>
                   <td style={{ paddingLeft: 15 }}>
                     {formatIDR(totalDebt(contact.debts))}
                   </td>
@@ -166,7 +155,7 @@ export default function VendorDebtTab() {
                     </Typography>
                   </td>
                   <td style={{ paddingLeft: 15 }}>
-                    <Typography color="danger">
+                    <Typography color="neutral">
                       {formatIDR(
                         totalDebt(contact.debts) - totalPayment(contact.debts)
                       )}

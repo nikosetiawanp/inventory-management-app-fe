@@ -1,17 +1,13 @@
 import {
-  Dialog,
   Stack,
   Typography,
   Button,
-  TableContainer,
   Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TextField,
-  InputAdornment,
-} from "@mui/material";
+  Modal,
+  Sheet,
+  Input,
+  ModalDialog,
+} from "@mui/joy";
 
 import {
   Inventory,
@@ -35,10 +31,6 @@ export default function InventoryDetailDialog(props: {
 
   //   FORM
   const { control, handleSubmit } = useForm();
-  // const { fields } = useFieldArray({
-  //   control,
-  //   name: "inventoryItems",
-  // });
   const { register } = control;
 
   // GET ITEMS
@@ -136,133 +128,125 @@ export default function InventoryDetailDialog(props: {
   };
 
   return (
-    <Dialog
-      open={props.open}
-      onClose={() => props.setOpen(false)}
-      fullWidth
-      maxWidth={"lg"}
-    >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack padding={3}>
-          {/* HEADER */}
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            marginBottom={2}
-          >
-            {/* TITLE */}
-            <Stack>
-              <Typography variant="h4">{props.inventory?.number}</Typography>
-              <Typography variant="body1">
-                {formatDate(props.inventory?.date)}
-              </Typography>
-              <Typography variant="body1">
-                {props.inventory?.transaction?.contact?.name}
-              </Typography>
+    <Modal open={props.open} onClose={() => props.setOpen(false)}>
+      <ModalDialog
+        size="sm"
+        sx={{ height: 1, width: 1, maxHeight: "90vh", maxWidth: "70vw" }}
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack padding={3}>
+            {/* HEADER */}
+            <Stack
+              direction={"row"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              marginBottom={2}
+            >
+              {/* TITLE */}
+              <Stack>
+                <Typography level="h4">{props.inventory?.number}</Typography>
+                <Typography level="body-sm">
+                  {formatDate(props.inventory?.date)}
+                </Typography>
+                <Typography level="body-sm">
+                  {props.inventory?.transaction?.contact?.name}
+                </Typography>
+              </Stack>
+              {/* BUTTONS */}
+              <Stack direction="row" alignItems={"center"} gap={2}>
+                {inventoryItemsQuery?.data?.length == 0 && (
+                  <Button
+                    variant="solid"
+                    onClick={() => handleSubmit(onSubmit as any)}
+                    type="submit"
+                    disabled={isSubmitting}
+                    sx={{ minHeight: "100%" }}
+                  >
+                    {isSubmitting ? "Memvalidasi" : "Validasi"}
+                  </Button>
+                )}
+              </Stack>
             </Stack>
-            {/* BUTTONS */}
-            <Stack direction="row" alignItems={"center"} gap={2}>
-              {inventoryItemsQuery?.data?.length == 0 && (
-                <Button
-                  variant="contained"
-                  onClick={() => handleSubmit(onSubmit as any)}
-                  type="submit"
-                  disabled={isSubmitting}
-                  sx={{ minHeight: "100%" }}
-                >
-                  {isSubmitting ? "Memvalidasi" : "Validasi"}
-                </Button>
-              )}
-            </Stack>
-          </Stack>
 
-          {/* TABLE */}
-          <TableContainer
-            sx={{
-              backgroundColor: "white",
-              height: 500,
-            }}
-          >
-            <Table stickyHeader size="small">
-              {/* TABLE HEAD */}
-              <TableHead
-                sx={{
-                  position: "sticky",
-                  backgroundColor: "white",
-                  top: 0,
-                  borderBottom: 1,
-                  borderColor: "divider",
-                  zIndex: 50,
-                }}
-              >
-                <TableRow>
-                  <TableCell>Produk</TableCell>
-                  <TableCell align="center">Quantity</TableCell>
-                  <TableCell align="center">Masuk</TableCell>
-                  {/* <TableCell width={10}>
+            {/* TABLE */}
+            <Sheet
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                position: "relative",
+                overflow: "auto",
+                height: 1,
+                width: 1,
+              }}
+            >
+              <Table size="sm" stickyHeader stickyFooter>
+                {/* TABLE HEAD */}
+                <thead>
+                  <tr>
+                    <th>Produk</th>
+                    <th style={{ textAlign: "center" }}>Quantity</th>
+                    <th style={{ textAlign: "center" }}>Masuk</th>
+                    {/* <td width={10}>
                     <IconButton size="small">
                       <Settings fontSize="small" />
                     </IconButton>
-                  </TableCell> */}
-                </TableRow>
-              </TableHead>
+                  </td> */}
+                  </tr>
+                </thead>
 
-              <TableBody
-                sx={{
-                  position: "sticky",
-                  backgroundColor: "white",
-                  borderColor: "divider",
-                  width: 1,
-                  overflowY: "scroll",
-                  maxHeight: 100,
-                }}
-              >
-                {/* NEW ITEM */}
-                {inventoryItemsQuery?.data?.length == 0
-                  ? props.transactionItems?.map(
-                      (purchaseItem: any, index: number) => (
-                        <TableRow key={index}>
-                          {/* {index} */}
-                          <TableCell>{purchaseItem?.product?.name}</TableCell>
-                          <TableCell align="center">
-                            {purchaseItem?.quantity}{" "}
-                            {purchaseItem.product?.unit}
-                          </TableCell>
-                          {/* QUANTITY */}
-                          <TableCell align="center" width={100}>
-                            <TextField
-                              id={`items[${index}].quantity`}
-                              size="small"
-                              {...register(`inventoryItems[${index}].quantity`)}
-                              InputProps={{
-                                endAdornment: (
-                                  <InputAdornment position="end">
-                                    {purchaseItem?.product?.unit}
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          </TableCell>
-                        </TableRow>
+                <tbody
+                  style={{
+                    position: "sticky",
+                    borderColor: "divider",
+                    width: 1,
+                    height: 1,
+                    overflow: "scroll",
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  {/* NEW ITEM */}
+                  {inventoryItemsQuery?.data?.length == 0
+                    ? props.transactionItems?.map(
+                        (purchaseItem: any, index: number) => (
+                          <tr key={index}>
+                            {/* {index} */}
+                            <td>{purchaseItem?.product?.name}</td>
+                            <td align="center">
+                              {purchaseItem?.quantity}{" "}
+                              {purchaseItem.product?.unit}
+                            </td>
+                            {/* QUANTITY */}
+                            <td style={{ width: 100, textAlign: "center" }}>
+                              <Input
+                                id={`items[${index}].quantity`}
+                                size="lg"
+                                {...register(
+                                  `inventoryItems[${index}].quantity`
+                                )}
+                                startDecorator="Rp"
+                              />
+                            </td>
+                          </tr>
+                        )
                       )
-                    )
-                  : inventoryItemsQuery?.data?.map(
-                      (inventoryItem: InventoryItem, index: number) => (
-                        <InventoryDetailRow
-                          key={index}
-                          index={index}
-                          inventory={props.inventory}
-                          inventoryItem={inventoryItem}
-                          purchaseItems={props.transactionItems}
-                        />
-                      )
-                    )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Stack>
-      </form>
-    </Dialog>
+                    : inventoryItemsQuery?.data?.map(
+                        (inventoryItem: InventoryItem, index: number) => (
+                          <InventoryDetailRow
+                            key={index}
+                            index={index}
+                            inventory={props.inventory}
+                            inventoryItem={inventoryItem}
+                            purchaseItems={props.transactionItems}
+                          />
+                        )
+                      )}
+                </tbody>
+              </Table>
+            </Sheet>
+          </Stack>
+        </form>
+      </ModalDialog>
+    </Modal>
   );
 }

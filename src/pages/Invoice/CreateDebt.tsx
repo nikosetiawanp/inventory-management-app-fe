@@ -1,11 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { Box, Button, Modal, ModalDialog, Typography } from "@mui/joy";
 import axios from "axios";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
@@ -59,11 +52,67 @@ export default function CreateDebt(props: {
 
   return (
     <>
-      <Button variant="contained" onClick={() => handleClickOpen(event)}>
+      <Button
+        variant="solid"
+        onClick={() => handleClickOpen(event)}
+        disabled={props.invoice?.debts?.length > 0}
+      >
         Buat Hutang
       </Button>
 
-      <Dialog
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog
+          aria-labelledby="nested-modal-title"
+          aria-describedby="nested-modal-description"
+          sx={(theme) => ({
+            [theme.breakpoints.only("xs")]: {
+              top: "unset",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderRadius: 0,
+              transform: "none",
+              maxWidth: "unset",
+            },
+          })}
+        >
+          <Typography id="nested-modal-title" level="h2">
+            Buat Hutang?
+          </Typography>
+          <Typography id="nested-modal-description" textColor="text.tertiary">
+            Anda yakin ingin membuat hutang dari faktur {props.invoice.number}?
+          </Typography>
+          <Box
+            sx={{
+              mt: 1,
+              display: "flex",
+              gap: 1,
+              flexDirection: { xs: "column", sm: "row-reverse" },
+            }}
+          >
+            <Button
+              variant="outlined"
+              color="neutral"
+              onClick={() => setOpen(false)}
+              disabled={createDebt.isLoading}
+            >
+              Batal
+            </Button>
+            <Button
+              variant="solid"
+              color="primary"
+              loading={createDebt.isLoading}
+              onClick={() => {
+                createDebt.mutateAsync(dataToSubmit as any);
+              }}
+            >
+              Buat Hutang
+            </Button>
+          </Box>
+        </ModalDialog>
+      </Modal>
+
+      {/* <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
@@ -89,7 +138,7 @@ export default function CreateDebt(props: {
             {createDebt.isLoading ? "Membuat Hutang" : "Buat Hutang"}
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }

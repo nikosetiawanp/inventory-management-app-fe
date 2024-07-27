@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import EditTransactionItemRow from "./EditTransactionItemRow";
 import { formatIDR } from "../../helpers/currencyHelpers";
-import { calculateNetPrice } from "../../helpers/calculationHelpers";
+import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
 
 export default function TransactionDetailRow(props: {
   transactionItem: TransactionItem;
@@ -17,22 +17,17 @@ export default function TransactionDetailRow(props: {
   inventories: Inventory[];
 }) {
   const [isEditing, setIsEditing] = useState(false);
-
-  const totalArrived = (productId: any) => {
+  const calculateTotalArrived = (productId: any) => {
     const inventoryItems = props.inventories?.map(
       (inventory: Inventory) => inventory.inventoryItems
     );
 
-    const flattenedInventoryItems = [].concat(...(inventoryItems as any));
-    const filteredByProductId = flattenedInventoryItems
+    const mergedInventoryItems = [].concat(...(inventoryItems as any));
+    const arrayOfArrivedQuantity = mergedInventoryItems
       .filter((inventoryItem: any) => inventoryItem.productId == productId)
       .map((item: any) => item.quantity);
 
-    const total = filteredByProductId.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0
-    );
-    return total;
+    return sum(arrayOfArrivedQuantity);
   };
 
   const Row = () => {
@@ -49,12 +44,12 @@ export default function TransactionDetailRow(props: {
             size="sm"
             variant="soft"
             color={
-              totalArrived(props.transactionItem.productId) > 0
+              calculateTotalArrived(props.transactionItem.productId) > 0
                 ? "success"
                 : "danger"
             }
           >
-            {totalArrived(props.transactionItem.productId) +
+            {calculateTotalArrived(props.transactionItem.productId) +
               " " +
               props.transactionItem.product.unit}
           </Chip>

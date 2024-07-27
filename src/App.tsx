@@ -13,7 +13,6 @@ import ContactPage from "./pages/Contact/ContactPage";
 import InvoicePage from "./pages/Invoice/InvoicePage";
 import InventoryArrivalPage from "./pages/Inventory/InventoryArrivalPage";
 import InventoryDeparturePage from "./pages/Inventory/InventoryDeparturePage";
-import InventoryPage from "./pages/Inventory/InventoryPage";
 import CashPage from "./pages/Cash/CashPage";
 import AccountPage from "./pages/Account/AccountPage";
 import ProductPage from "./pages/Product/ProductPage";
@@ -72,7 +71,6 @@ function App() {
 
                 <Route path="/debt" element={<DebtPage />} />
                 <Route path="/debt-payment" element={<DebtPaymentPage />} />
-                <Route path="/inventory" element={<InventoryPage />} />
                 <Route
                   path="/inventory-arrival"
                   element={<InventoryArrivalPage />}

@@ -55,6 +55,7 @@ export default function InventoryDetailRow(props: {
           BACKEND_URL + "inventory-items/" + props.inventoryItem.id,
           dataToSubmit
         );
+        return response;
       } catch (error) {
         console.log(error);
       }
