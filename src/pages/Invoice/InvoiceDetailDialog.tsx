@@ -50,6 +50,7 @@ export default function InvoiceDetailDialog(props: {
       BACKEND_URL +
         `transaction-items?transactionId=${props.invoice?.transactionId}`
     );
+    console.log(response.data.data);
 
     return response.data.data;
   };
@@ -65,7 +66,7 @@ export default function InvoiceDetailDialog(props: {
       const arrivedQuantity =
         inventoryItemsQuery?.data?.find(
           (inventoryItem: InventoryItem) =>
-            inventoryItem?.id == transactionItem?.id
+            inventoryItem?.productId == transactionItem?.productId
         )?.quantity || 0;
 
       return { ...transactionItem, arrivedQuantity };

@@ -19,6 +19,15 @@ export interface Contact {
   debts: Debt[];
 }
 
+export interface MonthlyDebt {
+  id: number;
+  name: string;
+  initialBalance: number;
+  totalDebt: number;
+  totalPayment: number;
+  currentBalance: number;
+}
+
 export interface TransactionItem {
   items(items: any): unknown;
   id: string;

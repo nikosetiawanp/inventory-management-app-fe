@@ -186,7 +186,7 @@ export default function InventoryDetailDialog(props: {
                   <tr>
                     <th>Produk</th>
                     <th style={{ textAlign: "center" }}>Quantity</th>
-                    <th style={{ textAlign: "center" }}>Masuk</th>
+                    <th style={{ textAlign: "center", width: 100 }}>Masuk</th>
                     {/* <td width={10}>
                     <IconButton size="small">
                       <Settings fontSize="small" />
@@ -208,13 +208,13 @@ export default function InventoryDetailDialog(props: {
                   {/* NEW ITEM */}
                   {inventoryItemsQuery?.data?.length == 0
                     ? props.transactionItems?.map(
-                        (purchaseItem: any, index: number) => (
+                        (transactionItem: any, index: number) => (
                           <tr key={index}>
                             {/* {index} */}
-                            <td>{purchaseItem?.product?.name}</td>
+                            <td>{transactionItem?.product?.name}</td>
                             <td align="center">
-                              {purchaseItem?.quantity}{" "}
-                              {purchaseItem.product?.unit}
+                              {transactionItem?.quantity}{" "}
+                              {transactionItem.product?.unit}
                             </td>
                             {/* QUANTITY */}
                             <td style={{ width: 100, textAlign: "center" }}>
@@ -224,7 +224,7 @@ export default function InventoryDetailDialog(props: {
                                 {...register(
                                   `inventoryItems[${index}].quantity`
                                 )}
-                                startDecorator="Rp"
+                                endDecorator={transactionItem?.product?.unit}
                               />
                             </td>
                           </tr>

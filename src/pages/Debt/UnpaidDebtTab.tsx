@@ -40,6 +40,7 @@ export default function UnpaidDebtTab() {
       BACKEND_URL +
         "debts?" +
         "isPaid=0" +
+        "&type=D" +
         `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
         `&endDate=${selectedEndDate ? formattedEndDate : ""}`
     );

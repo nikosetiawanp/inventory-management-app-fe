@@ -81,6 +81,7 @@ export default function CreatePayment(props: { debt: Debt }) {
       description: data.description,
       amount: data.amount,
       debtId: props.debt.id,
+      contactId: props.debt.contactId,
       accountId: 1,
     };
     console.log(dataToSubmit);
@@ -112,6 +113,8 @@ export default function CreatePayment(props: { debt: Debt }) {
                   slotProps={{
                     field: { clearable: true },
                   }}
+                  minDate={dayjs(props?.debt?.invoice?.date)}
+                  maxDate={dayjs()}
                 />
               </LocalizationProvider>
               <FormControl error={errors.amount?.message !== ""}>

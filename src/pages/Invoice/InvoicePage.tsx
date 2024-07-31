@@ -29,7 +29,6 @@ export default function InvoicePage() {
       BACKEND_URL +
         `invoices?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
     );
-    console.log(response.data.data);
 
     return response.data.data;
   };

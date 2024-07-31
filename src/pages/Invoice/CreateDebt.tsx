@@ -46,6 +46,7 @@ export default function CreateDebt(props: {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("debts");
+        queryClient.invalidateQueries("invoices");
       },
     }
   );

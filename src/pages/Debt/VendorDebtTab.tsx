@@ -1,92 +1,191 @@
 import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 
 import { Settings } from "@mui/icons-material";
-import { Contact, Debt, Payment } from "../../interfaces/interfaces";
+import { Contact, MonthlyDebt } from "../../interfaces/interfaces";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 
-import { sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
-import SearchFilter from "../../components/filters/SearchFilter";
 import SortButton from "../../components/buttons/SortButton";
+import MonthFilter from "../../components/filters/MonthFilter";
+import dayjs from "dayjs";
+import { formatDate } from "../../helpers/dateHelpers";
+import { sum } from "../../helpers/calculationHelpers";
 
 export default function VendorDebtTab() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  // const [selectedYear, setSelectedYear] = useState(dayjs().format("YYYY"));
+
   // GET DEBTS
-  const getContacts = async () => {
-    const response = await axios.get(BACKEND_URL + "contacts?" + "type=V");
-    return response.data.data;
+  const getMonthlyDebts = async () => {
+    const response = await axios.get(
+      BACKEND_URL +
+        "monthly-debts?" +
+        `yearMonth=${formatDate(selectedDate, "YYYY-MM")}` +
+        "&type=V"
+      // "http://127.0.0.1:8000/api/v1/monthly-debts?yearMonth=2024-08&type=V"
+    );
+    console.log(response.data);
+    return response.data;
   };
 
-  const contactsQuery = useQuery({
-    queryKey: ["contacts"],
-    queryFn: getContacts,
+  const monthlyDebtsQuery = useQuery({
+    queryKey: ["monthly-debts", selectedDate],
+    queryFn: getMonthlyDebts,
     refetchOnWindowFocus: false,
     enabled: true,
   });
 
-  const [searchInput, setSearchInput] = useState("");
+  // const getDebts = async () => {
+  //   const response = await axios.get(
+  //     BACKEND_URL +
+  //       "debts?" +
+  //       `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
+  //       `&endDate=${selectedEndDate ? formattedEndDate : ""}`
+  //   );
+  //   return response.data.data;
+  // };
+
+  // const refetch = () => {
+  //   getDebts();
+  //   debtsQuery.refetch();
+  // };
+
+  // const debtsQuery = useQuery({
+  //   queryKey: ["debts", selectedStartDate, selectedEndDate],
+  //   queryFn: getDebts,
+  //   refetchOnWindowFocus: false,
+  //   enabled: true,
+  // });
+
+  // const [searchInput, setSearchInput] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: "vendor",
     direction: "ascending",
   });
 
-  const totalDebt = (debts: Debt[]) => {
-    return sum(debts?.map((debt: Debt) => debt.amount));
-  };
-
-  const totalPayment = (debts: Debt[]) => {
-    return sum(
-      debts
-        ?.map((debt: Debt) =>
-          debt.payments.map((payment: Payment) => payment.amount)
-        )
-        .flat()
-    );
-  };
-
   // SORT DATA
   const sortedData = useMemo(() => {
     // SORT CONTACT ASCENDING
     if (sortConfig.key == "vendor" && sortConfig.direction == "ascending") {
-      return contactsQuery?.data?.sort((a: Contact, b: Contact) =>
+      return monthlyDebtsQuery?.data?.sort((a: Contact, b: Contact) =>
         a?.name?.localeCompare(b?.name)
       );
     }
 
     // SORT CONTACT ASCENDING
     if (sortConfig.key == "vendor" && sortConfig.direction == "descending") {
-      return contactsQuery?.data?.sort((a: Contact, b: Contact) =>
+      return monthlyDebtsQuery?.data?.sort((a: Contact, b: Contact) =>
         b?.name?.localeCompare(a?.name)
       );
     }
-  }, [contactsQuery, sortConfig]);
+  }, [monthlyDebtsQuery, sortConfig]);
 
-  const searchResult = !searchInput
-    ? sortedData
-    : sortedData.filter(
-        (vendor: Contact) =>
-          vendor.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-          vendor.code.toLowerCase().includes(searchInput.toLowerCase())
-      );
-
-  useEffect(() => {
-    // console.log(debts);
-  }, [sortConfig]);
+  const arrayOfInitialBalance = monthlyDebtsQuery?.data?.map(
+    (contact: MonthlyDebt) => contact.initialBalance
+  );
+  const arrayOfTotalDebt = monthlyDebtsQuery?.data?.map(
+    (contact: MonthlyDebt) => contact.totalDebt
+  );
+  const arrayOfTotalPayment = monthlyDebtsQuery?.data?.map(
+    (contact: MonthlyDebt) => contact.totalPayment
+  );
+  const arrayOfCurrentBalance = monthlyDebtsQuery?.data?.map(
+    (contact: MonthlyDebt) => contact.currentBalance
+  );
 
   return (
     <Stack gap={2} width={1}>
+      <Stack direction={"row"} gap={2} width={1}>
+        {/* SALDO AWAL */}
+        <Sheet
+          sx={{
+            border: 1,
+            borderColor: "divider",
+            boxShadow: 0,
+            padding: 2,
+            borderRadius: 2,
+          }}
+        >
+          <Typography level="body-md" color={"neutral"}>
+            Total Saldo Awal
+          </Typography>
+          <Typography color="neutral">
+            <h2>{formatIDR(sum(arrayOfInitialBalance))}</h2>
+          </Typography>
+        </Sheet>
+        {/* PEMBELIAN */}
+        <Sheet
+          sx={{
+            border: 1,
+            borderColor: "divider",
+            boxShadow: 0,
+            padding: 2,
+            borderRadius: 2,
+          }}
+        >
+          <Typography level="body-md" color={"neutral"}>
+            Total Pembelian
+          </Typography>
+          <Typography color="success">
+            <h2>{formatIDR(sum(arrayOfTotalDebt))}</h2>
+          </Typography>
+        </Sheet>
+
+        {/* PEMBAYARAN */}
+        <Sheet
+          sx={{
+            border: 1,
+            borderColor: "divider",
+            boxShadow: 0,
+            padding: 2,
+            borderRadius: 2,
+          }}
+        >
+          <Typography level="body-md" color={"neutral"}>
+            Total Pembayaran
+          </Typography>
+          <Typography color="danger">
+            <h2>{formatIDR(sum(arrayOfTotalPayment))}</h2>
+          </Typography>
+        </Sheet>
+
+        {/* SALDO AKHIR */}
+        <Sheet
+          sx={{
+            border: 1,
+            borderColor: "divider",
+            boxShadow: 0,
+            padding: 2,
+            borderRadius: 2,
+          }}
+        >
+          <Typography level="body-md" color={"neutral"}>
+            Total Saldo Akhir
+          </Typography>
+          <h2>{formatIDR(sum(arrayOfCurrentBalance))}</h2>
+        </Sheet>
+      </Stack>
       {/* FILTERS */}
       <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
-        <SearchFilter
+        {/* <SearchFilter
           searchInput={searchInput}
           setSearchInput={setSearchInput}
           label={"Cari Vendor"}
           placeholder={"Cari"}
+        /> */}
+        <MonthFilter
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          refetch={function (): void {
+            throw new Error("Function not implemented.");
+          }}
+          label={""}
         />
       </Stack>
 
@@ -104,9 +203,6 @@ export default function VendorDebtTab() {
                   setSortConfig={setSortConfig}
                   label={"Vendor"}
                 />
-                {/* <Button size="sm" variant="plain" color="neutral">
-                  Vendor
-                </Button> */}
               </th>
               <th>
                 <Button size="sm" variant="plain" color="neutral">
@@ -139,28 +235,39 @@ export default function VendorDebtTab() {
           </thead>
 
           <tbody>
-            {contactsQuery?.isLoading ? (
+            {monthlyDebtsQuery?.isLoading ? (
               <RowSkeleton rows={15} columns={6} />
             ) : (
-              searchResult?.map((contact: Contact, index: number) => (
+              sortedData?.map((contact: MonthlyDebt, index: number) => (
                 <tr key={index}>
-                  <td style={{ paddingLeft: 15 }}>{contact.name}</td>
-                  <td></td>
+                  <td style={{ paddingLeft: 15 }}>{contact?.name}</td>
                   <td style={{ paddingLeft: 15 }}>
-                    {formatIDR(totalDebt(contact.debts))}
-                  </td>
-                  <td style={{ paddingLeft: 15 }}>
-                    <Typography color="success">
-                      {formatIDR(totalPayment(contact.debts))}
+                    <Typography color="neutral">
+                      {formatIDR(contact?.initialBalance)}
                     </Typography>
                   </td>
                   <td style={{ paddingLeft: 15 }}>
+                    <Typography color="success">
+                      {formatIDR(contact?.totalDebt)}
+                    </Typography>
+                  </td>
+                  <td style={{ paddingLeft: 15 }}>
+                    <Typography color="danger">
+                      {formatIDR(contact?.totalPayment)}
+                    </Typography>
+                  </td>
+                  <td style={{ paddingLeft: 15 }}>
+                    <Typography>
+                      <b> {formatIDR(contact?.currentBalance)}</b>
+                    </Typography>
+                  </td>{" "}
+                  {/* <td style={{ paddingLeft: 15 }}>
                     <Typography color="neutral">
                       {formatIDR(
                         totalDebt(contact.debts) - totalPayment(contact.debts)
                       )}
                     </Typography>
-                  </td>
+                  </td> */}
                   <td style={{ width: 50 }}></td>
                 </tr>
               ))
