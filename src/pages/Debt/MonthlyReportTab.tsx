@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import { formatDate } from "../../helpers/dateHelpers";
 import { sum } from "../../helpers/calculationHelpers";
 
-export default function VendorDebtTab() {
+export default function MonthlyReportTab() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   const [selectedDate, setSelectedDate] = useState(dayjs());

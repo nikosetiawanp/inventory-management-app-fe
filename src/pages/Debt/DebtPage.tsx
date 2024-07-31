@@ -2,7 +2,8 @@ import { Stack, Tab, TabList, TabPanel, Tabs, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
 
 import UnpaidDebtTab from "./UnpaidDebtTab";
-import VendorDebtTab from "./VendorDebtTab";
+import MonthlyReportTab from "./MonthlyReportTab";
+import VendorReportTab from "./VendorReportTab";
 
 export default function DebtPage() {
   return (
@@ -23,14 +24,20 @@ export default function DebtPage() {
               Belum Lunas
             </Tab>
             <Tab color="primary" value={1}>
-              Bulanan
+              Laporan Bulanan
+            </Tab>
+            <Tab color="primary" value={2}>
+              Laporan Per Vendor
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ paddingX: 0 }}>
             <UnpaidDebtTab />
           </TabPanel>
           <TabPanel value={1} sx={{ paddingX: 0 }}>
-            <VendorDebtTab />
+            <MonthlyReportTab />
+          </TabPanel>
+          <TabPanel value={2} sx={{ paddingX: 0 }}>
+            <VendorReportTab />
           </TabPanel>
         </Tabs>
       </Stack>

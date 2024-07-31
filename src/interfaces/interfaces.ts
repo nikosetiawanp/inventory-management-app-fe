@@ -19,6 +19,14 @@ export interface Contact {
   debts: Debt[];
 }
 
+export interface DebtHistory {
+  id: number;
+  amount: number;
+  createdAt: Date;
+  type: "D" | "P";
+  date: string;
+}
+
 export interface MonthlyDebt {
   id: number;
   name: string;
@@ -26,6 +34,7 @@ export interface MonthlyDebt {
   totalDebt: number;
   totalPayment: number;
   currentBalance: number;
+  histories: DebtHistory[];
 }
 
 export interface TransactionItem {
