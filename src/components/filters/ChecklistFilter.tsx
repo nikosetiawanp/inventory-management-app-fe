@@ -14,18 +14,35 @@ import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { Close, CloseRounded } from "@mui/icons-material";
 
+interface data {
+  id: string;
+  label: string;
+}
+
 export default function ChecklistFilter(props: {
-  data: string[];
-  includedData: string[];
+  data: data[];
+  includedData: data[];
   setIncludedData: React.Dispatch<React.SetStateAction<any[]>>;
   label: string;
 }) {
   const [searchInput, setSearchInput] = useState("");
-  const searchResult = props.data?.filter(
-    (item: string) =>
-      item.toLowerCase().includes(searchInput.toLowerCase()) ||
-      item.toLowerCase().includes(searchInput.toLowerCase())
+  const uniqueArrayOfData = props.data?.filter(
+    (value, index, self) => index === self.findIndex((t) => t.id === value.id)
   );
+
+  const searchResult = uniqueArrayOfData?.filter((item: data) =>
+    item.label.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
+  const arrayOfIncludedId = props.includedData?.map((data: data) => data.id);
+
+  const check = (newValue: data) =>
+    props.setIncludedData([...props.includedData, newValue]);
+
+  const uncheck = (value: data) =>
+    props.setIncludedData(
+      props.includedData.filter((includedData) => includedData.id !== value.id)
+    );
 
   return (
     <Stack>
@@ -33,10 +50,10 @@ export default function ChecklistFilter(props: {
       <Select
         multiple
         autoFocus={false}
-        disabled={props.data.length == 0}
+        disabled={props.data?.length == 0}
         placeholder={`Pilih ${props.label}`}
-        defaultValue={props.includedData}
-        value={props.includedData}
+        defaultValue={[]}
+        value={arrayOfIncludedId}
         {...(props.includedData.length > 0 && {
           endDecorator: (
             <IconButton
@@ -55,14 +72,14 @@ export default function ChecklistFilter(props: {
           ),
           indicator: null,
         })}
-        renderValue={() =>
-          props.includedData.length == 0 ? (
+        renderValue={(selected) =>
+          selected.length === 0 ? (
             `Pilih ${props.label}`
           ) : (
             <Box sx={{ display: "flex", gap: "0.25rem" }}>
-              {props.includedData.map((data) => (
-                <Chip variant="soft" color="primary">
-                  {data}
+              {selected.map((selectedOption: any) => (
+                <Chip key={selectedOption.id} variant="soft" color="primary">
+                  {selectedOption.label}
                 </Chip>
               ))}
             </Box>
@@ -98,30 +115,30 @@ export default function ChecklistFilter(props: {
           }
         />
         <Divider />
-        {searchResult.map((data, index) => (
-          <Option
-            value={data}
-            key={index}
-            hidden={true}
-            autoFocus={false}
-            onChange={() => {
-              const newSelection = props.includedData.includes(data)
-                ? props.includedData.filter((item) => item !== data)
-                : [...props.includedData, data];
-              props.setIncludedData(newSelection);
-            }}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <Checkbox
-              label={data}
-              color="primary"
-              variant="outlined"
-              checked={props.includedData.includes(data)}
-            />
-          </Option>
-        ))}
+        {searchResult?.map((data: data) => {
+          return (
+            <Option
+              value={data.id}
+              key={data.id}
+              autoFocus={false}
+              onChange={() => {
+                arrayOfIncludedId.includes(data.id)
+                  ? uncheck(data)
+                  : check(data);
+              }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Checkbox
+                label={data.label}
+                color="primary"
+                variant="outlined"
+                checked={arrayOfIncludedId.includes(data.id)}
+              />
+            </Option>
+          );
+        })}
       </Select>
     </Stack>
   );

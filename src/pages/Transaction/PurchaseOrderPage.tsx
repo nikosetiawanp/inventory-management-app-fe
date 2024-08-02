@@ -55,20 +55,31 @@ export default function PurchaseOrderPage() {
   };
 
   // CHECKLIST FILTER
-  const [includedData, setIncludedData] = useState<string[]>([]);
-  const contacts: string[] | any = [
-    ...new Set(
-      transactionsQuery?.data?.map(
-        (transaction: Transaction) => transaction?.contact?.name
-      )
-    ),
-  ];
+  const [includedData, setIncludedData] = useState<
+    { id: string; label: string }[]
+  >([]);
+  const contacts = transactionsQuery?.data?.map((transaction: Transaction) => {
+    const data = {
+      id: transaction.contactId,
+      label: transaction?.contact?.name,
+    };
+    return data;
+  });
+  // const contacts: string[] | any = [
+  //   ...new Set(
+  //     transactionsQuery?.data?.map(
+  //       (transaction: Transaction) =>{id: transaction?.id,label: transaction?.contact?.name}
+  //     )
+  //   ),
+  // ];
 
   const filteredTransactionsQuery =
     includedData.length == 0
       ? transactionsQuery?.data
       : transactionsQuery?.data?.filter((transaction: Transaction) =>
-          includedData?.includes(transaction?.contact?.name)
+          includedData.some(
+            (includedData) => includedData.id == transaction.contactId
+          )
         );
 
   // TYPE FILTER

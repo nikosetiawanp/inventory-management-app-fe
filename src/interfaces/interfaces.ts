@@ -59,7 +59,7 @@ export interface Transaction {
   expectedArrival: string;
   isApproved: boolean;
   isDone: boolean;
-  contactId: string | number;
+  contactId: string;
 
   contact: Contact;
   contacts: Contact[];

@@ -4,6 +4,7 @@ import Drawer from "../../components/Drawer";
 import UnpaidDebtTab from "./UnpaidDebtTab";
 import MonthlyReportTab from "./MonthlyReportTab";
 import VendorReportTab from "./VendorReportTab";
+import MultiVendorReportTab from "./MultiVendorReportTab";
 
 export default function DebtPage() {
   return (
@@ -29,6 +30,9 @@ export default function DebtPage() {
             <Tab color="primary" value={2}>
               Laporan Per Vendor
             </Tab>
+            <Tab color="primary" value={3}>
+              Laporan Multi Vendor
+            </Tab>
           </TabList>
           <TabPanel value={0} sx={{ paddingX: 0 }}>
             <UnpaidDebtTab />
@@ -38,6 +42,9 @@ export default function DebtPage() {
           </TabPanel>
           <TabPanel value={2} sx={{ paddingX: 0 }}>
             <VendorReportTab />
+          </TabPanel>
+          <TabPanel value={3} sx={{ paddingX: 0 }}>
+            <MultiVendorReportTab />
           </TabPanel>
         </Tabs>
       </Stack>

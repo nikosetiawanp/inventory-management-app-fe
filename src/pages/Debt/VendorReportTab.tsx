@@ -193,7 +193,6 @@ export default function VendorReportTab() {
             size="md"
             placeholder={"Pilih Vendor"}
             disableClearable={true}
-            // value={selectedContact ? selectedContact : null}
             onChange={(event, newValue) => {
               event;
               setSelectedContact(newValue);

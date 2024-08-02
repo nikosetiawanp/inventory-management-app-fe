@@ -28,7 +28,9 @@ export default function UnpaidDebtTab() {
     ? dayjs(selectedEndDate).format("YYYY-MM-DD")
     : "";
 
-  const [includedData, setIncludedData] = useState<string[]>([]);
+  const [includedData, setIncludedData] = useState<
+    { id: string; label: string }[]
+  >([]);
   const [sortConfig, setSortConfig] = useState({
     key: "invoice-date",
     direction: "ascending",
@@ -59,14 +61,20 @@ export default function UnpaidDebtTab() {
     enabled: true,
   });
 
-  const contacts: string[] | any = [
-    ...new Set(debtsQuery?.data?.map((debt: Debt) => debt?.contact?.name)),
-  ];
+  const contacts = debtsQuery?.data?.map((debt: Debt) => {
+    const data = {
+      id: debt.contactId,
+      label: debt?.contact?.name,
+    };
+    return data;
+  });
   const filteredDebtsQuery =
     includedData.length == 0
       ? debtsQuery?.data
       : debtsQuery?.data?.filter((debt: Debt) =>
-          includedData?.includes(debt?.contact?.name)
+          includedData?.some(
+            (includedData) => includedData.id == debt.contactId
+          )
         );
 
   // SORT DATA
