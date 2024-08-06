@@ -30,6 +30,7 @@ export interface DebtHistory {
 export interface MonthlyDebt {
   id: number;
   name: string;
+  code: string;
   initialBalance: number;
   totalDebt: number;
   totalPayment: number;

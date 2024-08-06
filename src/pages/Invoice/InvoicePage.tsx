@@ -13,14 +13,12 @@ import DateFilterCopy from "../../components/filters/DateFilterCopy";
 
 export default function InvoicePage() {
   // DATE
-  const [selectedStartDate, setSelectedStartDate] = useState(null);
-  const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const formattedStartDate = selectedStartDate
-    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const formattedStartDate = startDate
+    ? dayjs(startDate).format("YYYY-MM-DD")
     : "";
-  const formattedEndDate = selectedEndDate
-    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
-    : "";
+  const formattedEndDate = endDate ? dayjs(endDate).format("YYYY-MM-DD") : "";
 
   // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -34,7 +32,7 @@ export default function InvoicePage() {
   };
 
   const invoicesQuery = useQuery({
-    queryKey: ["invoices", selectedStartDate, selectedEndDate],
+    queryKey: ["invoices", startDate, endDate],
     queryFn: () => getInvoices(),
     refetchOnWindowFocus: false,
     enabled: true,
@@ -47,7 +45,7 @@ export default function InvoicePage() {
 
   useEffect(() => {
     getInvoices();
-  }, [selectedStartDate, selectedEndDate]);
+  }, [startDate, endDate]);
   return (
     <>
       {/* PAGE */}
@@ -63,10 +61,10 @@ export default function InvoicePage() {
           {/* DATE FILTER */}
           <Stack direction={"row"} gap={2} width={1}>
             <DateFilterCopy
-              selectedStartDate={selectedStartDate}
-              setSelectedStartDate={setSelectedStartDate}
-              selectedEndDate={selectedEndDate}
-              setSelectedEndDate={setSelectedEndDate}
+              startDate={startDate}
+              setStartDate={setStartDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
               refetch={refetch}
               label="Tanggal Faktur"
             />{" "}

@@ -10,22 +10,16 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { Transaction } from "../../interfaces/interfaces";
-import dayjs from "dayjs";
 import TransactionRow from "./TransactionRow";
 import SortButton from "../../components/buttons/SortButton";
 import ChecklistFilter from "../../components/filters/ChecklistFilter";
 import SelectFilter from "../../components/filters/SelectFilter";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function PurchaseOrderPage() {
-  const [selectedStartDate, setSelectedStartDate] = useState(null);
-  const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const formattedStartDate = selectedStartDate
-    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
-    : "";
-  const formattedEndDate = selectedEndDate
-    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
-    : "";
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -35,8 +29,8 @@ export default function PurchaseOrderPage() {
         "transactions?" +
         `type=${selectedType}` +
         `&isApproved=${selectedApprovalStatus}` +
-        `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
-        `&endDate=${selectedEndDate ? formattedEndDate : ""}` +
+        `&startDate=${startDate ? formatDate(startDate, "YYYY-MM-DD") : ""}` +
+        `&endDate=${endDate ? formatDate(startDate, "YYYY-MM-DD") : ""}` +
         `&isDone=${selectedDoneStatus}`
     );
     return response.data.data;
@@ -168,8 +162,8 @@ export default function PurchaseOrderPage() {
   useEffect(() => {
     refetch();
   }, [
-    selectedStartDate,
-    selectedEndDate,
+    startDate,
+    endDate,
     selectedType,
     selectedApprovalStatus,
     selectedDoneStatus,
@@ -210,10 +204,10 @@ export default function PurchaseOrderPage() {
             label={"Approval"}
           />
           <DateFilterCopy
-            selectedStartDate={selectedStartDate}
-            setSelectedStartDate={setSelectedStartDate}
-            selectedEndDate={selectedEndDate}
-            setSelectedEndDate={setSelectedEndDate}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
             refetch={refetch}
             label={"Tanggal"}
           />

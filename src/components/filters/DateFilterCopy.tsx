@@ -17,10 +17,10 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import { CloseRounded } from "@mui/icons-material";
 
 export default function DateFilterCopy(props: {
-  selectedStartDate: string | number | dayjs.Dayjs | Date | null | undefined;
-  setSelectedStartDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>> | any;
-  selectedEndDate: string | number | dayjs.Dayjs | Date | null | undefined;
-  setSelectedEndDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>> | any;
+  startDate: string | number | dayjs.Dayjs | Date | null | undefined;
+  setStartDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>> | any;
+  endDate: string | number | dayjs.Dayjs | Date | null | undefined;
+  setEndDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>> | any;
   refetch: () => void;
   label: string;
 }) {
@@ -31,14 +31,14 @@ export default function DateFilterCopy(props: {
         <Sheet>
           <MenuButton
             endDecorator={
-              props.selectedStartDate || props.selectedEndDate ? (
+              props.startDate || props.endDate ? (
                 <IconButton
                   size="sm"
                   color="neutral"
                   variant="soft"
                   onClick={(e) => {
-                    props.setSelectedStartDate();
-                    props.setSelectedEndDate();
+                    props.setStartDate();
+                    props.setEndDate();
                     e.stopPropagation();
                   }}
                 >
@@ -49,20 +49,20 @@ export default function DateFilterCopy(props: {
               )
             }
             sx={
-              props.selectedStartDate || props.selectedEndDate
+              props.startDate || props.endDate
                 ? { gap: 0.5, paddingY: 0, paddingRight: 0 }
                 : { gap: 0.5 }
             }
           >
-            <Typography color={props.selectedStartDate ? "primary" : "neutral"}>
-              {props.selectedStartDate
-                ? formatDate(props.selectedStartDate, "DD MMM YYYY")
+            <Typography color={props.startDate ? "primary" : "neutral"}>
+              {props.startDate
+                ? formatDate(props.startDate, "DD MMM YYYY")
                 : "Start date"}{" "}
             </Typography>{" "}
             <Typography> -</Typography>
-            <Typography color={props.selectedEndDate ? "primary" : "neutral"}>
-              {props.selectedEndDate
-                ? formatDate(props.selectedEndDate, "DD MMM YYYY")
+            <Typography color={props.endDate ? "primary" : "neutral"}>
+              {props.endDate
+                ? formatDate(props.endDate, "DD MMM YYYY")
                 : "End date"}
             </Typography>
           </MenuButton>
@@ -71,20 +71,16 @@ export default function DateFilterCopy(props: {
               <Stack direction={"row"}>
                 <DateCalendar
                   autoFocus
-                  value={props.selectedStartDate}
-                  onChange={(newValue: any) =>
-                    props.setSelectedStartDate(newValue)
-                  }
-                  maxDate={props.selectedEndDate && props.selectedEndDate}
+                  value={props.startDate}
+                  onChange={(newValue: any) => props.setStartDate(newValue)}
+                  maxDate={props.endDate && props.endDate}
                 />
                 <Divider orientation="vertical" />
                 <DateCalendar
                   disableFuture
-                  value={props.selectedEndDate}
-                  minDate={props.selectedStartDate}
-                  onChange={(newValue: any) =>
-                    props.setSelectedEndDate(newValue)
-                  }
+                  value={props.endDate}
+                  minDate={props.startDate}
+                  onChange={(newValue: any) => props.setEndDate(newValue)}
                 />
               </Stack>
             </LocalizationProvider>

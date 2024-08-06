@@ -14,14 +14,12 @@ export default function InventoryArrivalPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   // DATE
-  const [selectedStartDate, setSelectedStartDate] = useState(null);
-  const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const formattedStartDate = selectedStartDate
-    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const formattedStartDate = startDate
+    ? dayjs(startDate).format("YYYY-MM-DD")
     : "";
-  const formattedEndDate = selectedEndDate
-    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
-    : "";
+  const formattedEndDate = endDate ? dayjs(endDate).format("YYYY-MM-DD") : "";
 
   // GET INVENTORY HISTORY
   const getInventories = async () => {
@@ -35,7 +33,7 @@ export default function InventoryArrivalPage() {
   };
 
   const inventoriesQuery = useQuery({
-    queryKey: ["inventories", selectedStartDate, selectedEndDate],
+    queryKey: ["inventories", startDate, endDate],
     queryFn: getInventories,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -48,7 +46,7 @@ export default function InventoryArrivalPage() {
 
   useEffect(() => {
     getInventories();
-  }, [selectedStartDate, selectedEndDate]);
+  }, [startDate, endDate]);
 
   return (
     // PAGE
@@ -62,10 +60,10 @@ export default function InventoryArrivalPage() {
         {/* DATE FILTER */}
         <Stack direction={"row"} gap={2} width={1}>
           <DateFilterCopy
-            selectedStartDate={selectedStartDate}
-            setSelectedStartDate={setSelectedStartDate}
-            selectedEndDate={selectedEndDate}
-            setSelectedEndDate={setSelectedEndDate}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
             refetch={refetch}
             label="Tanggal Faktur"
           />{" "}

@@ -1,7 +1,6 @@
 import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
 
-import dayjs from "dayjs";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 
@@ -14,19 +13,14 @@ import SortButton from "../../components/buttons/SortButton";
 import { sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function UnpaidDebtTab() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   // DATE
-  const [selectedStartDate, setSelectedStartDate] = useState(null);
-  const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const formattedStartDate = selectedStartDate
-    ? dayjs(selectedStartDate).format("YYYY-MM-DD")
-    : "";
-  const formattedEndDate = selectedEndDate
-    ? dayjs(selectedEndDate).format("YYYY-MM-DD")
-    : "";
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const [includedData, setIncludedData] = useState<
     { id: string; label: string }[]
@@ -43,8 +37,8 @@ export default function UnpaidDebtTab() {
         "debts?" +
         "isPaid=0" +
         "&type=D" +
-        `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
-        `&endDate=${selectedEndDate ? formattedEndDate : ""}`
+        `&startDate=${startDate ? formatDate(startDate, "YYYY-MM-DD") : ""}` +
+        `&endDate=${endDate ? formatDate(endDate, "YYYY-MM-DD") : ""}`
     );
     return response.data.data;
   };
@@ -55,7 +49,7 @@ export default function UnpaidDebtTab() {
   };
 
   const debtsQuery = useQuery({
-    queryKey: ["debts", selectedStartDate, selectedEndDate],
+    queryKey: ["debts", startDate, endDate],
     queryFn: getDebts,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -126,10 +120,6 @@ export default function UnpaidDebtTab() {
         .flat()
     : [];
 
-  useEffect(() => {
-    console.log(debtsQuery.data);
-  }, [selectedStartDate, selectedEndDate]);
-
   return (
     <Stack gap={2} width={1}>
       {/* STATUS */}
@@ -191,10 +181,10 @@ export default function UnpaidDebtTab() {
       {/* FILTERS */}
       <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
         <DateFilterCopy
-          selectedStartDate={selectedStartDate}
-          setSelectedStartDate={setSelectedStartDate}
-          selectedEndDate={selectedEndDate}
-          setSelectedEndDate={setSelectedEndDate}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
           refetch={refetch}
           label="Tanggal Faktur"
         />{" "}

@@ -1,6 +1,6 @@
 import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 
@@ -10,32 +10,34 @@ import RowSkeleton from "../../components/skeletons/RowSkeleton";
 
 import { formatIDR } from "../../helpers/currencyHelpers";
 import SortButton from "../../components/buttons/SortButton";
-import MonthFilter from "../../components/filters/MonthFilter";
-import dayjs from "dayjs";
+
 import { formatDate } from "../../helpers/dateHelpers";
 import { sum } from "../../helpers/calculationHelpers";
+import DateFilterCopy from "../../components/filters/DateFilterCopy";
 
 export default function MonthlyReportTab() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  // const [selectedYear, setSelectedYear] = useState(dayjs().format("YYYY"));
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null); // const [selectedYear, setSelectedYear] = useState(dayjs().format("YYYY"));
 
   // GET DEBTS
   const getMonthlyDebts = async () => {
     const response = await axios.get(
       BACKEND_URL +
         "monthly-debts?" +
-        `yearMonth=${formatDate(selectedDate, "YYYY-MM")}` +
-        "&type=V"
+        "type=V" +
+        `&startDate=${formatDate(startDate, "YYYY-MM-DD")}` +
+        `&endDate=${formatDate(endDate, "YYYY-MM-DD")}`
+
       // "http://127.0.0.1:8000/api/v1/monthly-debts?yearMonth=2024-08&type=V"
     );
     console.log(response.data);
     return response.data;
   };
 
-  const monthlyDebtsQuery = useQuery({
-    queryKey: ["monthly-debts", selectedDate],
+  const vendorDebtsQuery = useQuery({
+    queryKey: ["monthly-debts", startDate, endDate],
     queryFn: getMonthlyDebts,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -73,31 +75,39 @@ export default function MonthlyReportTab() {
   const sortedData = useMemo(() => {
     // SORT CONTACT ASCENDING
     if (sortConfig.key == "vendor" && sortConfig.direction == "ascending") {
-      return monthlyDebtsQuery?.data?.sort((a: Contact, b: Contact) =>
+      return vendorDebtsQuery?.data?.sort((a: Contact, b: Contact) =>
         a?.name?.localeCompare(b?.name)
       );
     }
 
     // SORT CONTACT ASCENDING
     if (sortConfig.key == "vendor" && sortConfig.direction == "descending") {
-      return monthlyDebtsQuery?.data?.sort((a: Contact, b: Contact) =>
+      return vendorDebtsQuery?.data?.sort((a: Contact, b: Contact) =>
         b?.name?.localeCompare(a?.name)
       );
     }
-  }, [monthlyDebtsQuery, sortConfig]);
+  }, [vendorDebtsQuery, sortConfig]);
 
-  const arrayOfInitialBalance = monthlyDebtsQuery?.data?.map(
+  const arrayOfInitialBalance = vendorDebtsQuery?.data?.map(
     (contact: MonthlyDebt) => contact.initialBalance
   );
-  const arrayOfTotalDebt = monthlyDebtsQuery?.data?.map(
+  const arrayOfTotalDebt = vendorDebtsQuery?.data?.map(
     (contact: MonthlyDebt) => contact.totalDebt
   );
-  const arrayOfTotalPayment = monthlyDebtsQuery?.data?.map(
+  const arrayOfTotalPayment = vendorDebtsQuery?.data?.map(
     (contact: MonthlyDebt) => contact.totalPayment
   );
-  const arrayOfCurrentBalance = monthlyDebtsQuery?.data?.map(
+  const arrayOfCurrentBalance = vendorDebtsQuery?.data?.map(
     (contact: MonthlyDebt) => contact.currentBalance
   );
+
+  const refetch = () => {
+    getMonthlyDebts();
+    vendorDebtsQuery.refetch();
+  };
+  useEffect(() => {
+    refetch();
+  }, [startDate, endDate]);
 
   return (
     <Stack gap={2} width={1}>
@@ -179,13 +189,14 @@ export default function MonthlyReportTab() {
           label={"Cari Vendor"}
           placeholder={"Cari"}
         /> */}
-        <MonthFilter
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          refetch={function (): void {
-            throw new Error("Function not implemented.");
-          }}
-          label={""}
+
+        <DateFilterCopy
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          refetch={refetch}
+          label={"Tanggal"}
         />
       </Stack>
 
@@ -235,7 +246,7 @@ export default function MonthlyReportTab() {
           </thead>
 
           <tbody>
-            {monthlyDebtsQuery?.isLoading ? (
+            {vendorDebtsQuery?.isLoading ? (
               <RowSkeleton rows={15} columns={6} />
             ) : (
               sortedData?.map((contact: MonthlyDebt, index: number) => (
