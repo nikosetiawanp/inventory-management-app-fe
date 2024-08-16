@@ -1,9 +1,21 @@
+export interface ProductHistory {
+  id: number;
+  quantity: number;
+  type: "A" | "D";
+  number: string;
+  receiptNumber: string;
+  date: string;
+  description: string;
+}
+
 export interface Product {
   id: number;
   code: string;
   name: string;
   unit: string;
+  initialQuantity: number;
   currentQuantity: number;
+  history: ProductHistory[];
 }
 
 export interface Contact {

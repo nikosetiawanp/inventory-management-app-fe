@@ -156,8 +156,10 @@ export default function CreateProductButton() {
                   onChange={handleTypeChange}
                   size="lg"
                 >
-                  {units.map((unit: string) => (
-                    <Option value={unit}>{unit}</Option>
+                  {units.map((unit: string, index: number) => (
+                    <Option key={index} value={unit}>
+                      {unit}
+                    </Option>
                   ))}
                 </Select>
               </Stack>
