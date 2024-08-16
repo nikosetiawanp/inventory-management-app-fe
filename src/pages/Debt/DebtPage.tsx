@@ -1,9 +1,7 @@
 import { Stack, Tab, TabList, TabPanel, Tabs, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
-
 import UnpaidDebtTab from "./UnpaidDebtTab";
 import MonthlyReportTab from "./MonthlyReportTab";
-import VendorReportTab from "./VendorReportTab";
 import MultiVendorReportTab from "./MultiVendorReportTab";
 
 export default function DebtPage() {
@@ -27,10 +25,8 @@ export default function DebtPage() {
             <Tab color="primary" value={1}>
               Laporan Bulanan
             </Tab>
+
             <Tab color="primary" value={2}>
-              Laporan Per Vendor
-            </Tab>
-            <Tab color="primary" value={3}>
               Laporan Multi Vendor
             </Tab>
           </TabList>
@@ -40,10 +36,8 @@ export default function DebtPage() {
           <TabPanel value={1} sx={{ paddingX: 0 }}>
             <MonthlyReportTab />
           </TabPanel>
+
           <TabPanel value={2} sx={{ paddingX: 0 }}>
-            <VendorReportTab />
-          </TabPanel>
-          <TabPanel value={3} sx={{ paddingX: 0 }}>
             <MultiVendorReportTab />
           </TabPanel>
         </Tabs>

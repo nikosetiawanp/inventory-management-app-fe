@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Sheet, Stack, Table, Typography } from "@mui/joy";
+import { Box, Button, Sheet, Stack, Table, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
 
 import axios from "axios";
@@ -47,9 +47,6 @@ export default function ProductPage() {
           <Typography fontWeight={"bold"} level="h4">
             Produk
           </Typography>
-          <Box>
-            <CreateProduct />
-          </Box>
         </Stack>
 
         {/* SEARCH & FILTER */}
@@ -66,6 +63,9 @@ export default function ProductPage() {
             label={"Cari produk"}
             placeholder={"Cari"}
           />
+          <Box minWidth={170}>
+            <CreateProduct />
+          </Box>
         </Stack>
 
         <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
@@ -85,7 +85,7 @@ export default function ProductPage() {
                 </th>
                 <th style={{ textAlign: "center" }}>
                   <Button size="sm" variant="plain" color="neutral">
-                    Unit
+                    Quantity
                   </Button>
                 </th>
                 <th
@@ -111,9 +111,7 @@ export default function ProductPage() {
                     <td style={{ paddingLeft: 15 }}>{product.code}</td>
                     <td style={{ paddingLeft: 15 }}>{product.name}</td>
                     <td style={{ textAlign: "center" }}>
-                      <Chip variant="outlined" size="sm">
-                        {product.unit}
-                      </Chip>
+                      {product.currentQuantity} {product.unit}
                     </td>
                     <td style={{ paddingLeft: 15 }}>
                       {/* <MoreVertProductButton product={product} /> */}

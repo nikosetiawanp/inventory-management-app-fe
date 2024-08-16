@@ -39,7 +39,7 @@ export default function VendorReportTab() {
   const getMonthlyDebts = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        "monthly-debts?" +
+        "debt-history?" +
         `yearMonth=${formatDate(selectedDate, "YYYY-MM")}` +
         "&type=V" +
         `&contactId=${selectedContact?.id}`
@@ -48,7 +48,7 @@ export default function VendorReportTab() {
   };
 
   const vendorDebtsQuery = useQuery({
-    queryKey: ["monthly-debts", selectedDate, selectedContact],
+    queryKey: ["debt-history", selectedDate, selectedContact],
     queryFn: getMonthlyDebts,
     refetchOnWindowFocus: false,
     enabled: selectedContact !== null,

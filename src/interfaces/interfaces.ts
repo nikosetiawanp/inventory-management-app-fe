@@ -3,7 +3,7 @@ export interface Product {
   code: string;
   name: string;
   unit: string;
-  quantity: number;
+  currentQuantity: number;
 }
 
 export interface Contact {

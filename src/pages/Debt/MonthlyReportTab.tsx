@@ -14,6 +14,7 @@ import SortButton from "../../components/buttons/SortButton";
 import { formatDate } from "../../helpers/dateHelpers";
 import { sum } from "../../helpers/calculationHelpers";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
+import PrintMonthlyReportModal from "./PrintMonthlyReportModal";
 
 export default function MonthlyReportTab() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -25,19 +26,17 @@ export default function MonthlyReportTab() {
   const getMonthlyDebts = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        "monthly-debts?" +
+        "debt-history?" +
         "type=V" +
         `&startDate=${formatDate(startDate, "YYYY-MM-DD")}` +
         `&endDate=${formatDate(endDate, "YYYY-MM-DD")}`
-
-      // "http://127.0.0.1:8000/api/v1/monthly-debts?yearMonth=2024-08&type=V"
     );
     console.log(response.data);
     return response.data;
   };
 
   const vendorDebtsQuery = useQuery({
-    queryKey: ["monthly-debts", startDate, endDate],
+    queryKey: ["debt-history", startDate, endDate],
     queryFn: getMonthlyDebts,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -183,13 +182,6 @@ export default function MonthlyReportTab() {
       </Stack>
       {/* FILTERS */}
       <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
-        {/* <SearchFilter
-          searchInput={searchInput}
-          setSearchInput={setSearchInput}
-          label={"Cari Vendor"}
-          placeholder={"Cari"}
-        /> */}
-
         <DateFilterCopy
           startDate={startDate}
           setStartDate={setStartDate}
@@ -197,6 +189,11 @@ export default function MonthlyReportTab() {
           setEndDate={setEndDate}
           refetch={refetch}
           label={"Tanggal"}
+        />
+        <PrintMonthlyReportModal
+          startDate={startDate}
+          endDate={endDate}
+          contacts={vendorDebtsQuery?.data}
         />
       </Stack>
 

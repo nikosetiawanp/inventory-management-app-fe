@@ -86,6 +86,7 @@ export default function CreateProductButton() {
         startDecorator={<AddIcon />}
         variant="solid"
         onClick={() => setOpen(true)}
+        fullWidth
       >
         Tambah Produk
       </Button>

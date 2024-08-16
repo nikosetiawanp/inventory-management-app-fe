@@ -13,7 +13,7 @@ import { formatDate } from "../../helpers/dateHelpers";
 import { sum } from "../../helpers/calculationHelpers";
 import ChecklistFilter from "../../components/filters/ChecklistFilter";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
-import PrintModal from "./PrintModal";
+import PrintMultiVendorReportModal from "./PrintMultiVendorReportModal";
 
 export default function MultiVendorReportTab() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -34,7 +34,7 @@ export default function MultiVendorReportTab() {
   const getMonthlyDebts = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        "monthly-debts?" +
+        "debt-history?" +
         "type=V" +
         `&startDate=${formatDate(startDate, "YYYY-MM-DD")}` +
         `&endDate=${formatDate(endDate, "YYYY-MM-DD")}` +
@@ -44,7 +44,7 @@ export default function MultiVendorReportTab() {
   };
 
   const vendorDebtsQuery = useQuery({
-    queryKey: ["monthly-debts", startDate, endDate, selectedContacts],
+    queryKey: ["debt-history", startDate, endDate, selectedContacts],
     queryFn: getMonthlyDebts,
     refetchOnWindowFocus: false,
     enabled: startDate !== null && endDate !== null,
@@ -170,7 +170,7 @@ export default function MultiVendorReportTab() {
           refetch={refetch}
           label={"Tanggal"}
         />
-        <PrintModal
+        <PrintMultiVendorReportModal
           startDate={startDate}
           endDate={endDate}
           contacts={vendorDebtsQuery?.data}

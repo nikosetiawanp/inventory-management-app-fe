@@ -44,9 +44,10 @@ export default function TransactionDetailRow(props: {
             size="sm"
             variant="soft"
             color={
-              calculateTotalArrived(props.transactionItem.productId) > 0
-                ? "success"
-                : "danger"
+              calculateTotalArrived(props.transactionItem.productId) <
+              props.transactionItem.quantity
+                ? "neutral"
+                : "success"
             }
           >
             {calculateTotalArrived(props.transactionItem.productId) +
