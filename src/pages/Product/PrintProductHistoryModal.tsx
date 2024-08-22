@@ -2,16 +2,16 @@ import { Button, Modal, Typography, ModalDialog, Stack, Table } from "@mui/joy";
 import { useState, useRef } from "react";
 import { formatDate } from "../../helpers/dateHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
-import { DebtHistory, MonthlyDebt } from "../../interfaces/interfaces";
+import { Product, ProductHistory } from "../../interfaces/interfaces";
 import { sum } from "../../helpers/calculationHelpers";
 import PrintIcon from "@mui/icons-material/Print";
 
 import { useReactToPrint } from "react-to-print";
 
-export default function PrintMultiVendorReportModal(props: {
+export default function PrintProductHistoryModal(props: {
   startDate: string | null;
   endDate: string | null;
-  contacts: MonthlyDebt[];
+  products: Product[];
 }) {
   const [open, setOpen] = useState(false);
   const formattedStartDate = formatDate(props.startDate, "DD MMMM YYYY");
@@ -117,27 +117,27 @@ export default function PrintMultiVendorReportModal(props: {
 
               {/* DATA */}
               <Stack spacing={4} height={1}>
-                {props.contacts?.map((vendor: MonthlyDebt, index: number) => {
-                  const arrayOfHistoryAmount = vendor?.histories?.map(
-                    (history: DebtHistory) =>
-                      history?.type == "D"
-                        ? history?.amount
-                        : history?.amount * -1
+                {props.products?.map((product: Product, index: number) => {
+                  const arrayOfHistoryQuantity = product?.history?.map(
+                    (history: ProductHistory) =>
+                      history?.type == "A"
+                        ? history?.quantity
+                        : history?.quantity * -1
                   );
-
-                  const arrayOfDebts = vendor?.histories
-                    ?.filter((history: DebtHistory) => history?.type == "D")
-                    .map((history: DebtHistory) => history?.amount);
-
-                  const arrayOfPayments = vendor?.histories
-                    ?.filter((history: DebtHistory) => history?.type == "P")
-                    .map((history: DebtHistory) => history?.amount);
+                  const arrayOfArrivalQuantity = product?.history?.map(
+                    (history: ProductHistory) =>
+                      history?.type == "A" ? history?.quantity : 0
+                  );
+                  const arrayOfDepartureQuantity = product?.history?.map(
+                    (history: ProductHistory) =>
+                      history?.type == "D" ? history?.quantity : 0
+                  );
 
                   return (
                     <Stack key={index} justifyContent={"center"}>
                       <Typography color="primary" textAlign={"center"}>
                         <b>
-                          {vendor?.name} | {vendor?.code}
+                          {product?.name} | {product?.code}
                         </b>
                       </Typography>
 
@@ -145,16 +145,28 @@ export default function PrintMultiVendorReportModal(props: {
                         <thead>
                           <tr>
                             <th style={{ fontSize: "12px" }}>Tanggal</th>
-                            <th style={{ fontSize: "12px" }}>Nomor Bukti</th>
+                            <th style={{ fontSize: "12px" }}>Nomor Faktur</th>
                             <th style={{ fontSize: "12px" }}>Keterangan</th>
                             {/* <th>
                             <Button size="sm" variant="plain" color="neutral">
                               Mata Uang
                             </Button>
                           </th> */}
-                            <th style={{ fontSize: "12px" }}>Debit</th>
-                            <th style={{ fontSize: "12px" }}>Kredit</th>
-                            <th style={{ fontSize: "12px" }}>Saldo</th>
+                            <th
+                              style={{ fontSize: "12px", textAlign: "center" }}
+                            >
+                              Masuk
+                            </th>
+                            <th
+                              style={{ fontSize: "12px", textAlign: "center" }}
+                            >
+                              Keluar
+                            </th>
+                            <th
+                              style={{ fontSize: "12px", textAlign: "center" }}
+                            >
+                              Saldo
+                            </th>
                           </tr>
                         </thead>
 
@@ -168,55 +180,66 @@ export default function PrintMultiVendorReportModal(props: {
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td style={{ fontSize: "12px" }}>
-                              {formatIDR(props.contacts[index].initialBalance)}
+                            <td
+                              style={{ fontSize: "12px", textAlign: "center" }}
+                            >
+                              <b>{props.products[index].initialQuantity}</b>
                             </td>
                           </tr>
 
-                          {vendor?.histories?.map(
-                            (history: DebtHistory, index: number) => (
+                          {product?.history?.map(
+                            (history: ProductHistory, index: number) => (
                               <tr key={index}>
                                 <td style={{ fontSize: "12px" }}>
                                   {formatDate(history?.date, "DD MMMM YYYY")}
                                 </td>
-                                <td style={{}}>
-                                  <Typography color="neutral">
-                                    {/* {formatIDR(vendor?.initialBalance)} */}
-                                  </Typography>
-                                </td>
-                                <td style={{}}>
-                                  <Typography></Typography>
-                                </td>
-                                {/* <td
-                                style={{ paddingLeft: 15, textAlign: "center" }}
-                              >
-                                Rp
-                              </td> */}
                                 <td style={{ fontSize: "12px" }}>
+                                  {history?.receiptNumber}
+                                </td>
+                                <td style={{ fontSize: "12px" }}>
+                                  {history?.description}
+                                </td>
+
+                                <td
+                                  style={{
+                                    fontSize: "12px",
+                                    textAlign: "center",
+                                  }}
+                                >
                                   <Typography color="success">
-                                    {history?.type == "D"
-                                      ? formatIDR(history?.amount)
-                                      : formatIDR(0)}
+                                    {history?.type == "A"
+                                      ? history?.quantity
+                                      : 0}
                                   </Typography>
                                 </td>
-                                <td style={{ fontSize: "12px" }}>
+                                <td
+                                  style={{
+                                    fontSize: "12px",
+                                    textAlign: "center",
+                                  }}
+                                >
                                   <Typography color="danger">
-                                    {history?.type == "P"
-                                      ? formatIDR(history?.amount)
-                                      : formatIDR(0)}
+                                    {history?.type == "D"
+                                      ? history?.quantity
+                                      : 0}
                                   </Typography>
                                 </td>
-                                <td style={{ fontSize: "12px" }}>
-                                  {formatIDR(
-                                    arrayOfHistoryAmount &&
-                                      vendor?.initialBalance +
+                                <td
+                                  style={{
+                                    fontSize: "12px",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  <b>
+                                    {arrayOfHistoryQuantity &&
+                                      product?.initialQuantity +
                                         sum(
-                                          arrayOfHistoryAmount.slice(
+                                          arrayOfHistoryQuantity.slice(
                                             0,
                                             index + 1
                                           )
-                                        )
-                                  )}
+                                        )}
+                                  </b>
                                 </td>
                               </tr>
                             )
@@ -230,19 +253,21 @@ export default function PrintMultiVendorReportModal(props: {
                             <td></td>
                             <td></td>
                             {/* <td></td> */}
-                            <td style={{ fontSize: "12px" }}>
+                            <td
+                              style={{ fontSize: "12px", textAlign: "center" }}
+                            >
                               <Typography color="success">
-                                {formatIDR(sum(arrayOfDebts))}
+                                {sum(arrayOfArrivalQuantity)}
                               </Typography>
                             </td>
-                            <td style={{ fontSize: "12px" }}>
+                            <td
+                              style={{ fontSize: "12px", textAlign: "center" }}
+                            >
                               <Typography color="danger">
-                                {formatIDR(sum(arrayOfPayments))}
+                                {sum(arrayOfDepartureQuantity)}
                               </Typography>
                             </td>
-                            <td style={{ fontSize: "12px" }}>
-                              <b>{formatIDR(vendor?.currentBalance)}</b>
-                            </td>
+                            <td style={{ fontSize: "12px" }}></td>
                           </tr>
                         </tfoot>
                       </Table>

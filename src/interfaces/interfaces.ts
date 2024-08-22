@@ -2,6 +2,7 @@ export interface ProductHistory {
   id: number;
   quantity: number;
   type: "A" | "D";
+  name: string;
   number: string;
   receiptNumber: string;
   date: string;

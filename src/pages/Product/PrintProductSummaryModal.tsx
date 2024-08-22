@@ -1,17 +1,16 @@
 import { Button, Modal, Typography, ModalDialog, Stack, Table } from "@mui/joy";
 import { useState, useRef } from "react";
 import { formatDate } from "../../helpers/dateHelpers";
-import { formatIDR } from "../../helpers/currencyHelpers";
-import { MonthlyDebt } from "../../interfaces/interfaces";
+import { Product, ProductHistory } from "../../interfaces/interfaces";
 import { sum } from "../../helpers/calculationHelpers";
 import PrintIcon from "@mui/icons-material/Print";
 
 import { useReactToPrint } from "react-to-print";
 
-export default function PrintMonthlyReportModal(props: {
+export default function PrintProductSummaryModal(props: {
   startDate: string | null;
   endDate: string | null;
-  contacts: MonthlyDebt[];
+  products: Product[];
 }) {
   const [open, setOpen] = useState(false);
   const formattedStartDate = formatDate(props.startDate, "DD MMMM YYYY");
@@ -23,18 +22,18 @@ export default function PrintMonthlyReportModal(props: {
     content: () => printRef.current,
   });
 
-  const arrayOfInitialBalance = props.contacts?.map(
-    (contact: MonthlyDebt) => contact.initialBalance
-  );
-  const arrayOfTotalDebt = props.contacts?.map(
-    (contact: MonthlyDebt) => contact.totalDebt
-  );
-  const arrayOfTotalPayment = props.contacts?.map(
-    (contact: MonthlyDebt) => contact.totalPayment
-  );
-  const arrayOfCurrentBalance = props.contacts?.map(
-    (contact: MonthlyDebt) => contact.currentBalance
-  );
+  // const arrayOfInitialBalance = props.contacts?.map(
+  //   (contact: MonthlyDebt) => contact.initialBalance
+  // );
+  // const arrayOfTotalDebt = props.contacts?.map(
+  //   (contact: MonthlyDebt) => contact.totalDebt
+  // );
+  // const arrayOfTotalPayment = props.contacts?.map(
+  //   (contact: MonthlyDebt) => contact.totalPayment
+  // );
+  // const arrayOfCurrentBalance = props.contacts?.map(
+  //   (contact: MonthlyDebt) => contact.currentBalance
+  // );
 
   return (
     <>
@@ -133,40 +132,56 @@ export default function PrintMonthlyReportModal(props: {
                 <Table size="sm">
                   <thead>
                     <tr>
-                      <th style={{ fontSize: "12px" }}>Vendor</th>
-                      <th style={{ fontSize: "12px" }}>Saldo Awal </th>
-                      <th style={{ fontSize: "12px" }}>Pembelian</th>
+                      <th style={{ fontSize: "12px" }}>Produk</th>
+                      <th style={{ fontSize: "12px", textAlign: "center" }}>
+                        Awal{" "}
+                      </th>
+                      <th style={{ fontSize: "12px", textAlign: "center" }}>
+                        Masuk
+                      </th>
 
-                      <th style={{ fontSize: "12px" }}>Pembayaran</th>
-                      <th style={{ fontSize: "12px" }}>Saldo Akhir</th>
+                      <th style={{ fontSize: "12px", textAlign: "center" }}>
+                        Keluar
+                      </th>
+                      <th style={{ fontSize: "12px", textAlign: "center" }}>
+                        Total
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {props.contacts?.map((contact: MonthlyDebt) => {
+                    {props.products?.map((product: Product) => {
+                      const arrayOfArrivalQuantity = product?.history?.map(
+                        (history: ProductHistory) =>
+                          history?.type == "A" ? history?.quantity : 0
+                      );
+                      const arrayOfDepartureQuantity = product?.history?.map(
+                        (history: ProductHistory) =>
+                          history?.type == "D" ? history?.quantity : 0
+                      );
                       return (
                         <tr>
-                          <td style={{ fontSize: "12px" }}>{contact?.name}</td>
-                          <td style={{ fontSize: "12px" }}>
-                            {formatIDR(contact?.initialBalance)}
+                          <td style={{ fontSize: "12px" }}>{product?.name}</td>
+                          <td style={{ fontSize: "12px", textAlign: "center" }}>
+                            {product?.initialQuantity}
                           </td>
-                          <td style={{ fontSize: "12px" }}>
+                          <td style={{ fontSize: "12px", textAlign: "center" }}>
                             <Typography color="success">
-                              {formatIDR(contact?.totalDebt)}
+                              {sum(arrayOfArrivalQuantity)}
                             </Typography>
                           </td>
-                          <td style={{ fontSize: "12px" }}>
+                          <td style={{ fontSize: "12px", textAlign: "center" }}>
                             <Typography color="danger">
-                              {formatIDR(contact?.totalPayment)}
+                              {sum(arrayOfDepartureQuantity)}
                             </Typography>
                           </td>
-                          <td style={{ fontSize: "12px" }}>
-                            <b>{formatIDR(contact?.currentBalance)}</b>
+                          <td style={{ fontSize: "12px", textAlign: "center" }}>
+                            <b>{product?.currentQuantity}</b>
                           </td>
                         </tr>
                       );
                     })}
                   </tbody>
-                  <tfoot>
+                  {/* <tfoot>
                     <tr>
                       <td style={{ fontSize: "12px" }}>
                         <b>Total</b>
@@ -184,7 +199,7 @@ export default function PrintMonthlyReportModal(props: {
                         <b>{formatIDR(sum(arrayOfCurrentBalance))}</b>
                       </td>{" "}
                     </tr>
-                  </tfoot>
+                  </tfoot> */}
                 </Table>
               </Stack>
             </Stack>

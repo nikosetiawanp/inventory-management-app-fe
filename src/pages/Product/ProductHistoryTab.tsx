@@ -11,8 +11,9 @@ import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import { formatDate } from "../../helpers/dateHelpers";
 import { sum } from "../../helpers/calculationHelpers";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
+import PrintProductHistoryModal from "./PrintProductHistoryModal";
 
-export default function MultiProductReportTab() {
+export default function ProductHistoryTab() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   // DATE
@@ -65,6 +66,11 @@ export default function MultiProductReportTab() {
           setEndDate={setEndDate}
           refetch={refetch}
           label={"Tanggal"}
+        />
+        <PrintProductHistoryModal
+          startDate={startDate}
+          endDate={endDate}
+          products={productHistoryQuery?.data}
         />
         {/* <PrintMultiVendorReportModal
           startDate={startDate}
@@ -174,7 +180,9 @@ export default function MultiProductReportTab() {
                             <td style={{ paddingLeft: 15 }}>
                               {formatDate(history?.date, "DD MMMM YYYY")}
                             </td>
-                            <td style={{ paddingLeft: 15 }}></td>
+                            <td style={{ paddingLeft: 15 }}>
+                              {history?.receiptNumber}
+                            </td>
                             <td style={{ paddingLeft: 15 }}>
                               <Typography>{history?.description}</Typography>
                             </td>{" "}
@@ -204,7 +212,7 @@ export default function MultiProductReportTab() {
                   <tfoot>
                     <tr>
                       <td style={{ paddingLeft: 15 }}>
-                        <b>Saldo Akhir</b>
+                        <b>Total</b>
                       </td>
                       <td></td>
                       <td></td>
@@ -218,9 +226,7 @@ export default function MultiProductReportTab() {
                           {sum(arrayOfDepartureQuantity)}
                         </Typography>
                       </td>
-                      <td style={{ paddingLeft: 15 }}>
-                        {product?.currentQuantity}
-                      </td>
+                      <td style={{ paddingLeft: 15 }}></td>
                       <td></td>
                     </tr>
                   </tfoot>
