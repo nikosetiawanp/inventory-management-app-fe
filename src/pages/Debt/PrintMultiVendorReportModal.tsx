@@ -104,7 +104,7 @@ export default function PrintMultiVendorReportModal(props: {
                   color="primary"
                   fontWeight="lg"
                 >
-                  Laporan Hutang Per Vendor
+                  Kartu Hutang
                 </Typography>
                 <Typography color="danger">
                   <b>

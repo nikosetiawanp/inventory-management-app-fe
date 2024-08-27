@@ -117,7 +117,7 @@ export default function PrintMonthlyReportModal(props: {
                   color="primary"
                   fontWeight="lg"
                 >
-                  Laporan Hutang Per Vendor
+                  Laporan Saldo Hutang
                 </Typography>
                 <Typography color="danger">
                   <b>

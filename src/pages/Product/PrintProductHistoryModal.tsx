@@ -1,7 +1,6 @@
 import { Button, Modal, Typography, ModalDialog, Stack, Table } from "@mui/joy";
 import { useState, useRef } from "react";
 import { formatDate } from "../../helpers/dateHelpers";
-import { formatIDR } from "../../helpers/currencyHelpers";
 import { Product, ProductHistory } from "../../interfaces/interfaces";
 import { sum } from "../../helpers/calculationHelpers";
 import PrintIcon from "@mui/icons-material/Print";
@@ -95,7 +94,7 @@ export default function PrintProductHistoryModal(props: {
               {/* HEADER & TITLE */}
               <Stack alignItems="center">
                 <Typography>
-                  <b>Data Hutang</b>
+                  <b>Data Produk</b>
                 </Typography>
                 <Typography
                   component="h3"
@@ -104,7 +103,7 @@ export default function PrintProductHistoryModal(props: {
                   color="primary"
                   fontWeight="lg"
                 >
-                  Laporan Hutang Per Vendor
+                  Kartu Stok
                 </Typography>
                 <Typography color="danger">
                   <b>

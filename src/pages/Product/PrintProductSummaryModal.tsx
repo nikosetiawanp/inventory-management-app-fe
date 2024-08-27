@@ -107,7 +107,7 @@ export default function PrintProductSummaryModal(props: {
               {/* HEADER & TITLE */}
               <Stack alignItems="center">
                 <Typography>
-                  <b>Data Hutang</b>
+                  <b>Data Produk</b>
                 </Typography>
                 <Typography
                   component="h3"
@@ -116,7 +116,7 @@ export default function PrintProductSummaryModal(props: {
                   color="primary"
                   fontWeight="lg"
                 >
-                  Laporan Hutang Per Vendor
+                  Laporan Stok Akhir
                 </Typography>
                 <Typography color="danger">
                   <b>
