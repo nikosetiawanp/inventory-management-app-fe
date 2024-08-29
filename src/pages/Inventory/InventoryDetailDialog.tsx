@@ -144,7 +144,9 @@ export default function InventoryDetailDialog(props: {
             >
               {/* TITLE */}
               <Stack>
-                <Typography level="h4">{props.inventory?.number}</Typography>
+                <Typography level="h4" fontWeight="bold">
+                  {props.inventory?.number}
+                </Typography>
                 <Typography level="body-sm">
                   {formatDate(props.inventory?.date)}
                 </Typography>
@@ -220,7 +222,7 @@ export default function InventoryDetailDialog(props: {
                             <td style={{ width: 100, textAlign: "center" }}>
                               <Input
                                 id={`items[${index}].quantity`}
-                                size="lg"
+                                size="md"
                                 {...register(
                                   `inventoryItems[${index}].quantity`
                                 )}

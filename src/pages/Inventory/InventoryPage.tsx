@@ -9,8 +9,9 @@ import { useQuery } from "react-query";
 import { Inventory } from "../../interfaces/interfaces";
 import InventoryRow from "./InventoryRow";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
+import CreateCash from "../Cash/CreateCash";
 
-export default function InventoryArrivalPage() {
+export default function InventoryPage(props: { type: "A" | "D" }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   // DATE
@@ -25,15 +26,17 @@ export default function InventoryArrivalPage() {
   const getInventories = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `inventories?startDate=${formattedStartDate}&endDate=${formattedEndDate}&type=A`
+        "inventories?" +
+        `startDate=${formattedStartDate}` +
+        `&endDate=${formattedEndDate}` +
+        `&type=${props.type}`
     );
-    console.log(response.data.data);
 
     return response.data.data;
   };
 
   const inventoriesQuery = useQuery({
-    queryKey: ["inventories", startDate, endDate],
+    queryKey: ["inventories", startDate, endDate, props.type],
     queryFn: getInventories,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -45,6 +48,11 @@ export default function InventoryArrivalPage() {
   };
 
   useEffect(() => {
+    setStartDate(null);
+    setEndDate(null);
+  }, [props.type]);
+
+  useEffect(() => {
     getInventories();
   }, [startDate, endDate]);
 
@@ -54,11 +62,11 @@ export default function InventoryArrivalPage() {
       <Drawer />
       <Stack padding={4} width={1} spacing={2}>
         <Typography fontWeight={"bold"} level="h4">
-          Gudang Masuk
+          {props.type == "A" ? "Gudang Masuk" : "Gudang Keluar"}
         </Typography>
 
         {/* DATE FILTER */}
-        <Stack direction={"row"} gap={2} width={1}>
+        <Stack direction={"row"} alignItems="end" gap={2} width={1}>
           <DateFilterCopy
             startDate={startDate}
             setStartDate={setStartDate}
@@ -67,7 +75,10 @@ export default function InventoryArrivalPage() {
             refetch={refetch}
             label="Tanggal Faktur"
           />{" "}
-          <CreateInventory type="A" />
+          <Stack marginLeft="auto">
+            <CreateInventory type={props.type} />
+          </Stack>
+          <CreateCash />
         </Stack>
 
         <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
@@ -89,7 +100,7 @@ export default function InventoryArrivalPage() {
                 <th>
                   {" "}
                   <Button size="sm" variant="plain" color="neutral">
-                    Vendor
+                    {props.type == "A" ? "Vendor" : "Customer"}
                   </Button>
                 </th>
                 <th>
@@ -101,13 +112,18 @@ export default function InventoryArrivalPage() {
                 <th>
                   {" "}
                   <Button size="sm" variant="plain" color="neutral">
-                    Purchase Order
+                    {props.type == "A" ? "Purchase Order" : "Sales Order"}
                   </Button>
                 </th>
                 <th>
                   {" "}
                   <Button size="sm" variant="plain" color="neutral">
                     Deskripsi
+                  </Button>
+                </th>
+                <th style={{ textAlign: "center" }}>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Status
                   </Button>
                 </th>
                 <th style={{ width: 60, textAlign: "center" }}>

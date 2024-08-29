@@ -38,22 +38,6 @@ export default function NewTransactionItem(props: {
       <tr>
         {/* PRODUCT */}
         <td>
-          {/* <SelectProduct
-          selectedProduct={selectedProduct}
-          setSelectedProduct={setSelectedProduct}
-          control={props.control}
-          index={props.index}
-          update={props.update}
-          setValue={props.setValue}
-        /> */}
-          {/* <SelectProductCopy
-          selectedProduct={selectedProduct}
-          setSelectedProduct={setSelectedProduct}
-          control={props.control}
-          index={props.index}
-          update={props.update}
-          setValue={props.setValue}
-        /> */}
           {/* AUTOCOMPLETE */}
           <FormControl>
             <Stack>

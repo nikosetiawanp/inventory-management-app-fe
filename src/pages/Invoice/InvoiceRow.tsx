@@ -54,15 +54,15 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
         <td style={{ paddingLeft: 15 }}>
           {props.invoice?.transaction?.contact?.name}
         </td>
-        <td style={{ paddingLeft: 15 }}>
-          <Chip size="sm" color={today <= dueDate ? "primary" : "danger"}>
+        <td style={{ paddingLeft: 10 }}>
+          <Chip size="sm" color={today <= dueDate ? "neutral" : "danger"}>
             {formatDate(props.invoice?.dueDate)}
           </Chip>
         </td>
         <td style={{ paddingLeft: 15 }}>
           <Chip
             size="sm"
-            color={props.invoice?.debts?.length == 0 ? "neutral" : "success"}
+            color={props.invoice?.debts?.length == 0 ? "danger" : "success"}
           >
             {`${props.invoice?.debts.length} hutang`}
           </Chip>

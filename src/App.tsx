@@ -3,16 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 import { QueryClient, QueryClientProvider } from "react-query";
-import PurchaseOrderPage from "./pages/Transaction/PurchaseOrderPage";
 import DebtPage from "./pages/Debt/DebtPage";
-import DebtPaymentPage from "./pages/DebtPaymentPage";
 import HomePage from "./pages/HomePage";
 
-import SalesOrderPage from "./pages/SalesOrderPage";
 import ContactPage from "./pages/Contact/ContactPage";
 import InvoicePage from "./pages/Invoice/InvoicePage";
-import InventoryArrivalPage from "./pages/Inventory/InventoryArrivalPage";
-import InventoryDeparturePage from "./pages/Inventory/InventoryDeparturePage";
 import CashPage from "./pages/Cash/CashPage";
 import AccountPage from "./pages/Account/AccountPage";
 import ProductPage from "./pages/Product/ProductPage";
@@ -24,6 +19,9 @@ import {
 } from "@mui/material/styles";
 import { CssVarsProvider as JoyCssVarsProvider } from "@mui/joy/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import PurchasePage from "./pages/Transaction/PurchasePage";
+import SalesPage from "./pages/Transaction/SalesPage";
+import InventoryPage from "./pages/Inventory/InventoryPage";
 
 const materialTheme = materialExtendTheme();
 
@@ -65,19 +63,26 @@ function App() {
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/product" element={<ProductPage />} />
-                <Route path="/purchase-order" element={<PurchaseOrderPage />} />
-                <Route path="/purchase-invoice" element={<InvoicePage />} />
-                <Route path="/sales-order" element={<SalesOrderPage />} />
+                <Route path="/purchase-order" element={<PurchasePage />} />
+                <Route
+                  path="/purchase-invoice"
+                  element={<InvoicePage type="P" />}
+                />
+                <Route path="/sales-order" element={<SalesPage />} />
+                <Route
+                  path="/sales-invoice"
+                  element={<InvoicePage type="S" />}
+                />
+                <Route path="/debt" element={<DebtPage type="D" />} />
+                <Route path="/receivable" element={<DebtPage type="R" />} />
 
-                <Route path="/debt" element={<DebtPage />} />
-                <Route path="/debt-payment" element={<DebtPaymentPage />} />
                 <Route
                   path="/inventory-arrival"
-                  element={<InventoryArrivalPage />}
+                  element={<InventoryPage type="A" />}
                 />
                 <Route
                   path="/inventory-departure"
-                  element={<InventoryDeparturePage />}
+                  element={<InventoryPage type="D" />}
                 />
 
                 <Route path="/cash" element={<CashPage />} />

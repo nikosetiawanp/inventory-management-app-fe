@@ -1,6 +1,5 @@
-import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
+import { Button, IconButton, Sheet, Stack, Table } from "@mui/joy";
 
-import Drawer from "../../components/Drawer";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import CreateTransaction from "./CreateTransaction";
 
@@ -10,14 +9,14 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { Transaction } from "../../interfaces/interfaces";
-import TransactionRow from "./TransactionRow";
 import SortButton from "../../components/buttons/SortButton";
 import ChecklistFilter from "../../components/filters/ChecklistFilter";
-import SelectFilter from "../../components/filters/SelectFilter";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import { formatDate } from "../../helpers/dateHelpers";
 
-export default function PurchaseOrderPage() {
+import TransactionRow from "./TransactionRow";
+
+export default function PendingTransactionTab(props: { type: "P" | "S" }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -27,11 +26,11 @@ export default function PurchaseOrderPage() {
     const response = await axios.get(
       BACKEND_URL +
         "transactions?" +
-        `type=${selectedType}` +
-        `&isApproved=${selectedApprovalStatus}` +
+        `type=${props.type}` +
+        `&isApproved=0` +
         `&startDate=${startDate ? formatDate(startDate, "YYYY-MM-DD") : ""}` +
-        `&endDate=${endDate ? formatDate(startDate, "YYYY-MM-DD") : ""}` +
-        `&isDone=${selectedDoneStatus}`
+        `&endDate=${endDate ? formatDate(endDate, "YYYY-MM-DD") : ""}` +
+        `&isDone=0`
     );
     return response.data.data;
   };
@@ -59,13 +58,6 @@ export default function PurchaseOrderPage() {
     };
     return data;
   });
-  // const contacts: string[] | any = [
-  //   ...new Set(
-  //     transactionsQuery?.data?.map(
-  //       (transaction: Transaction) =>{id: transaction?.id,label: transaction?.contact?.name}
-  //     )
-  //   ),
-  // ];
 
   const filteredTransactionsQuery =
     includedData.length == 0
@@ -76,50 +68,14 @@ export default function PurchaseOrderPage() {
           )
         );
 
-  // TYPE FILTER
-  const [selectedType, setSelectedType] = useState("P");
-  const types = [
-    { label: "Pembelian", key: "P" },
-    { label: "Penjualan", key: "S" },
-  ];
-
-  // STATUS FILTER
-  const [selectedApprovalStatus, setSelectedApprovalStatus] = useState(1);
-  const approvalStatuses = [
-    { label: "Approved", key: 1 },
-    { label: "Menunggu Approval", key: 0 },
-  ];
-
-  const [selectedDoneStatus, setSelectedDoneStatus] = useState(0);
-  const doneStatuses = [
-    { label: "Selesai", key: 1 },
-    { label: "Belum Selesai", key: 0 },
-  ];
-
-  const [] = useState();
-
   // SORTING
   const [sortConfig, setSortConfig] = useState({
-    key: "po-date",
+    key: "date",
     direction: "descending",
   });
   const sortedData = useMemo(() => {
-    // // SORT INVOICE DATE ASCENDING
-    // if (sortConfig.key == "po-date" && sortConfig.direction == "descending") {
-    //   return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
-    //     b?.date.localeCompare(a?.date)
-    //   );
-    // }
-
-    // // SORT INVOICE DATE ASCENDING
-    // if (sortConfig.key == "po-date" && sortConfig.direction == "ascending") {
-    //   return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
-    //     a?.date.localeCompare(b?.date)
-    //   );
-    // }
-
     // SORT INVOICE DATE DESCENDING
-    if (sortConfig.key == "po-date" && sortConfig.direction == "descending") {
+    if (sortConfig.key == "date" && sortConfig.direction == "descending") {
       return filteredTransactionsQuery?.sort(
         (a: Transaction, b: Transaction) => {
           const dateComparison = b?.date.localeCompare(a?.date);
@@ -132,7 +88,7 @@ export default function PurchaseOrderPage() {
     }
 
     // SORT INVOICE DATE ASCENDING
-    if (sortConfig.key == "po-date" && sortConfig.direction == "ascending") {
+    if (sortConfig.key == "date" && sortConfig.direction == "ascending") {
       return filteredTransactionsQuery?.sort(
         (a: Transaction, b: Transaction) => {
           const dateComparison = a?.date.localeCompare(b?.date);
@@ -151,7 +107,7 @@ export default function PurchaseOrderPage() {
       );
     }
 
-    // SORT CONTACT ASCENDING
+    // SORT CONTACT DESCENDING
     if (sortConfig.key == "contact" && sortConfig.direction == "descending") {
       return filteredTransactionsQuery?.sort((a: Transaction, b: Transaction) =>
         b?.contact?.name?.localeCompare(a?.contact?.name)
@@ -161,48 +117,22 @@ export default function PurchaseOrderPage() {
 
   useEffect(() => {
     refetch();
-  }, [
-    startDate,
-    endDate,
-    selectedType,
-    selectedApprovalStatus,
-    selectedDoneStatus,
-  ]);
+  }, [startDate, endDate]);
 
   return (
-    // PAGE
-    <Stack direction={"row"} height={"100vh"} width={"100vw"}>
-      {/* DRAWER */}
-      <Drawer />
-
+    // CONTAINER
+    <Stack direction={"row"}>
       {/* CONTENT */}
-      <Stack padding={4} width={1}>
+      <Stack>
         {/*TITLE & CREATE PRODUCT */}
+
         <Stack
           direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"flex-end"}
-          marginBottom={4}
+          marginBottom={2}
+          gap={2}
+          width={1}
+          alignItems={"end"}
         >
-          <Typography fontWeight={"bold"} level="h4">
-            Purchase Order
-          </Typography>
-          <CreateTransaction type={"purchase"} />
-        </Stack>
-
-        <Stack direction={"row"} marginBottom={2} gap={2} width={1}>
-          <SelectFilter
-            selected={selectedType}
-            setSelected={setSelectedType}
-            options={types}
-            label={"Kategori"}
-          />
-          <SelectFilter
-            selected={selectedApprovalStatus}
-            setSelected={setSelectedApprovalStatus}
-            options={approvalStatuses}
-            label={"Approval"}
-          />
           <DateFilterCopy
             startDate={startDate}
             setStartDate={setStartDate}
@@ -211,26 +141,17 @@ export default function PurchaseOrderPage() {
             refetch={refetch}
             label={"Tanggal"}
           />
-          {/* <DateFilter
-            selectedStartDate={selectedStartDate}
-            selectedEndDate={selectedEndDate}
-            setSelectedStartDate={setSelectedStartDate}
-            setSelectedEndDate={setSelectedEndDate}
-            refetch={refetch}
-            label="Tanggal PO"
-          /> */}
+
           <ChecklistFilter
             data={contacts}
             includedData={includedData}
             setIncludedData={setIncludedData}
-            label={"Vendor"}
+            label={props.type == "P" ? "Vendor" : "Customer"}
           />
-          <SelectFilter
-            selected={selectedDoneStatus}
-            setSelected={setSelectedDoneStatus}
-            options={doneStatuses}
-            label={"Status"}
-          />
+
+          <Stack marginLeft="auto">
+            <CreateTransaction type={props.type} />
+          </Stack>
 
           {/* BUTTON */}
         </Stack>
@@ -242,12 +163,12 @@ export default function PurchaseOrderPage() {
               <tr>
                 <th>
                   <Button size="sm" variant="plain" color="neutral">
-                    Nomor PO
+                    {props.type == "P" ? "Nomor PO" : "Nomor SO"}
                   </Button>
                 </th>
                 <th>
                   <SortButton
-                    label="Vendor"
+                    label={props.type == "P" ? "Vendor" : "Customer"}
                     sortConfigKey="contact"
                     sortConfig={sortConfig}
                     setSortConfig={setSortConfig}
@@ -255,20 +176,15 @@ export default function PurchaseOrderPage() {
                 </th>
                 <th>
                   <SortButton
-                    label="Tanggal PO"
-                    sortConfigKey="po-date"
+                    label="Tanggal"
+                    sortConfigKey="date"
                     sortConfig={sortConfig}
                     setSortConfig={setSortConfig}
                   />
                 </th>
                 <th style={{ textAlign: "center" }}>
                   <Button size="sm" variant="plain" color="neutral">
-                    Status Approval
-                  </Button>
-                </th>
-                <th style={{ textAlign: "center" }}>
-                  <Button size="sm" variant="plain" color="neutral">
-                    Status Selesai
+                    Status
                   </Button>
                 </th>
                 <th
@@ -290,15 +206,15 @@ export default function PurchaseOrderPage() {
               {transactionsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={5} />
               ) : (
-                sortedData?.map((transaction: Transaction, index: number) => (
-                  <TransactionRow
-                    index={index}
-                    key={index}
-                    transaction={transaction}
-                    refetch={transactionsQuery.refetch}
-                    arrayLength={transactionsQuery.data.length}
-                  />
-                ))
+                sortedData?.map((transaction: Transaction, index: number) => {
+                  return (
+                    <TransactionRow
+                      index={index}
+                      transaction={transaction}
+                      refetch={refetch}
+                    />
+                  );
+                })
               )}
             </tbody>
           </Table>

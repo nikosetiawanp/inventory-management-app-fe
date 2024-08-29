@@ -15,7 +15,7 @@ import ChecklistFilter from "../../components/filters/ChecklistFilter";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintMultiVendorReportModal from "./PrintMultiVendorReportModal";
 
-export default function MultiVendorReportTab() {
+export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   // DATE
@@ -35,16 +35,24 @@ export default function MultiVendorReportTab() {
     const response = await axios.get(
       BACKEND_URL +
         "debt-history?" +
-        "type=V" +
+        `type=${props.type == "D" ? "V" : "C"}` +
         `&startDate=${formatDate(startDate, "YYYY-MM-DD")}` +
         `&endDate=${formatDate(endDate, "YYYY-MM-DD")}` +
         selectedConctactsParam
     );
+    console.log(response.data);
+
     return response.data;
   };
 
   const vendorDebtsQuery = useQuery({
-    queryKey: ["debt-history", startDate, endDate, selectedContacts],
+    queryKey: [
+      "debt-history",
+      startDate,
+      endDate,
+      selectedContacts,
+      props.type,
+    ],
     queryFn: getMonthlyDebts,
     refetchOnWindowFocus: false,
     enabled: startDate !== null && endDate !== null,
@@ -52,7 +60,9 @@ export default function MultiVendorReportTab() {
 
   // CONTACTS
   const getContacts = async () => {
-    const response = await axios.get(BACKEND_URL + `contacts?type=V`);
+    const response = await axios.get(
+      BACKEND_URL + `contacts?` + `type=${props.type == "D" ? "V" : "C"}`
+    );
     return response.data.data;
   };
 
@@ -79,6 +89,11 @@ export default function MultiVendorReportTab() {
   useEffect(() => {
     refetch();
   }, [selectedContacts, startDate, endDate]);
+
+  useEffect(() => {
+    setStartDate(null);
+    setEndDate(null);
+  }, [props.type]);
 
   return (
     <Stack gap={2} width={1}>
@@ -111,7 +126,7 @@ export default function MultiVendorReportTab() {
           }}
         >
           <Typography level="body-md" color={"neutral"}>
-            Total Pembelian
+            {props.type == "D" ? "Total Pembelian" : "Total Penjualan"}
           </Typography>
           <Typography color="success">
             {/* <h2>{formatIDR(sum(arrayOfTotalDebt))}</h2> */}
@@ -159,7 +174,7 @@ export default function MultiVendorReportTab() {
           data={contacts}
           includedData={selectedContacts}
           setIncludedData={setSelectedContacts}
-          label={"Vendor"}
+          label={props.type == "D" ? "Vendor" : "Customer"}
         />
 
         <DateFilterCopy
@@ -189,11 +204,16 @@ export default function MultiVendorReportTab() {
         {vendorDebtsQuery?.data?.map((vendor: MonthlyDebt, index: number) => {
           const arrayOfHistoryAmount = vendor?.histories?.map(
             (history: DebtHistory) =>
-              history?.type == "D" ? history?.amount : history?.amount * -1
+              history?.type == "D" || history?.type == "R"
+                ? history?.amount
+                : history?.amount * -1
           );
 
           const arrayOfDebts = vendor?.histories
-            ?.filter((history: DebtHistory) => history?.type == "D")
+            ?.filter(
+              (history: DebtHistory) =>
+                history?.type == "D" || history?.type == "R"
+            )
             .map((history: DebtHistory) => history?.amount);
 
           const arrayOfPayments = vendor?.histories
@@ -286,7 +306,7 @@ export default function MultiVendorReportTab() {
                             </td>{" "}
                             <td style={{ paddingLeft: 15 }}>
                               <Typography color="success">
-                                {history?.type == "D"
+                                {history?.type == "D" || history?.type == "R"
                                   ? formatIDR(history?.amount)
                                   : formatIDR(0)}
                               </Typography>

@@ -11,46 +11,52 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import axios from "axios";
-import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { Transaction } from "../../interfaces/interfaces";
+import { formatDate } from "../../helpers/dateHelpers";
+import DateFilterCopy from "../../components/filters/DateFilterCopy";
 
 export default function SelectPurchase(props: {
-  selectedPurchase: Transaction | null | undefined;
-  setSelectedPurchase: any;
-  handlePurchaseChange: any;
+  selectedTransaction: Transaction | null | undefined;
+  setSelectedTransaction: any;
+  type: "A" | "D";
 }) {
   const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-  const selectedYear = formattedDate.split("-")[0];
-  const selectedMonth = formattedDate.split("-")[1];
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  // GET PURCHASES
+  const type = props.type == "A" ? "P" : "D";
+
+  // GET TRANSACTIONS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `transactions?startDate=${selectedYear}-${selectedMonth}-01&endDate=${selectedYear}-${selectedMonth}-31&isApproved=1&type=P`
+        "transactions?" +
+        `type=${type}` +
+        `&isApproved=1` +
+        `&startDate=${startDate ? formatDate(startDate, "YYYY-MM-DD") : ""}` +
+        `&endDate=${endDate ? formatDate(endDate, "YYYY-MM-DD") : ""}` +
+        `&isDone=0`
     );
     console.log(response.data.data);
 
     return response.data.data;
   };
+
   const transactionsQuery = useQuery({
     queryKey: ["transactions"],
-    queryFn: getTransactions,
+    queryFn: () => getTransactions(),
     refetchOnWindowFocus: false,
-    enabled: open,
+    enabled: true,
   });
 
-  useEffect(() => {
+  const refetch = () => {
+    getTransactions();
     transactionsQuery.refetch();
-  }, [selectedDate]);
+  };
 
   return (
     <>
@@ -60,7 +66,7 @@ export default function SelectPurchase(props: {
         variant="outlined"
         sx={{ input: { cursor: "pointer" } }}
         onClick={() => setOpen(true)}
-        value={props.selectedPurchase?.number || ""}
+        value={props.selectedTransaction?.number || ""}
         placeholder="Purchase Order"
       />
 
@@ -79,7 +85,15 @@ export default function SelectPurchase(props: {
             marginBottom={2}
           >
             <Typography variant="h4">Pilih Pembelian</Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateFilterCopy
+              startDate={startDate}
+              setStartDate={setStartDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
+              refetch={refetch}
+              label={"Tanggal"}
+            />
+            {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 views={["month", "year"]}
                 slotProps={{ textField: { size: "small" } }}
@@ -87,7 +101,7 @@ export default function SelectPurchase(props: {
                 onChange={(newValue: any) => setSelectedDate(newValue)}
                 format="MMMM YYYY"
               />
-            </LocalizationProvider>
+            </LocalizationProvider> */}
           </Stack>
 
           {/* TABLE */}
@@ -124,10 +138,10 @@ export default function SelectPurchase(props: {
                         hover
                         sx={{ cursor: "pointer" }}
                         onClick={() => {
-                          props.setSelectedPurchase(purchase);
+                          props.setSelectedTransaction(purchase);
                           setOpen(false);
                         }}
-                        selected={props.selectedPurchase?.id == purchase.id}
+                        selected={props.selectedTransaction?.id == purchase.id}
                       >
                         <TableCell>{purchase.date}</TableCell>
                         <TableCell>{purchase.contact.name}</TableCell>

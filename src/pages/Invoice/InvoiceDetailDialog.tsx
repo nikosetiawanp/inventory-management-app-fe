@@ -97,16 +97,22 @@ export default function InvoiceDetailDialog(props: {
           >
             {/* TITLE */}
             <Stack>
-              <Typography level="h4">{props.invoice?.number}</Typography>
+              <Typography level="h4" fontWeight="bold">
+                {props.invoice?.number}
+              </Typography>
               <Typography level="body-sm">
+                Tanggal Faktur :{" "}
                 {formatDate(props.invoice?.inventory.date, "DD MMMM YYYY")}
               </Typography>
               <Typography level="body-sm">
-                Jatuh tempo :{" "}
+                Tanggal Jatuh tempo :{" "}
                 {formatDate(props.invoice?.dueDate, "DD MMMM YYYY")}
               </Typography>
               <Typography level="body-sm">
-                {props.invoice?.inventory.number}
+                {props.invoice?.transaction?.type == "P"
+                  ? "Nomor PO"
+                  : "Nomor SO"}{" "}
+                : {props.invoice?.inventory.number}
               </Typography>
             </Stack>
             {/* BUTTONS */}
@@ -115,6 +121,7 @@ export default function InvoiceDetailDialog(props: {
               <CreateDebt
                 debtAmount={sum(arrayOfNetPrice)}
                 invoice={props.invoice}
+                type={props.invoice?.transaction?.type}
               />
               {/* <Button variant="contained" onClick={() => {}}>
               Buat Hutang
@@ -140,12 +147,12 @@ export default function InvoiceDetailDialog(props: {
               <thead>
                 <tr>
                   <th>Produk</th>
-                  <th align="center">Quantity</th>
+                  <th style={{ textAlign: "center" }}>Quantity</th>
 
-                  <th align="right">Harga</th>
-                  <th align="center">Diskon</th>
-                  <th align="center">Pajak</th>
-                  <th align="right">Total</th>
+                  <th>Harga</th>
+                  <th style={{ textAlign: "center" }}>Diskon</th>
+                  <th style={{ textAlign: "center" }}>Pajak</th>
+                  <th style={{ textAlign: "right" }}>Total</th>
                 </tr>
               </thead>
 
@@ -173,13 +180,11 @@ export default function InvoiceDetailDialog(props: {
                       </td>
 
                       {/* HARGA */}
-                      <td style={{ textAlign: "right" }}>
-                        {formatIDR(item.price)}
-                      </td>
+                      <td style={{}}>{formatIDR(item.price)}</td>
 
                       <td style={{ textAlign: "center" }}>{item.discount}%</td>
                       <td style={{ textAlign: "center" }}>{item.tax}%</td>
-                      <td style={{ textAlign: "center" }}>
+                      <td style={{ textAlign: "right" }}>
                         {formatIDR(
                           calculateNetPrice(
                             item.arrivedQuantity,

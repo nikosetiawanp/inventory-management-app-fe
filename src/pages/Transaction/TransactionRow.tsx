@@ -9,9 +9,12 @@ export default function TransactionRow(props: {
   index: number;
   transaction: Transaction;
   refetch: any;
-  arrayLength: number;
 }) {
   const [open, setOpen] = useState(false);
+  const isOngoing =
+    props.transaction?.isApproved == true && props.transaction?.isDone == false;
+  const isDone =
+    props.transaction?.isApproved == true && props.transaction?.isDone == true;
 
   return (
     <>
@@ -29,18 +32,9 @@ export default function TransactionRow(props: {
           <Chip
             variant="soft"
             size="sm"
-            color={props.transaction?.isApproved ? "success" : "warning"}
+            color={isDone ? "success" : isOngoing ? "warning" : "neutral"}
           >
-            {props.transaction?.isApproved ? "Approved" : "Pending"}{" "}
-          </Chip>
-        </td>
-        <td style={{ textAlign: "center" }}>
-          <Chip
-            size="sm"
-            variant="soft"
-            color={props.transaction?.isDone ? "success" : "danger"}
-          >
-            {props.transaction?.isDone ? "Selesai" : "Belum Selesai"}
+            {isDone ? "Selesai" : isOngoing ? "Ongoing" : "Pending"}
           </Chip>
         </td>
 
@@ -49,9 +43,7 @@ export default function TransactionRow(props: {
             textAlign: "center",
             width: 60,
           }}
-        >
-          {/* <MoreVertTransactionButton transaction={props.transaction} /> */}
-        </td>
+        ></td>
       </tr>
 
       {/* DIALOG */}

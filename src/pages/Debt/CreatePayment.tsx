@@ -82,7 +82,7 @@ export default function CreatePayment(props: { debt: Debt }) {
       amount: data.amount,
       debtId: props.debt.id,
       contactId: props.debt.contactId,
-      accountId: 1,
+      accountId: props.debt.type == "D" ? 1 : 2,
     };
     console.log(dataToSubmit);
     try {
@@ -136,18 +136,6 @@ export default function CreatePayment(props: { debt: Debt }) {
                   )}
                 </Stack>
               </FormControl>
-              {/* <Input
-                id="amount"
-                label="Jumlah Pembayaran"
-                variant="outlined"
-                InputProps={{
-                  startDecorator: "Rp",
-                }}
-                {...register("amount", { required: "Tidak boleh kosong" })}
-                error={!!errors.amount}
-                helperText={errors.amount?.message}
-                required
-              /> */}
 
               <FormControl error={errors.number?.message !== ""}>
                 <Stack spacing={0}>
@@ -167,15 +155,6 @@ export default function CreatePayment(props: { debt: Debt }) {
                   )}
                 </Stack>
               </FormControl>
-              {/* <TextField
-                id="amount"
-                label="Nomor Kas"
-                variant="outlined"
-                {...register("number", { required: "Tidak boleh kosong" })}
-                error={!!errors.number}
-                helperText={errors.number?.message}
-                required
-              /> */}
 
               <FormControl error={errors.description?.message !== ""}>
                 <Stack spacing={0}>
@@ -197,14 +176,6 @@ export default function CreatePayment(props: { debt: Debt }) {
                   )}
                 </Stack>
               </FormControl>
-              {/* <TextField
-                id="amount"
-                label="Deskripsi"
-                variant="outlined"
-                {...register("description")}
-                error={!!errors.description}
-                helperText={errors.description?.message}
-              /> */}
 
               {/* ACTIONS */}
               <Stack

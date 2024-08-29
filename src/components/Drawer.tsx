@@ -75,13 +75,13 @@ export default function Drawer() {
     {
       name: "Hutang",
       param: "/debt",
-      category: "Hutang",
+      category: "Hutang Piutang",
       icon: <PaidIcon />,
     },
     {
-      name: "Pembayaran Hutang",
-      param: "/debt-payment",
-      category: "Hutang",
+      name: "Piutang",
+      param: "/receivable",
+      category: "Hutang Piutang",
     },
     // INVENTORY
     {

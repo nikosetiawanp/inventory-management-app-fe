@@ -151,15 +151,6 @@ export default function CreateContact(props: {
                   )}
                 </Stack>
               </FormControl>
-              {/* <TextField
-              id="kode"
-              label="Kode"
-              variant="outlined"
-              {...register("code", { required: "Tidak boleh kosong" })}
-              error={!!errors.code}
-              helperText={errors.code?.message}
-              required
-            /> */}
 
               <FormControl error={errors.name?.message !== ""}>
                 <Stack spacing={0}>
@@ -263,40 +254,9 @@ export default function CreateContact(props: {
                   )}
                 </Stack>
               </FormControl>
-              {/* <TextField
-              id="address"
-              label="Alamat"
-              variant="outlined"
-              {...register("address")}
-              error={!!errors.address}
-              helperText={errors.address?.message}
-              rows={3}
-            /> */}
-              {/* SUPPLIER? */}
-              <FormControl>
-                {/* <FormLabel id="demo-row-radio-buttons-group-label">
-                Jenis
-              </FormLabel> */}
 
-                {/* <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={type}
-                onChange={(event) => setType(event.target.value as "V" | "C")}
-              >
-                <FormControlLabel
-                  value={"V"}
-                  control={<Radio />}
-                  label="Vendor"
-                />
-                <FormControlLabel
-                  value={"C"}
-                  control={<Radio />}
-                  label="Customer"
-                />
-              </RadioGroup> */}
-              </FormControl>
+              {/* SUPPLIER? */}
+              <FormControl></FormControl>
               {/* ACTIONS */}
             </Stack>
           </form>

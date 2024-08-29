@@ -23,9 +23,7 @@ import dayjs from "dayjs";
 import AddIcon from "@mui/icons-material/Add";
 import { InfoOutlined } from "@mui/icons-material";
 
-export default function CreateTransaction(props: {
-  type: "purchase" | "sales";
-}) {
+export default function CreateTransaction(props: { type: "P" | "S" }) {
   const {
     register,
     handleSubmit,
@@ -35,7 +33,7 @@ export default function CreateTransaction(props: {
   const [open, setOpen] = useState(false);
   const getContacts = async () => {
     const response = await axios.get(
-      BACKEND_URL + `contacts?type=${props.type == "purchase" ? "V" : "C"}`
+      BACKEND_URL + `contacts?type=${props.type == "P" ? "V" : "C"}`
     );
     return response.data.data;
   };
@@ -76,7 +74,7 @@ export default function CreateTransaction(props: {
   const onSubmit: SubmitHandler<Transaction> = async (data) => {
     const dataToSubmit: any = {
       number: data.number,
-      type: props.type == "purchase" ? "P" : props.type == "sales" ? "S" : null,
+      type: props.type == "P" ? "P" : props.type == "S" ? "S" : null,
       date: formattedDate,
       expectedArrival: null,
       isApproved: false,
@@ -99,15 +97,13 @@ export default function CreateTransaction(props: {
         variant="solid"
         onClick={() => setOpen(true)}
       >
-        {props.type == "purchase" ? "Buat Purchase Order" : "Buat Sales Order"}
+        {props.type == "P" ? "Buat Purchase Order" : "Buat Sales Order"}
       </Button>
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalDialog>
           <DialogTitle>
-            {props.type == "purchase"
-              ? "Buat Purchase Order"
-              : "Buat Sales Order"}
+            {props.type == "P" ? "Buat Purchase Order" : "Buat Sales Order"}
           </DialogTitle>
           <form
             action="submit"
@@ -117,7 +113,7 @@ export default function CreateTransaction(props: {
           >
             <Stack spacing={2}>
               {/* DATE PICKER */}
-              <Stack>
+              <Stack spacing={1}>
                 <FormLabel>Tanggal</FormLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
@@ -135,20 +131,16 @@ export default function CreateTransaction(props: {
               </Stack>
 
               {/* AUTOCOMPLETE */}
-              <FormControl
-              // error={!selectedContact}
-              >
+              <FormControl>
                 <Stack>
                   <FormLabel>
-                    {props.type == "purchase" ? "Vendor" : "Customer"}
+                    {props.type == "P" ? "Vendor" : "Customer"}
                   </FormLabel>{" "}
                   <Autocomplete
                     id="contact"
                     size="lg"
                     placeholder={
-                      props.type == "purchase"
-                        ? "Pilih Vendor"
-                        : "Pilih Customer"
+                      props.type == "P" ? "Pilih Vendor" : "Pilih Customer"
                     }
                     value={selectedContact}
                     onChange={(event, newValue) => {
@@ -178,10 +170,12 @@ export default function CreateTransaction(props: {
               {/* NOMOR */}
               <FormControl error={errors.number?.message !== ""}>
                 <Stack>
-                  <FormLabel>Nomor</FormLabel>
+                  <FormLabel>
+                    {props.type == "P" ? "Nomor PO" : "Nomor SO"}
+                  </FormLabel>
                   <Input
                     id="number"
-                    placeholder="Nomor"
+                    placeholder={props.type == "P" ? "Nomor PO" : "Nomor SO"}
                     {...register("number", { required: "Tidak boleh kosong" })}
                     error={!!errors.number}
                     size="lg"

@@ -111,12 +111,13 @@ export default function CreateInvoice(props: {
             <Stack spacing={2}>
               {/* TANGGAL JATUH TEMPO */}
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Stack>
+                <Stack spacing={1}>
                   <FormLabel>Tanggal Jatuh Tempo</FormLabel>
 
                   <DatePicker
                     value={selectedDueDate}
                     onChange={(newValue: any) => setSelectedDueDate(newValue)}
+                    minDate={dayjs()}
                     slotProps={{
                       field: { clearable: true },
                       textField: {
@@ -150,9 +151,7 @@ export default function CreateInvoice(props: {
                 </Stack>
               </FormControl>
 
-              <FormControl
-              // error={errors.inventory?.message !== ""}
-              >
+              <FormControl>
                 <Stack>
                   <FormLabel>Nomor Surat Jalan</FormLabel>{" "}
                   <Autocomplete

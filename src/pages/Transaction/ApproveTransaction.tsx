@@ -11,7 +11,7 @@ import { Transaction } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
-export default function ApprovePurchase(props: {
+export default function ApproveTransaction(props: {
   refetch(): any;
   transaction: Transaction;
 }) {
@@ -36,7 +36,7 @@ export default function ApprovePurchase(props: {
         isApproved: true,
         isDone: false,
         contactId: data?.contactId,
-        type: "P",
+        type: props.transaction.type,
       };
       console.log(dataToSubmit);
 

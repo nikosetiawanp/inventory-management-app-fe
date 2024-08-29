@@ -19,11 +19,11 @@ import { useState } from "react";
 import NewTransactionItem from "./NewTransactionItem";
 import CreateInvoice from "./CreateInvoice";
 import TransactionDetailRow from "./TransactionDetailRow";
-import ApprovePurchase from "./ApprovePurchase";
 import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
 import MoreTransactionButton from "./MoreTransactionButton";
+import ApproveTransaction from "./ApproveTransaction";
 
 export default function TransactionDetailDialog(props: {
   open: boolean;
@@ -155,34 +155,31 @@ export default function TransactionDetailDialog(props: {
           >
             {/* TITLE */}
             <Stack>
-              <Typography level="body-md">Purchase Order</Typography>
-              <Typography level="h3" fontWeight="bold">
+              <Typography level="body-md">
+                {props.transaction?.type == "P"
+                  ? "Purchase Order"
+                  : "Sales Order"}
+              </Typography>
+              <Typography level="h4" fontWeight="bold">
                 {props.transaction?.number}
               </Typography>
               <Stack direction={"row"} gap={0.5}>
-                <Typography level="body-sm">Vendor :</Typography>
-                <Typography>{props.transaction?.contact?.name}</Typography>
+                <Typography level="body-sm">
+                  {props.transaction?.type == "P" ? "Vendor" : "Customer"} :{" "}
+                  <b> {props.transaction?.contact?.name}</b>
+                </Typography>
               </Stack>
               <Typography level="body-sm">
-                {/* Tanggal :  */}
-                {formatDate(props.transaction?.date, "DD MMMM YYYY")}
+                Tanggal :{" "}
+                <b>{formatDate(props.transaction?.date, "DD MMMM YYYY")}</b>
               </Typography>
               <Stack direction={"row"} spacing={1}>
                 {props.transaction?.isApproved ? (
-                  <Chip color="success">Approved</Chip>
+                  <Chip color="warning">Ongoing</Chip>
                 ) : (
-                  <Chip color="danger">Menunggu Approval</Chip>
-                )}
-                {props.transaction?.isDone ? (
-                  <Chip color="success">Selesai</Chip>
-                ) : (
-                  <Chip color="danger">Belum Selesai</Chip>
+                  <Chip color="neutral">Pending</Chip>
                 )}
               </Stack>
-              {/* <Typography level="body-sm">
-                Estimasi Kedatangan :{" "}
-                {formatDate(props.transaction?.expectedArrival, "DD MMMM YYYY")}
-              </Typography> */}
             </Stack>
 
             {/* BUTTONS */}
@@ -209,7 +206,7 @@ export default function TransactionDetailDialog(props: {
                       />
                     </>
                   ) : (
-                    <ApprovePurchase
+                    <ApproveTransaction
                       refetch={props.refetch}
                       transaction={props.transaction}
                     />

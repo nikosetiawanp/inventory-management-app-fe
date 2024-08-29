@@ -1,44 +1,45 @@
 import { Stack, Tab, TabList, TabPanel, Tabs, Typography } from "@mui/joy";
-import Drawer from "../../components/Drawer";
-import UnpaidDebtTab from "./UnpaidDebtTab";
-import MonthlyReportTab from "./MonthlyReportTab";
-import MultiVendorReportTab from "./MultiVendorReportTab";
 
-export default function DebtPage(props: { type: "D" | "R" }) {
+import Drawer from "../../components/Drawer";
+
+import PendingPurchaseTab from "./PendingTransactionTab";
+import ApprovedTransactionTab from "./ApprovedTransactionTab";
+import CompletedTransactionTab from "./CompletedTransactionTab";
+
+export default function PurchasePage() {
   return (
-    <Stack
-      direction={"row"}
-      height={"100vh"}
-      width={"100vw"}
-      sx={{ backgroundColor: "background" }}
-    >
+    // PAGE
+    <Stack direction={"row"} height={"100vh"} width={"100vw"}>
+      {/* DRAWER */}
       <Drawer />
+
+      {/* CONTENT */}
       <Stack padding={4} gap={2} width={1}>
         <Typography fontWeight={"bold"} level="h4">
-          {props.type == "D" ? "Hutang" : "Piutang"}
+          Pembelian
         </Typography>
+        {/* TABS */}
         <Tabs defaultValue={0} sx={{ backgroundColor: "transparent" }}>
           <TabList>
             <Tab color="primary" value={0}>
-              Belum Lunas
-            </Tab>
-            <Tab color="primary" value={1}>
-              Laporan Bulanan
+              Pending{" "}
             </Tab>
 
+            <Tab color="primary" value={1}>
+              Approved
+            </Tab>
             <Tab color="primary" value={2}>
-              Laporan Multi Vendor
+              Selesai
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ paddingX: 0 }}>
-            <UnpaidDebtTab type={props.type} />
+            <PendingPurchaseTab type={"P"} />
           </TabPanel>
           <TabPanel value={1} sx={{ paddingX: 0 }}>
-            <MonthlyReportTab />
+            <ApprovedTransactionTab type={"P"} />
           </TabPanel>
-
           <TabPanel value={2} sx={{ paddingX: 0 }}>
-            <MultiVendorReportTab type={props.type} />
+            <CompletedTransactionTab type={"P"} />
           </TabPanel>
         </Tabs>
       </Stack>

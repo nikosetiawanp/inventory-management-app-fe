@@ -7,6 +7,7 @@ import { Debt, Invoice } from "../../interfaces/interfaces";
 export default function CreateDebt(props: {
   debtAmount: number;
   invoice: Invoice;
+  type: "P" | "S";
 }) {
   const [open, setOpen] = useState(false);
   const handleClickOpen = (event: any) => {
@@ -23,7 +24,7 @@ export default function CreateDebt(props: {
 
   const dataToSubmit = {
     amount: props.debtAmount,
-    type: "D",
+    type: props.type == "P" ? "D" : "R",
     isPaid: false,
     invoiceId: props.invoice?.id,
     contactId: props.invoice?.transaction?.contactId,
@@ -58,7 +59,7 @@ export default function CreateDebt(props: {
         onClick={() => handleClickOpen(event)}
         disabled={props.invoice?.debts?.length > 0}
       >
-        Buat Hutang
+        {props.type == "P" ? "Buat Hutang" : "Buat Piutang"}
       </Button>
 
       <Modal open={open} onClose={() => setOpen(false)}>
@@ -78,10 +79,12 @@ export default function CreateDebt(props: {
           })}
         >
           <Typography id="nested-modal-title" level="h2">
-            Buat Hutang?
+            {props.type == "P" ? "Buat Hutang?" : "Buat Piutang?"}{" "}
           </Typography>
           <Typography id="nested-modal-description" textColor="text.tertiary">
-            Anda yakin ingin membuat hutang dari faktur {props.invoice.number}?
+            {props.type == "P"
+              ? `Anda yakin ingin membuat hutang dari faktur ${props.invoice.number}`
+              : `Anda yakin ingin membuat piutang dari faktur ${props.invoice.number}`}
           </Typography>
           <Box
             sx={{
@@ -107,39 +110,11 @@ export default function CreateDebt(props: {
                 createDebt.mutateAsync(dataToSubmit as any);
               }}
             >
-              Buat Hutang
+              {props.type == "P" ? "Buat Hutang" : "Buat Piutang"}{" "}
             </Button>
           </Box>
         </ModalDialog>
       </Modal>
-
-      {/* <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Buat Hutang?</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Anda yakin ingin membuat hutang dari faktur ini?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Batal</Button>
-          <Button
-            color={createDebt.isLoading ? "inherit" : "primary"}
-            onClick={() => {
-              createDebt.mutateAsync(dataToSubmit as any);
-            }}
-            autoFocus
-            disabled={createDebt.isLoading}
-            variant="contained"
-          >
-            {createDebt.isLoading ? "Membuat Hutang" : "Buat Hutang"}
-          </Button>
-        </DialogActions>
-      </Dialog> */}
     </>
   );
 }

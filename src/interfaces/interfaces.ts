@@ -36,7 +36,7 @@ export interface DebtHistory {
   id: number;
   amount: number;
   createdAt: Date;
-  type: "D" | "P";
+  type: "D" | "R" | "P";
   date: string;
 }
 
@@ -74,6 +74,7 @@ export interface Transaction {
   isApproved: boolean;
   isDone: boolean;
   contactId: string;
+  type: "P" | "S";
 
   contact: Contact;
   contacts: Contact[];

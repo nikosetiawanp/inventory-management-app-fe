@@ -11,7 +11,7 @@ import { Invoice } from "../../interfaces/interfaces";
 import InvoiceRow from "./InvoiceRow";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 
-export default function InvoicePage() {
+export default function InvoicePage(props: { type: "P" | "S" }) {
   // DATE
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -25,14 +25,17 @@ export default function InvoicePage() {
   const getInvoices = async () => {
     const response = await axios.get(
       BACKEND_URL +
-        `invoices?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
+        "invoices?" +
+        `startDate=${formattedStartDate}` +
+        `&endDate=${formattedEndDate}` +
+        `&type=${props.type}`
     );
 
     return response.data.data;
   };
 
   const invoicesQuery = useQuery({
-    queryKey: ["invoices", startDate, endDate],
+    queryKey: ["invoices", startDate, endDate, props.type],
     queryFn: () => getInvoices(),
     refetchOnWindowFocus: false,
     enabled: true,
@@ -44,8 +47,13 @@ export default function InvoicePage() {
   };
 
   useEffect(() => {
+    setStartDate(null);
+    setEndDate(null);
+  }, [props.type]);
+
+  useEffect(() => {
     getInvoices();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, props.type]);
   return (
     <>
       {/* PAGE */}
@@ -90,7 +98,7 @@ export default function InvoicePage() {
                   </th>
                   <th>
                     <Button size="sm" variant="plain" color="neutral">
-                      Nama Vendor
+                      {props.type == "P" ? "Vendor" : "Customer"}
                     </Button>
                   </th>
                   <th>
@@ -100,7 +108,7 @@ export default function InvoicePage() {
                   </th>
                   <th>
                     <Button size="sm" variant="plain" color="neutral">
-                      Status Hutang
+                      {props.type == "P" ? "Status Hutang" : "Status Piutang"}
                     </Button>
                   </th>
 

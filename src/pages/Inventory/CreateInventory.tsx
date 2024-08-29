@@ -1,5 +1,20 @@
-import { Button, Dialog, Stack, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import {
+  Autocomplete,
+  AutocompleteOption,
+  Button,
+  Chip,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  ListItemContent,
+  Modal,
+  ModalDialog,
+  Stack,
+  Typography,
+} from "@mui/joy";
+import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Inventory, Transaction } from "../../interfaces/interfaces";
@@ -7,14 +22,15 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import axios from "axios";
-import { useMutation, useQueryClient } from "react-query";
-import SelectTransaction from "../../components/select/SelectTransaction";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+
+import { InfoOutlined } from "@mui/icons-material";
+import { formatDate } from "../../helpers/dateHelpers";
 
 export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<Inventory>();
 
@@ -23,10 +39,6 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
   // VENDOR
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
-  const handlePurchaseChange = (value: any) => {
-    setSelectedTransaction(value);
-    setValue("contact", value ? value.id : "");
-  };
 
   // DATE
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -35,7 +47,7 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
   // POST INVENTORY HISTORY
   const queryClient = useQueryClient();
 
-  const createInventoryHistory = useMutation(
+  const createInventory = useMutation(
     async (data: Inventory) => {
       try {
         const response = await axios.post(BACKEND_URL + "inventories", data);
@@ -63,100 +75,199 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
     };
     try {
       console.log(dataToSubmit);
-      await createInventoryHistory.mutateAsync(dataToSubmit as any);
+      await createInventory.mutateAsync(dataToSubmit as any);
     } catch (error) {
       console.log("Mutation Error:", error);
     }
   };
 
+  // TRANSACTIONS
+  const type = props.type == "A" ? "P" : "S";
+  const getTransactions = async () => {
+    const response = await axios.get(
+      BACKEND_URL +
+        "transactions?" +
+        `type=${type}` +
+        `&isApproved=1` +
+        `&isDone=0`
+    );
+
+    return response.data.data;
+  };
+
+  const transactionsQuery = useQuery({
+    queryKey: ["transactions"],
+    queryFn: () => getTransactions(),
+    refetchOnWindowFocus: false,
+    enabled: true,
+  });
+
+  useEffect(() => {
+    console.log(transactionsQuery?.data);
+  }, []);
+
   return (
     <>
       <Button
-        startIcon={<AddIcon />}
-        variant="contained"
+        startDecorator={<AddIcon />}
+        variant="solid"
         onClick={() => setOpen(true)}
-        sx={{ marginLeft: "auto" }}
-        size="small"
       >
         {props.type == "A" ? "Catat Gudang Masuk" : "Catat Gudang Keluar"}
       </Button>
 
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        fullWidth
-        maxWidth={"xs"}
-      >
-        <form action="submit" onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Stack gap={3} padding={4}>
-            <Typography variant="h6">
-              {props.type == "A" ? "Catat Gudang Masuk" : "Catat Gudang Keluar"}
-            </Typography>
-            {/* PURCHASE */}
-            <SelectTransaction
-              selectedPurchase={selectedTransaction}
-              setSelectedPurchase={setSelectedTransaction}
-              handlePurchaseChange={handlePurchaseChange}
-            />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Tanggal masuk"
-                value={selectedDate}
-                onChange={(newValue: any) => setSelectedDate(newValue)}
-                format="DD/MM/YYYY"
-                slotProps={{
-                  field: { clearable: true },
-                }}
-              />
-            </LocalizationProvider>
-            <TextField
-              id="number"
-              label="Nomor LPB"
-              variant="outlined"
-              {...register("number", { required: "Tidak boleh kosong" })}
-              error={!!errors.number}
-              helperText={errors.number?.message}
-              required
-            />
-            <TextField
-              id="receiptNumber"
-              label="Nomor Faktur"
-              variant="outlined"
-              {...register("receiptNumber", { required: "Tidak boleh kosong" })}
-              error={!!errors.receiptNumber}
-              helperText={errors.receiptNumber?.message}
-              required
-            />
-            <TextField
-              id="description"
-              label="Deskripsi"
-              variant="outlined"
-              {...register("description")}
-              error={!!errors.description}
-              helperText={errors.description?.message}
-            />
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>
+            {props.type == "A" ? "Catat Gudang Masuk" : "Catat Gudang Keluar"}
+          </DialogTitle>
+          <form
+            action="submit"
+            onSubmit={handleSubmit(onSubmit as any)}
+            noValidate
+            style={{ overflow: "scroll" }}
+          >
+            <Stack spacing={2}>
+              {/* PURCHASE */}
+              <FormControl>
+                <Stack>
+                  <FormLabel>
+                    {props.type == "A" ? "Nomor PO" : "Nomor SO"}
+                  </FormLabel>{" "}
+                  <Autocomplete
+                    id="number"
+                    size="lg"
+                    placeholder={props.type == "A" ? "Nomor PO" : "Nomor SO"}
+                    value={selectedTransaction}
+                    onChange={(event, newValue) => {
+                      event;
+                      setSelectedTransaction(newValue);
+                    }}
+                    inputValue={
+                      selectedTransaction?.number && selectedTransaction?.number
+                    }
+                    getOptionLabel={(option: Transaction) => option.number}
+                    options={transactionsQuery.data}
+                    renderOption={(props, option: Transaction) => (
+                      <AutocompleteOption {...props} key={option.id}>
+                        <ListItemContent>
+                          <Stack direction="column">
+                            <h3>{option.number}</h3>
+                            <Typography>{option.contact.name}</Typography>
+                          </Stack>
+                        </ListItemContent>
+                        <Stack spacing={1}>
+                          <Chip variant="outlined" size="sm">
+                            {formatDate(option.date, "DD MMM YYYY")}
+                          </Chip>
+                        </Stack>
+                      </AutocompleteOption>
+                    )}
+                  />
+                </Stack>
+              </FormControl>
+              <Stack spacing={1}>
+                <FormLabel>Tanggal</FormLabel>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={selectedDate}
+                    onChange={(newValue: any) => setSelectedDate(newValue)}
+                    format="DD/MM/YYYY"
+                    slotProps={{
+                      field: { clearable: true },
+                      textField: {
+                        size: "small",
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </Stack>
+              <FormControl error={errors.number?.message !== ""}>
+                <Stack spacing={0}>
+                  <FormLabel>Nomor LPB</FormLabel>
+                  <Input
+                    id="number"
+                    placeholder="Nama"
+                    {...register("number", { required: "Tidak boleh kosong" })}
+                    error={!!errors.number}
+                    size="lg"
+                  />
+                  {errors.number?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.number?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+              <FormControl error={errors.receiptNumber?.message !== ""}>
+                <Stack spacing={0}>
+                  <FormLabel>Nomor Faktur</FormLabel>
+                  <Input
+                    id="receiptNumber"
+                    placeholder="Nomor Faktur"
+                    {...register("receiptNumber", {
+                      required: "Tidak boleh kosong",
+                    })}
+                    error={!!errors.receiptNumber}
+                    size="lg"
+                  />
+                  {errors.receiptNumber?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.receiptNumber?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
 
-            {/* ACTIONS */}
-            <Stack
-              direction={"row"}
-              width={1}
-              justifyContent={"flex-end"}
-              gap={1}
-            >
-              <Button onClick={() => setOpen(false)} type="button">
-                Batal
-              </Button>
-              <Button
-                variant={"contained"}
-                type="submit"
-                disabled={createInventoryHistory.isLoading}
+              <FormControl error={errors.description?.message !== ""}>
+                <Stack spacing={0}>
+                  <FormLabel>Deskripsi</FormLabel>
+                  <Input
+                    id="description"
+                    placeholder="Nama"
+                    {...register("description", {
+                      required: "Tidak boleh kosong",
+                    })}
+                    error={!!errors.description}
+                    size="lg"
+                  />
+                  {errors.description?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.description?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+              <Stack
+                direction={"row"}
+                width={1}
+                justifyContent={"flex-end"}
+                gap={1}
               >
-                {createInventoryHistory.isLoading ? "Menyimpan" : "Simpan"}
-              </Button>
+                <Button
+                  onClick={() => setOpen(false)}
+                  type="button"
+                  variant="outlined"
+                  color="neutral"
+                >
+                  Batal
+                </Button>
+                <Button
+                  variant={"solid"}
+                  disabled={createInventory.isLoading}
+                  type="button"
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  {createInventory.isLoading ? "Menyimpan" : "Simpan"}
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-        </form>
-      </Dialog>
+          </form>
+        </ModalDialog>
+      </Modal>
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 
@@ -15,7 +15,7 @@ import { formatIDR } from "../../helpers/currencyHelpers";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import { formatDate } from "../../helpers/dateHelpers";
 
-export default function UnpaidDebtTab() {
+export default function UnpaidDebtTab(props: { type: "D" | "R" }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   // DATE
@@ -36,7 +36,7 @@ export default function UnpaidDebtTab() {
       BACKEND_URL +
         "debts?" +
         "isPaid=0" +
-        "&type=D" +
+        `&type=${props.type}` +
         `&startDate=${startDate ? formatDate(startDate, "YYYY-MM-DD") : ""}` +
         `&endDate=${endDate ? formatDate(endDate, "YYYY-MM-DD") : ""}`
     );
@@ -49,7 +49,7 @@ export default function UnpaidDebtTab() {
   };
 
   const debtsQuery = useQuery({
-    queryKey: ["debts", startDate, endDate],
+    queryKey: ["debts", startDate, endDate, props.type],
     queryFn: getDebts,
     refetchOnWindowFocus: false,
     enabled: true,
@@ -94,14 +94,14 @@ export default function UnpaidDebtTab() {
     }
 
     // SORT CONTACT ASCENDING
-    if (sortConfig.key == "vendor" && sortConfig.direction == "ascending") {
+    if (sortConfig.key == "contact" && sortConfig.direction == "ascending") {
       return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
         a?.contact?.name?.localeCompare(b?.contact?.name)
       );
     }
 
     // SORT CONTACT ASCENDING
-    if (sortConfig.key == "vendor" && sortConfig.direction == "descending") {
+    if (sortConfig.key == "contact" && sortConfig.direction == "descending") {
       return filteredDebtsQuery?.sort((a: Debt, b: Debt) =>
         b?.contact?.name?.localeCompare(a?.contact?.name)
       );
@@ -119,6 +119,11 @@ export default function UnpaidDebtTab() {
         )
         .flat()
     : [];
+
+  useEffect(() => {
+    setStartDate(null);
+    setEndDate(null);
+  }, [props.type]);
 
   return (
     <Stack gap={2} width={1}>
@@ -168,7 +173,7 @@ export default function UnpaidDebtTab() {
           }}
         >
           <Typography level="body-md" color={"neutral"}>
-            Sisa Hutang
+            {props.type == "D" ? "Sisa Hutang" : "Sisa Piutang"}
           </Typography>
           <h2>
             <Typography color="danger">
@@ -192,7 +197,7 @@ export default function UnpaidDebtTab() {
           data={contacts}
           includedData={includedData}
           setIncludedData={setIncludedData}
-          label={"Vendor"}
+          label={props.type == "D" ? "Vendor" : "Customer"}
         />
       </Stack>
 
@@ -220,10 +225,10 @@ export default function UnpaidDebtTab() {
               </th>
               <th style={{ width: 120 }}>
                 <SortButton
-                  sortConfigKey="vendor"
+                  sortConfigKey="contact"
                   sortConfig={sortConfig}
                   setSortConfig={setSortConfig}
-                  label={"Vendor"}
+                  label={props.type == "D" ? "Vendor" : "Customer"}
                 />
               </th>
               <th>
