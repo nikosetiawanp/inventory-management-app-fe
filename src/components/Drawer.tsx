@@ -1,15 +1,18 @@
 import {
+  Avatar,
   Box,
+  DialogContent,
+  DialogTitle,
   Divider,
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
-  ListItemText,
+  ListItemDecorator,
   ListSubheader,
-  Skeleton,
+  Sheet,
   Stack,
-} from "@mui/material";
+  Typography,
+} from "@mui/joy";
 import { useNavigate } from "react-router-dom";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -30,53 +33,53 @@ export default function Drawer() {
     {
       name: "Kontak",
       param: "/contact",
-      category: "Daftar",
-      icon: <AccountCircleIcon />,
+      category: "List",
+      icon: <AccountCircleIcon fontSize="small" />,
     },
     {
       name: "Produk",
       param: "/product",
-      category: "Daftar",
-      icon: <CategoryIcon />,
+      category: "List",
+      icon: <CategoryIcon fontSize="small" />,
     },
     {
       name: "Akun",
       param: "/account",
-      category: "Daftar",
-      icon: <AccountBalanceIcon />,
+      category: "List",
+      icon: <AccountBalanceIcon fontSize="small" />,
     },
     // PURCHASE
     {
       name: "Purchase Order",
       param: "/purchase-order",
       category: "Pembelian",
-      icon: <ShoppingCartIcon />,
+      icon: <ShoppingCartIcon fontSize="small" />,
     },
     {
       name: "Faktur",
       param: "/purchase-invoice",
       category: "Pembelian",
-      icon: <ReceiptIcon />,
+      icon: <ReceiptIcon fontSize="small" />,
     },
     // SALES
     {
       name: "Penjualan",
       param: "/sales-order",
       category: "Penjualan",
-      icon: <ShoppingCartIcon />,
+      icon: <ShoppingCartIcon fontSize="small" />,
     },
     {
       name: "Faktur",
       param: "/sales-invoice",
       category: "Penjualan",
-      icon: <ReceiptIcon />,
+      icon: <ReceiptIcon fontSize="small" />,
     },
     // DEBT
     {
       name: "Hutang",
       param: "/debt",
       category: "Hutang Piutang",
-      icon: <PaidIcon />,
+      icon: <PaidIcon fontSize="small" />,
     },
     {
       name: "Piutang",
@@ -88,66 +91,93 @@ export default function Drawer() {
       name: "Gudang Masuk",
       param: "/inventory-arrival",
       category: "Gudang",
-      icon: <InputIcon />,
+      icon: <InputIcon fontSize="small" />,
     },
     {
       name: "Gudang Keluar",
       param: "/inventory-departure",
       category: "Gudang",
-      icon: <OutputIcon />,
+      icon: <OutputIcon fontSize="small" />,
     },
     {
       name: "Kas",
       param: "/cash",
       category: "Kas",
-      icon: <AccountBalanceWalletIcon />,
+      icon: <AccountBalanceWalletIcon fontSize="small" />,
     },
     {
       name: "General",
       param: "/general",
       category: "Kas",
-      icon: <BalanceIcon />,
+      icon: <BalanceIcon fontSize="small" />,
     },
   ];
+
   return (
-    <Box
+    <Sheet
       sx={{
         height: 1,
         minWidth: "256px",
         borderRight: 1,
         borderColor: "divider",
+        direction: "column",
       }}
     >
+      {/* OVERFLOW */}
       <Stack height={1} overflow={"scroll"}>
-        <List>
-          {/* LOGO */}
-          <ListItem>
-            <Skeleton variant="rounded" width={"100%"} height={50} />
-          </ListItem>
-          <Divider sx={{ marginY: 1 }} />
-          {/* BUTTON */}
-          <ListItem></ListItem>
-
-          {links.map((item, index) => (
-            <div key={index}>
-              {links[index]?.category !== links[index - 1]?.category && (
-                <ListSubheader key={item.category}>
-                  {item.category}
-                </ListSubheader>
-              )}
-              <ListItem key={index} disablePadding>
+        {/* LOGO */}
+        <Stack paddingX={2} paddingY={1}>
+          <DialogTitle level="title-lg">Logo</DialogTitle>
+        </Stack>
+        <Divider sx={{ marginY: 1 }} />
+        <DialogContent>
+          <List size="md">
+            {links.map((item, index) => (
+              <ListItem nested>
+                {links[index]?.category !== links[index - 1]?.category && (
+                  <ListSubheader
+                    key={item.category}
+                    sx={{ marginTop: index > 0 ? 1.5 : 0 }}
+                    // sx={index > 0 && { marginTop: 1 }}
+                  >
+                    {/* <b> */}
+                    {item.category}
+                    {/* </b> */}
+                  </ListSubheader>
+                )}
                 <ListItemButton
+                  color={item.param == endpoint ? "primary" : "neutral"}
+                  variant={item.param == endpoint ? "soft" : "plain"}
+                  sx={{ marginX: "1px", borderRadius: 1 }}
                   onClick={() => navigate(item.param)}
-                  selected={endpoint == item.param}
+                  // selected={item.param == endpoint}
                 >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.name}></ListItemText>
+                  <ListItemDecorator>{item.icon}</ListItemDecorator>
+                  {item.name}
                 </ListItemButton>
               </ListItem>
-            </div>
-          ))}
-        </List>
+            ))}
+          </List>
+        </DialogContent>
+
+        {/* USER */}
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            p: 1.5,
+            pb: 2,
+            borderTop: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          <Avatar size="lg" />
+          <div>
+            <Typography level="title-md">Username</Typography>
+            <Typography level="body-sm">joined 20 Jun 2023</Typography>
+          </div>
+        </Box>
       </Stack>
-    </Box>
+    </Sheet>
   );
 }
