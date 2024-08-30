@@ -109,10 +109,13 @@ export default function InvoiceDetailDialog(props: {
                 {formatDate(props.invoice?.dueDate, "DD MMMM YYYY")}
               </Typography>
               <Typography level="body-sm">
-                {props.invoice?.transaction?.type == "P"
+                {props.invoice.transaction.type == "P"
                   ? "Nomor PO"
                   : "Nomor SO"}{" "}
-                : {props.invoice?.inventory.number}
+                : {props.invoice.transaction.number}
+              </Typography>
+              <Typography level="body-sm">
+                Nomor Surat Jalan : {props.invoice?.inventory.number}
               </Typography>
             </Stack>
             {/* BUTTONS */}

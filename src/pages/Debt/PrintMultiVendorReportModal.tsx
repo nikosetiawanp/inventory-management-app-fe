@@ -12,6 +12,7 @@ export default function PrintMultiVendorReportModal(props: {
   startDate: string | null;
   endDate: string | null;
   contacts: MonthlyDebt[];
+  type: "D" | "R";
 }) {
   const [open, setOpen] = useState(false);
   const formattedStartDate = formatDate(props.startDate, "DD MMMM YYYY");
@@ -95,7 +96,9 @@ export default function PrintMultiVendorReportModal(props: {
               {/* HEADER & TITLE */}
               <Stack alignItems="center">
                 <Typography>
-                  <b>Data Hutang</b>
+                  <b>
+                    {props.type == "D" || "R" ? "Data Hutang" : "Data Piutang"}
+                  </b>
                 </Typography>
                 <Typography
                   component="h3"
@@ -104,7 +107,7 @@ export default function PrintMultiVendorReportModal(props: {
                   color="primary"
                   fontWeight="lg"
                 >
-                  Kartu Hutang
+                  {props.type == "D" || "R" ? "Kartu Hutang" : "Kartu Piutang"}{" "}
                 </Typography>
                 <Typography color="danger">
                   <b>
@@ -117,19 +120,23 @@ export default function PrintMultiVendorReportModal(props: {
 
               {/* DATA */}
               <Stack spacing={4} height={1}>
-                {props.contacts?.map((vendor: MonthlyDebt, index: number) => {
-                  const arrayOfHistoryAmount = vendor?.histories?.map(
+                {props.contacts?.map((contact: MonthlyDebt, index: number) => {
+                  const arrayOfHistoryAmount = contact?.histories?.map(
                     (history: DebtHistory) =>
-                      history?.type == "D"
+                      history?.type == "D" || history?.type == "R"
                         ? history?.amount
-                        : history?.amount * -1
+                        : 0 - history?.amount
                   );
 
-                  const arrayOfDebts = vendor?.histories
+                  const arrayOfDebts = contact?.histories
                     ?.filter((history: DebtHistory) => history?.type == "D")
                     .map((history: DebtHistory) => history?.amount);
 
-                  const arrayOfPayments = vendor?.histories
+                  const arrayOfReceivables = contact?.histories
+                    ?.filter((history: DebtHistory) => history?.type == "R")
+                    .map((history: DebtHistory) => history?.amount);
+
+                  const arrayOfPayments = contact?.histories
                     ?.filter((history: DebtHistory) => history?.type == "P")
                     .map((history: DebtHistory) => history?.amount);
 
@@ -137,7 +144,7 @@ export default function PrintMultiVendorReportModal(props: {
                     <Stack key={index} justifyContent={"center"}>
                       <Typography color="primary" textAlign={"center"}>
                         <b>
-                          {vendor?.name} | {vendor?.code}
+                          {contact?.name} | {contact?.code}
                         </b>
                       </Typography>
 
@@ -169,11 +176,17 @@ export default function PrintMultiVendorReportModal(props: {
                             <td></td>
                             <td></td>
                             <td style={{ fontSize: "12px" }}>
-                              {formatIDR(props.contacts[index].initialBalance)}
+                              {props.type == "D"
+                                ? formatIDR(
+                                    props.contacts[index].initialBalance
+                                  )
+                                : formatIDR(
+                                    0 - props.contacts[index].initialBalance
+                                  )}
                             </td>
                           </tr>
 
-                          {vendor?.histories?.map(
+                          {contact?.histories?.map(
                             (history: DebtHistory, index: number) => (
                               <tr key={index}>
                                 <td style={{ fontSize: "12px" }}>
@@ -194,29 +207,45 @@ export default function PrintMultiVendorReportModal(props: {
                               </td> */}
                                 <td style={{ fontSize: "12px" }}>
                                   <Typography color="success">
-                                    {history?.type == "D"
+                                    {history?.type == "D" && props.type == "D"
+                                      ? formatIDR(history?.amount)
+                                      : history?.type == "P" &&
+                                        props.type == "R"
                                       ? formatIDR(history?.amount)
                                       : formatIDR(0)}
                                   </Typography>
                                 </td>
                                 <td style={{ fontSize: "12px" }}>
                                   <Typography color="danger">
-                                    {history?.type == "P"
+                                    {history?.type == "R" && props.type == "R"
+                                      ? formatIDR(history?.amount)
+                                      : history?.type == "P" &&
+                                        props.type == "D"
                                       ? formatIDR(history?.amount)
                                       : formatIDR(0)}
                                   </Typography>
                                 </td>
                                 <td style={{ fontSize: "12px" }}>
-                                  {formatIDR(
-                                    arrayOfHistoryAmount &&
-                                      vendor?.initialBalance +
-                                        sum(
-                                          arrayOfHistoryAmount.slice(
-                                            0,
-                                            index + 1
+                                  {props.type == "D"
+                                    ? formatIDR(
+                                        contact?.initialBalance +
+                                          sum(
+                                            arrayOfHistoryAmount.slice(
+                                              0,
+                                              index + 1
+                                            )
                                           )
-                                        )
-                                  )}
+                                      )
+                                    : formatIDR(
+                                        contact?.initialBalance +
+                                          sum(
+                                            arrayOfHistoryAmount.slice(
+                                              0,
+                                              index + 1
+                                            )
+                                          ) *
+                                            -1
+                                      )}
                                 </td>
                               </tr>
                             )
@@ -229,19 +258,30 @@ export default function PrintMultiVendorReportModal(props: {
                             </td>
                             <td></td>
                             <td></td>
-                            {/* <td></td> */}
                             <td style={{ fontSize: "12px" }}>
                               <Typography color="success">
-                                {formatIDR(sum(arrayOfDebts))}
+                                <b>
+                                  {props.type == "D"
+                                    ? formatIDR(sum(arrayOfDebts))
+                                    : formatIDR(sum(arrayOfPayments))}
+                                </b>
                               </Typography>
                             </td>
                             <td style={{ fontSize: "12px" }}>
                               <Typography color="danger">
-                                {formatIDR(sum(arrayOfPayments))}
+                                <b>
+                                  {props.type == "D"
+                                    ? formatIDR(sum(arrayOfPayments))
+                                    : formatIDR(sum(arrayOfReceivables))}
+                                </b>
                               </Typography>
                             </td>
                             <td style={{ fontSize: "12px" }}>
-                              <b>{formatIDR(vendor?.currentBalance)}</b>
+                              <b>
+                                {props.type == "D"
+                                  ? formatIDR(contact?.currentBalance)
+                                  : formatIDR(0 - contact?.currentBalance)}
+                              </b>
                             </td>
                           </tr>
                         </tfoot>

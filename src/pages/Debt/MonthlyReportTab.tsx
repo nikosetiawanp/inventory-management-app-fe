@@ -12,11 +12,10 @@ import { formatIDR } from "../../helpers/currencyHelpers";
 import SortButton from "../../components/buttons/SortButton";
 
 import { formatDate } from "../../helpers/dateHelpers";
-import { sum } from "../../helpers/calculationHelpers";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintMonthlyReportModal from "./PrintMonthlyReportModal";
 
-export default function MonthlyReportTab() {
+export default function MonthlyReportTab(props: { type: "D" | "R" }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   const [startDate, setStartDate] = useState(null);
@@ -42,63 +41,28 @@ export default function MonthlyReportTab() {
     enabled: true,
   });
 
-  // const getDebts = async () => {
-  //   const response = await axios.get(
-  //     BACKEND_URL +
-  //       "debts?" +
-  //       `&startDate=${selectedStartDate ? formattedStartDate : ""}` +
-  //       `&endDate=${selectedEndDate ? formattedEndDate : ""}`
-  //   );
-  //   return response.data.data;
-  // };
-
-  // const refetch = () => {
-  //   getDebts();
-  //   debtsQuery.refetch();
-  // };
-
-  // const debtsQuery = useQuery({
-  //   queryKey: ["debts", selectedStartDate, selectedEndDate],
-  //   queryFn: getDebts,
-  //   refetchOnWindowFocus: false,
-  //   enabled: true,
-  // });
-
   // const [searchInput, setSearchInput] = useState("");
   const [sortConfig, setSortConfig] = useState({
-    key: "vendor",
+    key: "contact",
     direction: "ascending",
   });
 
   // SORT DATA
   const sortedData = useMemo(() => {
     // SORT CONTACT ASCENDING
-    if (sortConfig.key == "vendor" && sortConfig.direction == "ascending") {
+    if (sortConfig.key == "contact" && sortConfig.direction == "ascending") {
       return vendorDebtsQuery?.data?.sort((a: Contact, b: Contact) =>
         a?.name?.localeCompare(b?.name)
       );
     }
 
     // SORT CONTACT ASCENDING
-    if (sortConfig.key == "vendor" && sortConfig.direction == "descending") {
+    if (sortConfig.key == "contact" && sortConfig.direction == "descending") {
       return vendorDebtsQuery?.data?.sort((a: Contact, b: Contact) =>
         b?.name?.localeCompare(a?.name)
       );
     }
   }, [vendorDebtsQuery, sortConfig]);
-
-  const arrayOfInitialBalance = vendorDebtsQuery?.data?.map(
-    (contact: MonthlyDebt) => contact.initialBalance
-  );
-  const arrayOfTotalDebt = vendorDebtsQuery?.data?.map(
-    (contact: MonthlyDebt) => contact.totalDebt
-  );
-  const arrayOfTotalPayment = vendorDebtsQuery?.data?.map(
-    (contact: MonthlyDebt) => contact.totalPayment
-  );
-  const arrayOfCurrentBalance = vendorDebtsQuery?.data?.map(
-    (contact: MonthlyDebt) => contact.currentBalance
-  );
 
   const refetch = () => {
     getMonthlyDebts();
@@ -108,78 +72,13 @@ export default function MonthlyReportTab() {
     refetch();
   }, [startDate, endDate]);
 
+  useEffect(() => {
+    setStartDate(null);
+    setEndDate(null);
+  }, [props.type]);
+
   return (
     <Stack gap={2} width={1}>
-      <Stack direction={"row"} gap={2} width={1}>
-        {/* SALDO AWAL */}
-        <Sheet
-          sx={{
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 0,
-            padding: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography level="body-md" color={"neutral"}>
-            Total Saldo Awal
-          </Typography>
-          <Typography color="neutral">
-            <h2>{formatIDR(sum(arrayOfInitialBalance))}</h2>
-          </Typography>
-        </Sheet>
-        {/* PEMBELIAN */}
-        <Sheet
-          sx={{
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 0,
-            padding: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography level="body-md" color={"neutral"}>
-            Total Pembelian
-          </Typography>
-          <Typography color="success">
-            <h2>{formatIDR(sum(arrayOfTotalDebt))}</h2>
-          </Typography>
-        </Sheet>
-
-        {/* PEMBAYARAN */}
-        <Sheet
-          sx={{
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 0,
-            padding: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography level="body-md" color={"neutral"}>
-            Total Pembayaran
-          </Typography>
-          <Typography color="danger">
-            <h2>{formatIDR(sum(arrayOfTotalPayment))}</h2>
-          </Typography>
-        </Sheet>
-
-        {/* SALDO AKHIR */}
-        <Sheet
-          sx={{
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 0,
-            padding: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography level="body-md" color={"neutral"}>
-            Total Saldo Akhir
-          </Typography>
-          <h2>{formatIDR(sum(arrayOfCurrentBalance))}</h2>
-        </Sheet>
-      </Stack>
       {/* FILTERS */}
       <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
         <DateFilterCopy
@@ -194,6 +93,7 @@ export default function MonthlyReportTab() {
           startDate={startDate}
           endDate={endDate}
           contacts={vendorDebtsQuery?.data}
+          type={props.type}
         />
       </Stack>
 
@@ -206,10 +106,10 @@ export default function MonthlyReportTab() {
             <tr>
               <th>
                 <SortButton
-                  sortConfigKey="vendor"
+                  sortConfigKey="contact"
                   sortConfig={sortConfig}
                   setSortConfig={setSortConfig}
-                  label={"Vendor"}
+                  label={props.type == "D" ? "Vendor" : "Customer"}
                 />
               </th>
               <th>
@@ -219,13 +119,13 @@ export default function MonthlyReportTab() {
               </th>
               <th>
                 <Button size="sm" variant="plain" color="neutral">
-                  Pembelian
+                  Debit
                 </Button>
               </th>
 
               <th>
                 <Button size="sm" variant="plain" color="neutral">
-                  Pembayaran
+                  Kredit
                 </Button>
               </th>
               <th>
@@ -256,26 +156,27 @@ export default function MonthlyReportTab() {
                   </td>
                   <td style={{ paddingLeft: 15 }}>
                     <Typography color="success">
-                      {formatIDR(contact?.totalDebt)}
+                      {props.type == "D"
+                        ? formatIDR(contact?.totalDebt)
+                        : formatIDR(contact?.totalPayment)}
                     </Typography>
                   </td>
                   <td style={{ paddingLeft: 15 }}>
                     <Typography color="danger">
-                      {formatIDR(contact?.totalPayment)}
+                      {props.type == "D"
+                        ? formatIDR(contact?.totalPayment)
+                        : formatIDR(contact?.totalDebt)}
                     </Typography>
                   </td>
                   <td style={{ paddingLeft: 15 }}>
                     <Typography>
-                      <b> {formatIDR(contact?.currentBalance)}</b>
+                      <b>
+                        {props.type == "D"
+                          ? formatIDR(contact?.currentBalance)
+                          : formatIDR(0 - contact?.currentBalance)}
+                      </b>
                     </Typography>
-                  </td>{" "}
-                  {/* <td style={{ paddingLeft: 15 }}>
-                    <Typography color="neutral">
-                      {formatIDR(
-                        totalDebt(contact.debts) - totalPayment(contact.debts)
-                      )}
-                    </Typography>
-                  </td> */}
+                  </td>
                   <td style={{ width: 50 }}></td>
                 </tr>
               ))

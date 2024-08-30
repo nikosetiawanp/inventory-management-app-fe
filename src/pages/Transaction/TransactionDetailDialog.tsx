@@ -159,6 +159,7 @@ export default function TransactionDetailDialog(props: {
                 {props.transaction?.type == "P"
                   ? "Purchase Order"
                   : "Sales Order"}
+                'tambah tombol print'
               </Typography>
               <Typography level="h4" fontWeight="bold">
                 {props.transaction?.number}

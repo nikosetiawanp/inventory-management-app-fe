@@ -34,7 +34,7 @@ export default function DebtPage(props: { type: "D" | "R" }) {
             <UnpaidDebtTab type={props.type} />
           </TabPanel>
           <TabPanel value={1} sx={{ paddingX: 0 }}>
-            <MonthlyReportTab />
+            <MonthlyReportTab type={props.type} />
           </TabPanel>
 
           <TabPanel value={2} sx={{ paddingX: 0 }}>

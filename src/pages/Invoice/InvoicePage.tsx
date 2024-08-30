@@ -52,7 +52,7 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
   }, [props.type]);
 
   useEffect(() => {
-    getInvoices();
+    refetch();
   }, [startDate, endDate, props.type]);
   return (
     <>
@@ -63,7 +63,7 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
         {/* TITLE */}
         <Stack padding={4} width={1} spacing={2}>
           <Typography fontWeight={"bold"} level="h4">
-            Faktur
+            {props.type == "P" ? "Faktur Pembelian" : "Faktur Penjualan"}
           </Typography>
 
           {/* DATE FILTER */}
@@ -106,7 +106,7 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
                       Jatuh Tempo
                     </Button>
                   </th>
-                  <th>
+                  <th style={{ textAlign: "center" }}>
                     <Button size="sm" variant="plain" color="neutral">
                       {props.type == "P" ? "Status Hutang" : "Status Piutang"}
                     </Button>

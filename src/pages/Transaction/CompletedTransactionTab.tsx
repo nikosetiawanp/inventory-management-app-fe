@@ -123,7 +123,7 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
       {/* CONTENT */}
       <Stack>
         {/*TITLE & CREATE PRODUCT */}
-
+        Kasih tombol print
         <Stack
           direction={"row"}
           marginBottom={2}
@@ -147,7 +147,6 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
             label={props.type == "P" ? "Vendor" : "Customer"}
           />
         </Stack>
-
         <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
           <Table size="sm" stickyHeader stickyFooter>
             {/* HEAD */}

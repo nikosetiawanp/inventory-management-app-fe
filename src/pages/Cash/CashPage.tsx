@@ -10,6 +10,7 @@ import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import { formatDate } from "../../helpers/dateHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
+import CreateCash from "./CreateCash";
 
 export default function CashPage() {
   const [startDate, setStartDate] = useState(null);
@@ -64,6 +65,9 @@ export default function CashPage() {
             refetch={refetch}
             label="Tanggal Faktur"
           />{" "}
+          <Stack marginLeft="auto">
+            <CreateCash />
+          </Stack>
         </Stack>
 
         {/* TABLE */}

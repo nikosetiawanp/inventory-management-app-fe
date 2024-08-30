@@ -12,6 +12,7 @@ export default function PrintMonthlyReportModal(props: {
   startDate: string | null;
   endDate: string | null;
   contacts: MonthlyDebt[];
+  type: "D" | "R";
 }) {
   const [open, setOpen] = useState(false);
   const formattedStartDate = formatDate(props.startDate, "DD MMMM YYYY");
@@ -108,7 +109,7 @@ export default function PrintMonthlyReportModal(props: {
               {/* HEADER & TITLE */}
               <Stack alignItems="center">
                 <Typography>
-                  <b>Data Hutang</b>
+                  <b>{props.type == "D" ? "Data Hutang" : "Data Piutang"}</b>
                 </Typography>
                 <Typography
                   component="h3"
@@ -117,7 +118,9 @@ export default function PrintMonthlyReportModal(props: {
                   color="primary"
                   fontWeight="lg"
                 >
-                  Laporan Saldo Hutang
+                  {props.type == "D"
+                    ? "Laporan Saldo Hutang"
+                    : "Laporan Saldo Piutang"}
                 </Typography>
                 <Typography color="danger">
                   <b>
@@ -133,7 +136,9 @@ export default function PrintMonthlyReportModal(props: {
                 <Table size="sm">
                   <thead>
                     <tr>
-                      <th style={{ fontSize: "12px" }}>Vendor</th>
+                      <th style={{ fontSize: "12px" }}>
+                        {props.type == "D" ? "Vendor" : "Customer"}
+                      </th>
                       <th style={{ fontSize: "12px" }}>Saldo Awal </th>
                       <th style={{ fontSize: "12px" }}>Pembelian</th>
 
@@ -151,16 +156,25 @@ export default function PrintMonthlyReportModal(props: {
                           </td>
                           <td style={{ fontSize: "12px" }}>
                             <Typography color="success">
-                              {formatIDR(contact?.totalDebt)}
+                              {props.type == "D"
+                                ? formatIDR(contact?.totalDebt)
+                                : formatIDR(contact?.totalPayment)}
                             </Typography>
                           </td>
                           <td style={{ fontSize: "12px" }}>
                             <Typography color="danger">
-                              {formatIDR(contact?.totalPayment)}
+                              {props.type == "D"
+                                ? formatIDR(contact?.totalPayment)
+                                : formatIDR(contact?.totalDebt)}
                             </Typography>
                           </td>
                           <td style={{ fontSize: "12px" }}>
-                            <b>{formatIDR(contact?.currentBalance)}</b>
+                            <b>
+                              {" "}
+                              {props.type == "D"
+                                ? formatIDR(contact?.currentBalance)
+                                : formatIDR(0 - contact?.currentBalance)}
+                            </b>
                           </td>
                         </tr>
                       );
@@ -175,13 +189,30 @@ export default function PrintMonthlyReportModal(props: {
                         <b>{formatIDR(sum(arrayOfInitialBalance))}</b>
                       </td>
                       <td style={{ fontSize: "12px" }}>
-                        <b> {formatIDR(sum(arrayOfTotalDebt))}</b>
+                        <Typography color="success">
+                          <b>
+                            {props.type == "D"
+                              ? formatIDR(sum(arrayOfTotalDebt))
+                              : formatIDR(sum(arrayOfTotalPayment))}
+                          </b>
+                        </Typography>
                       </td>
                       <td style={{ fontSize: "12px" }}>
-                        <b> {formatIDR(sum(arrayOfTotalPayment))}</b>
+                        <Typography color="danger">
+                          <b>
+                            {" "}
+                            {props.type == "D"
+                              ? formatIDR(sum(arrayOfTotalPayment))
+                              : formatIDR(sum(arrayOfTotalDebt))}
+                          </b>
+                        </Typography>
                       </td>
                       <td style={{ fontSize: "12px" }}>
-                        <b>{formatIDR(sum(arrayOfCurrentBalance))}</b>
+                        <b>
+                          {props.type == "D"
+                            ? formatIDR(sum(arrayOfCurrentBalance))
+                            : formatIDR(0 - sum(arrayOfCurrentBalance))}
+                        </b>
                       </td>{" "}
                     </tr>
                   </tfoot>

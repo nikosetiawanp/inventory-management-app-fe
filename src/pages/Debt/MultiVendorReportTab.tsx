@@ -45,7 +45,7 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
     return response.data;
   };
 
-  const vendorDebtsQuery = useQuery({
+  const contactDebtsQuery = useQuery({
     queryKey: [
       "debt-history",
       startDate,
@@ -83,7 +83,7 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
 
   const refetch = () => {
     getMonthlyDebts();
-    vendorDebtsQuery.refetch();
+    contactDebtsQuery.refetch();
   };
 
   useEffect(() => {
@@ -97,77 +97,6 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
 
   return (
     <Stack gap={2} width={1}>
-      <Stack direction={"row"} gap={2} width={1}>
-        {/* SALDO AWAL */}
-        <Sheet
-          sx={{
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 0,
-            padding: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography level="body-md" color={"neutral"}>
-            Total Saldo Awal
-          </Typography>
-          <Typography color="neutral">
-            {/* <h2>{formatIDR(sum(arrayOfInitialBalance))}</h2> */}
-          </Typography>
-        </Sheet>
-        {/* PEMBELIAN */}
-        <Sheet
-          sx={{
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 0,
-            padding: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography level="body-md" color={"neutral"}>
-            {props.type == "D" ? "Total Pembelian" : "Total Penjualan"}
-          </Typography>
-          <Typography color="success">
-            {/* <h2>{formatIDR(sum(arrayOfTotalDebt))}</h2> */}
-          </Typography>
-        </Sheet>
-
-        {/* PEMBAYARAN */}
-        <Sheet
-          sx={{
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 0,
-            padding: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography level="body-md" color={"neutral"}>
-            Total Pembayaran
-          </Typography>
-          <Typography color="danger">
-            {/* <h2>{formatIDR(sum(arrayOfTotalPayment))}</h2> */}
-          </Typography>
-        </Sheet>
-
-        {/* SALDO AKHIR */}
-        <Sheet
-          sx={{
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 0,
-            padding: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography level="body-md" color={"neutral"}>
-            Total Saldo Akhir
-          </Typography>
-          {/* <h2>{formatIDR(sum(arrayOfCurrentBalance))}</h2> */}
-        </Sheet>
-      </Stack>
-
       {/* FILTERS */}
       <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
         <ChecklistFilter
@@ -188,7 +117,8 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
         <PrintMultiVendorReportModal
           startDate={startDate}
           endDate={endDate}
-          contacts={vendorDebtsQuery?.data}
+          contacts={contactDebtsQuery?.data}
+          type={props.type}
         />
       </Stack>
 
@@ -201,22 +131,23 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
         maxHeight={"100vh"} // Ensure it doesn't exceed the viewport height
         overflow={"scroll"}
       >
-        {vendorDebtsQuery?.data?.map((vendor: MonthlyDebt, index: number) => {
-          const arrayOfHistoryAmount = vendor?.histories?.map(
+        {contactDebtsQuery?.data?.map((contact: MonthlyDebt, index: number) => {
+          const arrayOfHistoryAmount = contact?.histories?.map(
             (history: DebtHistory) =>
               history?.type == "D" || history?.type == "R"
                 ? history?.amount
-                : history?.amount * -1
+                : 0 - history?.amount
           );
 
-          const arrayOfDebts = vendor?.histories
-            ?.filter(
-              (history: DebtHistory) =>
-                history?.type == "D" || history?.type == "R"
-            )
+          const arrayOfDebts = contact?.histories
+            ?.filter((history: DebtHistory) => history?.type == "D")
             .map((history: DebtHistory) => history?.amount);
 
-          const arrayOfPayments = vendor?.histories
+          const arrayOfReceivables = contact?.histories
+            ?.filter((history: DebtHistory) => history?.type == "R")
+            .map((history: DebtHistory) => history?.amount);
+
+          const arrayOfPayments = contact?.histories
             ?.filter((history: DebtHistory) => history?.type == "P")
             .map((history: DebtHistory) => history?.amount);
 
@@ -224,7 +155,7 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
             <Stack key={index}>
               <Typography color="primary">
                 <b>
-                  {vendor?.name} | {vendor?.code}
+                  {contact?.name} | {contact?.code}
                 </b>
               </Typography>
               <Sheet
@@ -283,18 +214,23 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
                       <td></td>
                       <td style={{ paddingLeft: 15 }}>
                         <b>
-                          {formatIDR(
-                            vendorDebtsQuery?.data[index].initialBalance
-                          )}
+                          {props.type == "D"
+                            ? formatIDR(
+                                contactDebtsQuery?.data[index].initialBalance
+                              )
+                            : formatIDR(
+                                0 -
+                                  contactDebtsQuery?.data[index].initialBalance
+                              )}
                         </b>
                       </td>
                       <td></td>
                     </tr>
 
-                    {vendorDebtsQuery?.isLoading ? (
+                    {contactDebtsQuery?.isLoading ? (
                       <RowSkeleton rows={15} columns={6} />
                     ) : (
-                      vendor?.histories?.map(
+                      contact?.histories?.map(
                         (history: DebtHistory, index: number) => (
                           <tr key={index}>
                             <td style={{ paddingLeft: 15 }}>
@@ -303,29 +239,42 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
                             <td style={{ paddingLeft: 15 }}></td>
                             <td style={{ paddingLeft: 15 }}>
                               <Typography></Typography>
-                            </td>{" "}
+                            </td>
                             <td style={{ paddingLeft: 15 }}>
                               <Typography color="success">
-                                {history?.type == "D" || history?.type == "R"
+                                {history?.type == "D" && props.type == "D"
                                   ? formatIDR(history?.amount)
-                                  : formatIDR(0)}
+                                  : history?.type == "P" && props.type == "R"
+                                  ? formatIDR(history?.amount)
+                                  : "-"}
                               </Typography>
                             </td>
+                            {/* KREDIT */}
                             <td style={{ paddingLeft: 15 }}>
                               <Typography color="danger">
-                                {history?.type == "P"
+                                {history?.type == "R" && props.type == "R"
                                   ? formatIDR(history?.amount)
-                                  : formatIDR(0)}
+                                  : history?.type == "P" && props.type == "D"
+                                  ? formatIDR(history?.amount)
+                                  : "-"}
                               </Typography>
                             </td>
+
                             <td style={{ paddingLeft: 15 }}>
-                              {formatIDR(
-                                arrayOfHistoryAmount &&
-                                  vendor?.initialBalance +
-                                    sum(
-                                      arrayOfHistoryAmount.slice(0, index + 1)
-                                    )
-                              )}
+                              {props.type == "D"
+                                ? formatIDR(
+                                    contact?.initialBalance +
+                                      sum(
+                                        arrayOfHistoryAmount.slice(0, index + 1)
+                                      )
+                                  )
+                                : formatIDR(
+                                    contact?.initialBalance +
+                                      sum(
+                                        arrayOfHistoryAmount.slice(0, index + 1)
+                                      ) *
+                                        -1
+                                  )}
                             </td>
                             <td style={{ width: 50 }}></td>
                           </tr>
@@ -342,16 +291,22 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
                       <td></td>
                       <td style={{ paddingLeft: 15 }}>
                         <Typography color="success">
-                          {formatIDR(sum(arrayOfDebts))}
+                          {props.type == "D"
+                            ? formatIDR(sum(arrayOfDebts))
+                            : formatIDR(sum(arrayOfPayments))}
                         </Typography>
                       </td>
                       <td style={{ paddingLeft: 15 }}>
                         <Typography color="danger">
-                          {formatIDR(sum(arrayOfPayments))}
+                          {props.type == "D"
+                            ? formatIDR(sum(arrayOfPayments))
+                            : formatIDR(sum(arrayOfReceivables))}
                         </Typography>
                       </td>
                       <td style={{ paddingLeft: 15 }}>
-                        {formatIDR(vendor?.currentBalance)}
+                        {props.type == "D"
+                          ? formatIDR(contact?.currentBalance)
+                          : formatIDR(0 - contact?.currentBalance)}
                       </td>
                       <td></td>
                     </tr>

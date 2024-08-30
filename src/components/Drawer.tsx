@@ -146,16 +146,6 @@ export default function Drawer() {
               </ListItem>
             </div>
           ))}
-
-          {/* PRODUK
-          <ListItem dense>
-            <ListItemButton>
-              <ListItemIcon>
-                <ShoppingCartIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Produk"}></ListItemText>
-            </ListItemButton>
-          </ListItem> */}
         </List>
       </Stack>
     </Box>
