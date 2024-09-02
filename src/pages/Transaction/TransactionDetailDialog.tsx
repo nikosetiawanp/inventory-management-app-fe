@@ -24,6 +24,7 @@ import { formatIDR } from "../../helpers/currencyHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
 import MoreTransactionButton from "./MoreTransactionButton";
 import ApproveTransaction from "./ApproveTransaction";
+import PrintTransactionDetail from "./PrintTransactionDetail";
 
 export default function TransactionDetailDialog(props: {
   open: boolean;
@@ -212,6 +213,10 @@ export default function TransactionDetailDialog(props: {
                       transaction={props.transaction}
                     />
                   )}
+                  <PrintTransactionDetail
+                    transaction={props.transaction}
+                    transactionItems={transactionItemsQuery?.data}
+                  />
                   <MoreTransactionButton />
                 </>
               )}

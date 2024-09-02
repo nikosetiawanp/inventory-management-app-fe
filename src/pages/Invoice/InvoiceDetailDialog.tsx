@@ -102,20 +102,22 @@ export default function InvoiceDetailDialog(props: {
               </Typography>
               <Typography level="body-sm">
                 Tanggal Faktur :{" "}
-                {formatDate(props.invoice?.inventory.date, "DD MMMM YYYY")}
+                <b>
+                  {formatDate(props.invoice?.inventory.date, "DD MMMM YYYY")}
+                </b>
               </Typography>
               <Typography level="body-sm">
                 Tanggal Jatuh tempo :{" "}
-                {formatDate(props.invoice?.dueDate, "DD MMMM YYYY")}
+                <b>{formatDate(props.invoice?.dueDate, "DD MMMM YYYY")}</b>
               </Typography>
               <Typography level="body-sm">
                 {props.invoice.transaction.type == "P"
                   ? "Nomor PO"
                   : "Nomor SO"}{" "}
-                : {props.invoice.transaction.number}
+                : <b>{props.invoice.transaction.number}</b>
               </Typography>
               <Typography level="body-sm">
-                Nomor Surat Jalan : {props.invoice?.inventory.number}
+                Nomor Surat Jalan : <b>{props.invoice?.inventory.number}</b>
               </Typography>
             </Stack>
             {/* BUTTONS */}
