@@ -9,6 +9,7 @@ import { useQuery } from "react-query";
 import { Inventory } from "../../interfaces/interfaces";
 import InventoryRow from "./InventoryRow";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
+import PrintInventory from "./PrintInventory";
 
 export default function InventoryPage(props: { type: "A" | "D" }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -61,8 +62,7 @@ export default function InventoryPage(props: { type: "A" | "D" }) {
       <Drawer />
       <Stack padding={4} width={1} spacing={2}>
         <Typography fontWeight={"bold"} level="h4">
-          {props.type == "A" ? "Gudang Masuk" : "Gudang Keluar"} - Kasih tombol
-          print
+          {props.type == "A" ? "Gudang Masuk" : "Gudang Keluar"}
         </Typography>
 
         {/* DATE FILTER */}
@@ -75,8 +75,14 @@ export default function InventoryPage(props: { type: "A" | "D" }) {
             refetch={refetch}
             label="Tanggal Faktur"
           />{" "}
-          <Stack marginLeft="auto">
+          <Stack marginLeft="auto" direction={"row"} spacing={2}>
             <CreateInventory type={props.type} />
+            <PrintInventory
+              startDate={startDate}
+              endDate={endDate}
+              inventories={inventoriesQuery?.data}
+              type={props.type}
+            />
           </Stack>
         </Stack>
 

@@ -13,6 +13,7 @@ export default function PrintTransactionDetail(props: {
   transactionItems: TransactionItem[];
 }) {
   const [open, setOpen] = useState(false);
+
   //   TOTALS
   const arrayOfNetPrice = props.transactionItems?.map(
     (transactionItem: TransactionItem) =>
@@ -37,7 +38,9 @@ export default function PrintTransactionDetail(props: {
         color="primary"
         size="md"
         onClick={() => setOpen(true)}
-        disabled={props.transactionItems?.length == 0}
+        disabled={
+          props.transactionItems?.length == 0 || !props.transaction?.isApproved
+        }
         startDecorator={<PrintIcon fontSize="small" />}
       >
         Cetak
@@ -84,12 +87,14 @@ export default function PrintTransactionDetail(props: {
             </Button>
           </Stack>
 
+          {/* BORDER */}
           <Stack
             border={1}
             borderColor={"divider"}
             borderRadius={2}
             overflow={"scroll"}
           >
+            {/* PRINT AREA */}
             <Stack
               height={1}
               spacing={4}
@@ -102,6 +107,9 @@ export default function PrintTransactionDetail(props: {
             >
               {/* HEADER & TITLE */}
               <Stack alignItems="center">
+                <Typography>
+                  <b>{props.transaction?.contact?.name}</b>
+                </Typography>
                 <Typography>
                   <b>
                     {props.transaction?.type == "P"
@@ -120,6 +128,7 @@ export default function PrintTransactionDetail(props: {
                     ? "Laporan Pembelian"
                     : "Laporan Penjualan"}
                 </Typography>
+
                 <Typography color="danger">
                   <b>{formatDate(props.transaction?.date, "DD MMMM YYYY")}</b>
                 </Typography>

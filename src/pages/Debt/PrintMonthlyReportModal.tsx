@@ -89,7 +89,7 @@ export default function PrintMonthlyReportModal(props: {
               Cetak
             </Button>
           </Stack>
-          {/* OUTLINE */}
+
           <Stack
             border={1}
             borderColor={"divider"}
