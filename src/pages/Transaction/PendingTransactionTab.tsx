@@ -47,6 +47,10 @@ export default function PendingTransactionTab(props: { type: "P" | "S" }) {
     transactionsQuery.refetch();
   };
 
+  useEffect(() => {
+    console.log(transactionsQuery.data);
+  }, []);
+
   // CHECKLIST FILTER
   const [includedData, setIncludedData] = useState<
     { id: string; label: string }[]
@@ -209,6 +213,7 @@ export default function PendingTransactionTab(props: { type: "P" | "S" }) {
                 sortedData?.map((transaction: Transaction, index: number) => {
                   return (
                     <TransactionRow
+                      key={index}
                       index={index}
                       transaction={transaction}
                       refetch={refetch}

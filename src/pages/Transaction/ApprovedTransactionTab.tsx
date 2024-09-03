@@ -13,6 +13,7 @@ import ChecklistFilter from "../../components/filters/ChecklistFilter";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import { formatDate } from "../../helpers/dateHelpers";
 import TransactionRow from "./TransactionRow";
+import PrintTransactions from "./PrintTransactions";
 
 export default function ApprovedTransactionTab(props: { type: "P" | "S" }) {
   const [startDate, setStartDate] = useState(null);
@@ -44,6 +45,10 @@ export default function ApprovedTransactionTab(props: { type: "P" | "S" }) {
     getTransactions();
     transactionsQuery.refetch();
   };
+
+  useEffect(() => {
+    console.log(transactionsQuery?.data);
+  }, []);
 
   // CHECKLIST FILTER
   const [includedData, setIncludedData] = useState<
@@ -123,7 +128,6 @@ export default function ApprovedTransactionTab(props: { type: "P" | "S" }) {
       {/* CONTENT */}
       <Stack>
         {/*TITLE & CREATE PRODUCT */}
-
         <Stack
           direction={"row"}
           marginBottom={2}
@@ -145,6 +149,13 @@ export default function ApprovedTransactionTab(props: { type: "P" | "S" }) {
             includedData={includedData}
             setIncludedData={setIncludedData}
             label={props.type == "P" ? "Vendor" : "Customer"}
+          />
+
+          <PrintTransactions
+            startDate={startDate}
+            endDate={endDate}
+            type={props.type}
+            transactions={transactionsQuery?.data}
           />
         </Stack>
 
@@ -201,6 +212,7 @@ export default function ApprovedTransactionTab(props: { type: "P" | "S" }) {
                 sortedData?.map((transaction: Transaction, index: number) => {
                   return (
                     <TransactionRow
+                      key={index}
                       index={index}
                       transaction={transaction}
                       refetch={refetch}

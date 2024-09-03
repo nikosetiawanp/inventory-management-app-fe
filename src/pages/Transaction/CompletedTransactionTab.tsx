@@ -123,7 +123,6 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
       {/* CONTENT */}
       <Stack>
         {/*TITLE & CREATE PRODUCT */}
-        Kasih tombol print
         <Stack
           direction={"row"}
           marginBottom={2}
@@ -201,6 +200,7 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
                 sortedData?.map((transaction: Transaction, index: number) => {
                   return (
                     <TransactionRow
+                      key={index}
                       index={index}
                       transaction={transaction}
                       refetch={undefined}

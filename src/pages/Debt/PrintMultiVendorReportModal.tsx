@@ -57,6 +57,7 @@ export default function PrintMultiVendorReportModal(props: {
             padding: 4,
           }}
         >
+          {/* PRINT */}
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -83,6 +84,7 @@ export default function PrintMultiVendorReportModal(props: {
             borderRadius={2}
             overflow={"scroll"}
           >
+            {/* PRINT AREA */}
             <Stack
               height={1}
               spacing={4}

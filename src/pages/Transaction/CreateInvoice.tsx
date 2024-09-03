@@ -18,7 +18,7 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { Inventory, Transaction } from "../../interfaces/interfaces";
@@ -86,10 +86,6 @@ export default function CreateInvoice(props: {
     event?.target.reset();
     setOpen(false);
   };
-
-  useEffect(() => {
-    console.log(props.inventories);
-  }, [props.inventories]);
 
   return (
     <>
