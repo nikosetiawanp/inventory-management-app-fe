@@ -30,7 +30,6 @@ export default function PrintInventory(props: {
 
   return (
     <>
-      {" "}
       <Button
         variant="solid"
         color="primary"

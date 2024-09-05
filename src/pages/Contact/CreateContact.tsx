@@ -16,10 +16,10 @@ import { provinces } from "../../public/ProvinceData";
 import { FormHelperText, FormLabel, Input } from "@mui/joy";
 import AddIcon from "@mui/icons-material/Add";
 import { InfoOutlined } from "@mui/icons-material";
-import { Select, Option } from "@mui/joy";
 
 export default function CreateContact(props: {
   setAlert: React.Dispatch<React.SetStateAction<Alert>>;
+  type: "V" | "C";
 }) {
   const {
     register,
@@ -33,18 +33,9 @@ export default function CreateContact(props: {
 
   const [selectedProvince, setSelectedProvince] = useState<string>();
   const [selectedCity, setSelectedCity] = useState<any>();
-  const [selectedType, setSelectedType] = useState<"V" | "C" | null>("V");
   const cities =
     provinces.find((province) => province.name == selectedProvince)?.cities ||
     [];
-
-  const handleTypeChange = (
-    event: React.SyntheticEvent | null,
-    newValue: "V" | "C" | null
-  ) => {
-    event;
-    setSelectedType(newValue);
-  };
 
   const createContact = useMutation(
     async (data: Contact) => {
@@ -56,7 +47,7 @@ export default function CreateContact(props: {
         province: selectedProvince,
         city: selectedCity,
         address: data.address,
-        type: selectedType,
+        type: props.type,
       };
 
       try {
@@ -107,13 +98,18 @@ export default function CreateContact(props: {
         startDecorator={<AddIcon />}
         variant="solid"
         onClick={() => setOpen(true)}
+        sx={{ whiteSpace: "nowrap" }}
       >
-        Tambah Kontak
+        {props.type == "V" ? "Tambah Vendor" : "Tambah Customer"}
       </Button>
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalDialog>
-          <DialogTitle>Tambah Kontak</DialogTitle>
+          <DialogTitle>
+            {props.type == "V"
+              ? "Tambah Kontak Vendor"
+              : "Tambah Kontak Customer"}
+          </DialogTitle>
           <form
             action="submit"
             onSubmit={handleSubmit(onSubmit)}
@@ -121,18 +117,6 @@ export default function CreateContact(props: {
             style={{ overflow: "scroll" }}
           >
             <Stack spacing={2}>
-              <Stack spacing={0}>
-                <FormLabel>Jenis</FormLabel>
-                <Select
-                  size="lg"
-                  value={selectedType}
-                  onChange={handleTypeChange}
-                >
-                  <Option value={"V"}>Vendor</Option>
-                  <Option value={"C"}>Customer</Option>
-                </Select>
-              </Stack>
-
               <FormControl error={errors.code?.message !== ""}>
                 <Stack spacing={0}>
                   <FormLabel>Kode</FormLabel>
