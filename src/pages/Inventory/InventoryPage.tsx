@@ -128,7 +128,7 @@ export default function InventoryPage(props: { type: "A" | "D" }) {
                 </th>
                 <th style={{ textAlign: "center" }}>
                   <Button size="sm" variant="plain" color="neutral">
-                    Status
+                    Status Validasi
                   </Button>
                 </th>
                 <th style={{ width: 60, textAlign: "center" }}>

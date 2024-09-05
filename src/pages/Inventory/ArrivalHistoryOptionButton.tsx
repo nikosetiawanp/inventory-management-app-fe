@@ -84,10 +84,7 @@ const DeleteInventory = (props: { inventory: Inventory }) => {
             autoFocus
             disabled={deleteInventory.isLoading}
           >
-            {deleteInventory.isLoading
-              ? "Menghapus"
-              : // <CircularProgress color="inherit" size={15} />
-                "Hapus"}
+            {deleteInventory.isLoading ? "Menghapus" : "Hapus"}
           </Button>
         </DialogActions>
       </Dialog>

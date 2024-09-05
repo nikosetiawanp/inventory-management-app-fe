@@ -41,10 +41,6 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
             paddingLeft: 15,
           }}
         >
-          {/* <Chip
-            size="sm"
-            color={props.invoice?.debts?.length == 0 ? "danger" : "success"}
-          > */}
           {props.invoice?.debts?.length == 0 ? (
             <CancelIcon fontSize="small" color="error" />
           ) : (

@@ -69,7 +69,7 @@ export default function ProductListTab() {
                 </th>
                 <th style={{ textAlign: "center" }}>
                   <Button size="sm" variant="plain" color="neutral">
-                    Quantity
+                    Unit
                   </Button>
                 </th>
                 <th
@@ -94,9 +94,7 @@ export default function ProductListTab() {
                   <tr key={index}>
                     <td style={{ paddingLeft: 15 }}>{product.code}</td>
                     <td style={{ paddingLeft: 15 }}>{product.name}</td>
-                    <td style={{ textAlign: "center" }}>
-                      {product.currentQuantity} {product.unit}
-                    </td>
+                    <td style={{ textAlign: "center" }}>{product.unit}</td>
                     <td style={{ paddingLeft: 15 }}>
                       {/* <MoreVertProductButton product={product} /> */}
                     </td>

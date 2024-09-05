@@ -13,6 +13,7 @@ import ChecklistFilter from "../../components/filters/ChecklistFilter";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import { formatDate } from "../../helpers/dateHelpers";
 import TransactionRow from "./TransactionRow";
+import PrintCompletedTransactions from "./PrintCompletedTransactions";
 
 export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
   const [startDate, setStartDate] = useState(null);
@@ -34,7 +35,7 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
   };
 
   const transactionsQuery = useQuery({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", props.type],
     queryFn: () => getTransactions(),
     refetchOnWindowFocus: false,
     enabled: true,
@@ -115,7 +116,7 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
 
   useEffect(() => {
     refetch();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, props.type]);
 
   return (
     // CONTAINER
@@ -144,6 +145,12 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
             includedData={includedData}
             setIncludedData={setIncludedData}
             label={props.type == "P" ? "Vendor" : "Customer"}
+          />
+          <PrintCompletedTransactions
+            startDate={startDate}
+            endDate={endDate}
+            type={props.type}
+            transactions={transactionsQuery?.data}
           />
         </Stack>
         <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>

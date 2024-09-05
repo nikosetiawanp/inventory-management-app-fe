@@ -1,5 +1,5 @@
 import { Button, Modal, ModalDialog, Stack, Table, Typography } from "@mui/joy";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatDate } from "../../helpers/dateHelpers";
 import PrintIcon from "@mui/icons-material/Print";
 import { useReactToPrint } from "react-to-print";
@@ -8,7 +8,7 @@ import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import React from "react";
 
-export default function PrintTransactions(props: {
+export default function PrintCompletedTransactions(props: {
   startDate: string | null;
   endDate: string | null;
   type: "P" | "S";
@@ -37,6 +37,10 @@ export default function PrintTransactions(props: {
         transactionItem?.tax
       )
   );
+
+  useEffect(() => {
+    console.log(props.transactions);
+  }, []);
 
   return (
     <>
@@ -106,16 +110,13 @@ export default function PrintTransactions(props: {
               spacing={4}
               ref={printRef}
               sx={{
-                width: "210mm", // A4 paper width
-                maxWidth: "100%", // Ensure it fits on smaller screens
+                width: "210mm",
+                maxWidth: "100%",
                 padding: 2,
               }}
             >
               {/* HEADER & TITLE */}
               <Stack alignItems="center">
-                {/* <Typography>
-                  <b>{props.type == "P" ? "Laporan PO" : "Laporan SO"}</b>
-                </Typography> */}
                 <Typography
                   component="h3"
                   id="close-modal-title"
@@ -140,7 +141,7 @@ export default function PrintTransactions(props: {
                   <tr>
                     <th style={{ fontSize: "12px" }}>Tanggal</th>
                     <th style={{ fontSize: "12px" }}>
-                      {props.type == "P" ? "No. PO" : "No. SO"}
+                      {props.type == "P" ? "No. Faktur" : "No. Faktur"}
                     </th>
                     <th style={{ fontSize: "12px" }}>
                       {props.type == "P" ? "Vendor" : "Customer"}
@@ -302,19 +303,21 @@ export default function PrintTransactions(props: {
                   )}
                 </tbody>
                 <tfoot>
-                  <td style={{ fontSize: "12px" }}>
-                    <b>Total Semua</b>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td style={{ fontSize: "12px" }}>
-                    <b>{formatIDR(sum(arrayOfAllNetPrice))}</b>
-                  </td>
+                  <tr>
+                    <td style={{ fontSize: "12px" }}>
+                      <b>Total Semua</b>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style={{ fontSize: "12px" }}>
+                      <b>{formatIDR(sum(arrayOfAllNetPrice))}</b>
+                    </td>
+                  </tr>
                 </tfoot>
               </Table>
             </Stack>

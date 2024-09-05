@@ -36,7 +36,7 @@ export default function PendingTransactionTab(props: { type: "P" | "S" }) {
   };
 
   const transactionsQuery = useQuery({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", props.type],
     queryFn: () => getTransactions(),
     refetchOnWindowFocus: false,
     enabled: true,
@@ -121,7 +121,7 @@ export default function PendingTransactionTab(props: { type: "P" | "S" }) {
 
   useEffect(() => {
     refetch();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, props.type]);
 
   return (
     // CONTAINER

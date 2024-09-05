@@ -3,7 +3,10 @@ import { Inventory } from "../../interfaces/interfaces";
 import { useState } from "react";
 import InventoryDetailDialog from "./InventoryDetailDialog";
 import { formatDate } from "../../helpers/dateHelpers";
-import { Chip } from "@mui/joy";
+import { Stack } from "@mui/joy";
+
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function InventoryRow(props: {
   index: number;
@@ -29,17 +32,20 @@ export default function InventoryRow(props: {
           {props.inventory?.transaction?.number}
         </td>
         <td style={{ paddingLeft: 15 }}>{props.inventory?.description}</td>
-        <td style={{ paddingLeft: 15, textAlign: "center" }}>
-          <Chip
-            size="sm"
-            color={
-              props.inventory?.inventoryItems?.length > 0 ? "success" : "danger"
-            }
-          >
-            {props.inventory?.inventoryItems?.length > 0
-              ? "Divalidasi"
-              : "Menunggu validasi"}
-          </Chip>
+        <td
+          style={{
+            // display: "flex",
+            textAlign: "center",
+            paddingLeft: 15,
+          }}
+        >
+          <Stack justifyContent="center" alignItems="center">
+            {props.inventory?.inventoryItems?.length > 0 ? (
+              <CheckCircleIcon fontSize="small" color="success" />
+            ) : (
+              <CancelIcon fontSize="small" color="error" />
+            )}
+          </Stack>
         </td>
         <td style={{ textAlign: "center" }}>
           <ArrivalHistoryOptionButton inventory={props.inventory} />

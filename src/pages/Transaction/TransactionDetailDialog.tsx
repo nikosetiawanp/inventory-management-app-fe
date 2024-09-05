@@ -23,8 +23,8 @@ import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
 import MoreTransactionButton from "./MoreTransactionButton";
-import ApproveTransaction from "./ApproveTransaction";
 import PrintTransactionDetail from "./PrintTransactionDetail";
+import UpdateTransactionStatus from "./UpdateTransactionStatus";
 
 export default function TransactionDetailDialog(props: {
   open: boolean;
@@ -140,6 +140,12 @@ export default function TransactionDetailDialog(props: {
     }
   };
 
+  const purchaseTitle = props.transaction?.isDone
+    ? "Pembelian"
+    : "Purchase Order";
+
+  const salesTitle = props.transaction?.isDone ? "Penjualan" : "Sales Order";
+
   return (
     <Modal open={props.open} onClose={() => props.setOpen(false)}>
       <ModalDialog
@@ -157,9 +163,7 @@ export default function TransactionDetailDialog(props: {
             {/* TITLE */}
             <Stack>
               <Typography level="body-md">
-                {props.transaction?.type == "P"
-                  ? "Purchase Order"
-                  : "Sales Order"}
+                {props.transaction?.type == "P" ? purchaseTitle : salesTitle}
               </Typography>
               <Typography level="h4" fontWeight="bold">
                 {props.transaction?.number}
@@ -199,19 +203,25 @@ export default function TransactionDetailDialog(props: {
               ) : (
                 <>
                   {props.transaction?.isApproved ? (
-                    <>
-                      {/* <Button variant="outlined">2 Faktur</Button> */}
-                      <CreateInvoice
-                        inventories={inventoriesQuery.data}
-                        transaction={props.transaction}
-                      />
-                    </>
-                  ) : (
-                    <ApproveTransaction
-                      refetch={props.refetch}
+                    <CreateInvoice
+                      inventories={inventoriesQuery.data}
                       transaction={props.transaction}
                     />
+                  ) : (
+                    ""
                   )}
+                  <UpdateTransactionStatus
+                    refetch={props.refetch}
+                    transaction={props.transaction}
+                    purpose={
+                      !props.transaction?.isApproved &&
+                      !props.transaction?.isDone
+                        ? "approve"
+                        : "complete"
+                    }
+                    dialogOpen={props.open}
+                    setDialogOpen={props.setOpen}
+                  />
                   <PrintTransactionDetail
                     transaction={props.transaction}
                     transactionItems={transactionItemsQuery?.data}

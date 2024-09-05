@@ -133,7 +133,7 @@ export default function Drawer() {
         <DialogContent>
           <List size="md">
             {links.map((item, index) => (
-              <ListItem nested>
+              <ListItem nested key={index}>
                 {links[index]?.category !== links[index - 1]?.category && (
                   <ListSubheader
                     key={item.category}

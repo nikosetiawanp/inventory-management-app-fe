@@ -156,17 +156,15 @@ export default function InventoryDetailDialog(props: {
               </Stack>
               {/* BUTTONS */}
               <Stack direction="row" alignItems={"center"} gap={2}>
-                {inventoryItemsQuery?.data?.length == 0 && (
-                  <Button
-                    variant="solid"
-                    onClick={() => handleSubmit(onSubmit as any)}
-                    type="submit"
-                    disabled={isSubmitting}
-                    sx={{ minHeight: "100%" }}
-                  >
-                    {isSubmitting ? "Memvalidasi" : "Validasi"}
-                  </Button>
-                )}
+                <Button
+                  variant="solid"
+                  onClick={() => handleSubmit(onSubmit as any)}
+                  type="submit"
+                  disabled={inventoryItemsQuery?.data?.length > 0}
+                  sx={{ minHeight: "100%" }}
+                >
+                  {isSubmitting ? "Memvalidasi" : "Validasi"}
+                </Button>
               </Stack>
             </Stack>
 
