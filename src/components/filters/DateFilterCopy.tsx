@@ -1,8 +1,8 @@
 import {
+  Box,
   Divider,
   Dropdown,
   FormLabel,
-  IconButton,
   Menu,
   MenuButton,
   Sheet,
@@ -30,28 +30,39 @@ export default function DateFilterCopy(props: {
       <Dropdown>
         <Sheet>
           <MenuButton
-            endDecorator={
-              props.startDate || props.endDate ? (
-                <IconButton
-                  size="sm"
-                  color="neutral"
-                  variant="soft"
-                  onClick={(e) => {
-                    props.setStartDate();
-                    props.setEndDate();
-                    e.stopPropagation();
-                  }}
-                >
-                  <CloseRounded fontSize="small" />
-                </IconButton>
-              ) : (
-                <DateRangeIcon fontSize="small" />
-              )
-            }
             sx={
               props.startDate || props.endDate
-                ? { gap: 0.5, paddingY: 0, paddingRight: 0 }
+                ? { gap: 0.5, paddingY: 0, paddingRight: 1 }
                 : { gap: 0.5 }
+            }
+            endDecorator={
+              props.startDate || props.endDate ? (
+                <Box
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.05)", // Add your desired hover background color
+                      cursor: "pointer",
+                    },
+                    borderRadius: 99,
+                    width: "fit",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: 0.5,
+                  }}
+                >
+                  <CloseRounded
+                    fontSize="small"
+                    onClick={(e) => {
+                      props.setStartDate();
+                      props.setEndDate();
+                      e.stopPropagation();
+                    }}
+                  />
+                </Box>
+              ) : (
+                // </IconButton>
+                <DateRangeIcon fontSize="small" />
+              )
             }
           >
             <Typography color={props.startDate ? "primary" : "neutral"}>
