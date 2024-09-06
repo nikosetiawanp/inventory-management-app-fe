@@ -1,4 +1,4 @@
-import { Box, Button, Sheet, Stack, Table } from "@mui/joy";
+import { Button, Sheet, Stack, Table } from "@mui/joy";
 
 import axios from "axios";
 import { useState } from "react";
@@ -8,6 +8,7 @@ import CreateProduct from "./CreateProduct";
 import { Settings } from "@mui/icons-material";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import SearchFilter from "../../components/filters/SearchFilter";
+import PrintProducts from "./PrintProducts";
 export default function ProductListTab() {
   // FETCHING PRODUCTS
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -47,9 +48,10 @@ export default function ProductListTab() {
             label={"Cari produk"}
             placeholder={"Cari"}
           />
-          <Box minWidth={170}>
+          <Stack direction={"row"} gap={2} width="auto" alignItems={"end"}>
+            <PrintProducts products={productsQuery?.data} />
             <CreateProduct />
-          </Box>
+          </Stack>
         </Stack>
 
         <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
