@@ -80,6 +80,7 @@ export interface Transaction {
   contacts: Contact[];
   transactionItems: TransactionItem[];
   inventories: Inventory[];
+  invoices: Invoice[];
 }
 
 export interface Inventory {

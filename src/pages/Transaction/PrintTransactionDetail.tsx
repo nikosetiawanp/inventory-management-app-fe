@@ -157,9 +157,9 @@ export default function PrintTransactionDetail(props: {
                   </thead>
                   <tbody>
                     {props.transactionItems?.map(
-                      (transactionItem: TransactionItem) => {
+                      (transactionItem: TransactionItem, index: number) => {
                         return (
-                          <tr>
+                          <tr key={index}>
                             <td style={{ fontSize: "12px" }}>
                               {transactionItem?.product?.name}
                             </td>

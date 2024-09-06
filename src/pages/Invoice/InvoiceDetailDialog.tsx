@@ -50,7 +50,6 @@ export default function InvoiceDetailDialog(props: {
       BACKEND_URL +
         `transaction-items?transactionId=${props.invoice?.transactionId}`
     );
-    console.log(response.data.data);
 
     return response.data.data;
   };
@@ -218,25 +217,6 @@ export default function InvoiceDetailDialog(props: {
               <h3>{formatIDR(sum(arrayOfNetPrice))}</h3>
             </Sheet>
           </Sheet>
-
-          {/* FOOTER */}
-          {/* <Stack
-            position={"sticky"}
-            bottom={0}
-            direction={"row"}
-            justifyContent={"space-between"}
-            bgcolor={"white"}
-            padding={2}
-            borderTop={1}
-            borderColor={"divider"}
-          >
-            <Typography fontWeight={"bold"} level="body-sm">
-              Total
-            </Typography>
-            <Typography fontWeight={"bold"} level="body-sm">
-              {formatIDR(sum(inventoryItemsQuery.data))}
-            </Typography>
-          </Stack> */}
         </Stack>
       </ModalDialog>
     </Modal>

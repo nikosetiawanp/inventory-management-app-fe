@@ -47,9 +47,7 @@ export default function PendingTransactionTab(props: { type: "P" | "S" }) {
     transactionsQuery.refetch();
   };
 
-  useEffect(() => {
-    console.log(transactionsQuery.data);
-  }, []);
+  useEffect(() => {}, []);
 
   // CHECKLIST FILTER
   const [includedData, setIncludedData] = useState<

@@ -114,6 +114,7 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
     }
   }, [transactionsQuery, includedData, sortConfig]);
 
+  useEffect(() => {}, []);
   useEffect(() => {
     refetch();
   }, [startDate, endDate, props.type]);

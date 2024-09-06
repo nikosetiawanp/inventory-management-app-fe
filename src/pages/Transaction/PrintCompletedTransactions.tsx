@@ -38,8 +38,14 @@ export default function PrintCompletedTransactions(props: {
       )
   );
 
+  const arrayOfInvoices = props.transactions
+    ?.map((transaction: Transaction) => {
+      return transaction.invoices;
+    })
+    .flat();
+
   useEffect(() => {
-    console.log(props.transactions);
+    console.log("arrayOfInvoices:", arrayOfInvoices);
   }, []);
 
   return (

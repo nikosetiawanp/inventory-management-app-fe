@@ -161,12 +161,12 @@ export default function CreateInvoice(props: {
                     }}
                     inputValue={selectedInventory?.number}
                     getOptionLabel={(option: Inventory) => option.number}
-                    options={props.inventories && props.inventories}
+                    options={props.inventories ? props.inventories : []}
                     getOptionDisabled={(option: Inventory) =>
                       option.invoices.length > 0
                     }
                     renderOption={(props, option: Inventory) => (
-                      <AutocompleteOption {...props} key={option.id}>
+                      <AutocompleteOption {...props}>
                         <ListItemContent>
                           <Stack direction="column">
                             <h3>{option.number}</h3>
