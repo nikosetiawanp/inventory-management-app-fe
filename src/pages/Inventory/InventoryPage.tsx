@@ -1,157 +1,66 @@
-import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
+import { Stack, Tab, TabList, TabPanel, Tabs, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
-import { Settings } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import CreateInventory from "./CreateInventory";
-import axios from "axios";
-import { useQuery } from "react-query";
-import { Inventory } from "../../interfaces/interfaces";
-import InventoryRow from "./InventoryRow";
-import DateFilterCopy from "../../components/filters/DateFilterCopy";
-import PrintInventory from "./PrintInventory";
+import { useState } from "react";
+import InventoryTab from "./InventoryTab";
+import ProductSummaryTab from "./ProductSummaryTab";
+import ProductHistoryTab from "./ProductHistoryTab";
 
-export default function InventoryPage(props: { type: "A" | "D" }) {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-
-  // DATE
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const formattedStartDate = startDate
-    ? dayjs(startDate).format("YYYY-MM-DD")
-    : "";
-  const formattedEndDate = endDate ? dayjs(endDate).format("YYYY-MM-DD") : "";
-
-  // GET INVENTORY HISTORY
-  const getInventories = async () => {
-    const response = await axios.get(
-      BACKEND_URL +
-        "inventories?" +
-        `startDate=${formattedStartDate}` +
-        `&endDate=${formattedEndDate}` +
-        `&type=${props.type}`
-    );
-
-    return response.data.data;
+export default function InventoryPage() {
+  // FILTER
+  const [tabTitle, setTabTitle] = useState("Daftar Vendor");
+  const handleTabChange = (event: any, newValue: number) => {
+    event;
+    const titles = [
+      "Gudang Masuk",
+      "Gudang Keluar",
+      "Rangkuman Stok",
+      "Histori Stok",
+    ];
+    setTabTitle(titles[newValue]);
   };
-
-  const inventoriesQuery = useQuery({
-    queryKey: ["inventories", startDate, endDate, props.type],
-    queryFn: getInventories,
-    refetchOnWindowFocus: false,
-    enabled: true,
-  });
-
-  const refetch = () => {
-    getInventories();
-    inventoriesQuery.refetch();
-  };
-
-  useEffect(() => {
-    setStartDate(null);
-    setEndDate(null);
-  }, [props.type]);
-
-  useEffect(() => {
-    getInventories();
-  }, [startDate, endDate]);
 
   return (
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
+      {/* DRAWER */}
       <Drawer />
-      <Stack padding={4} width={1} spacing={2}>
+      <Stack padding={4} gap={2} width={1}>
         <Typography fontWeight={"bold"} level="h4">
-          {props.type == "A" ? "Gudang Masuk" : "Gudang Keluar"}
+          {tabTitle}
         </Typography>
 
-        {/* DATE FILTER */}
-        <Stack direction={"row"} alignItems="end" gap={2} width={1}>
-          <DateFilterCopy
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-            refetch={refetch}
-            label="Tanggal Faktur"
-          />{" "}
-          <Stack marginLeft="auto" direction={"row"} spacing={2}>
-            <CreateInventory type={props.type} />
-            <PrintInventory
-              startDate={startDate}
-              endDate={endDate}
-              inventories={inventoriesQuery?.data}
-              type={props.type}
-            />
-          </Stack>
-        </Stack>
-
-        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
-          <Table size="sm" stickyHeader stickyFooter>
-            <thead>
-              <tr>
-                <th>
-                  {" "}
-                  <Button size="sm" variant="plain" color="neutral">
-                    Nomor LPB
-                  </Button>
-                </th>
-                <th>
-                  {" "}
-                  <Button size="sm" variant="plain" color="neutral">
-                    Nomor Faktur
-                  </Button>
-                </th>
-                <th>
-                  {" "}
-                  <Button size="sm" variant="plain" color="neutral">
-                    {props.type == "A" ? "Vendor" : "Customer"}
-                  </Button>
-                </th>
-                <th>
-                  {" "}
-                  <Button size="sm" variant="plain" color="neutral">
-                    Tanggal Faktur
-                  </Button>
-                </th>
-                <th>
-                  {" "}
-                  <Button size="sm" variant="plain" color="neutral">
-                    {props.type == "A" ? "Purchase Order" : "Sales Order"}
-                  </Button>
-                </th>
-                <th>
-                  {" "}
-                  <Button size="sm" variant="plain" color="neutral">
-                    Deskripsi
-                  </Button>
-                </th>
-                <th style={{ textAlign: "center" }}>
-                  <Button size="sm" variant="plain" color="neutral">
-                    Status Validasi
-                  </Button>
-                </th>
-                <th style={{ width: 60, textAlign: "center" }}>
-                  <IconButton size="sm">
-                    <Settings fontSize="small" />
-                  </IconButton>
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {inventoriesQuery?.data?.map(
-                (inventory: Inventory, index: number) => (
-                  <InventoryRow
-                    key={index}
-                    index={index}
-                    inventory={inventory}
-                  />
-                )
-              )}
-            </tbody>
-          </Table>
-        </Sheet>
+        <Tabs
+          defaultValue={0}
+          sx={{ backgroundColor: "transparent" }}
+          onChange={handleTabChange as any}
+        >
+          <TabList>
+            <Tab color="primary" value={0}>
+              Gudang Masuk
+            </Tab>
+            <Tab color="primary" value={1}>
+              Gudang Keluar
+            </Tab>
+            <Tab color="primary" value={2}>
+              Rangkuman Stok
+            </Tab>
+            <Tab color="primary" value={3}>
+              Histori Stok
+            </Tab>
+          </TabList>
+          <TabPanel value={0} sx={{ paddingX: 0 }}>
+            <InventoryTab type="A" />
+          </TabPanel>
+          <TabPanel value={1} sx={{ paddingX: 0 }}>
+            <InventoryTab type="D" />
+          </TabPanel>
+          <TabPanel value={2} sx={{ paddingX: 0 }}>
+            <ProductSummaryTab />
+          </TabPanel>
+          <TabPanel value={3} sx={{ paddingX: 0 }}>
+            <ProductHistoryTab />
+          </TabPanel>
+        </Tabs>
       </Stack>
     </Stack>
   );

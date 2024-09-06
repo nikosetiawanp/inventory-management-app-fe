@@ -81,14 +81,7 @@ function App() {
                 <Route path="/debt" element={<DebtPage type="D" />} />
                 <Route path="/receivable" element={<DebtPage type="R" />} />
 
-                <Route
-                  path="/inventory-arrival"
-                  element={<InventoryPage type="A" />}
-                />
-                <Route
-                  path="/inventory-departure"
-                  element={<InventoryPage type="D" />}
-                />
+                <Route path="/inventory" element={<InventoryPage />} />
 
                 <Route path="/cash" element={<CashPage />} />
                 <Route path="/account" element={<AccountPage />} />

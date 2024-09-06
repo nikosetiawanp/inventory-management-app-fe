@@ -146,12 +146,14 @@ export default function CompletedTransactionTab(props: { type: "P" | "S" }) {
             setIncludedData={setIncludedData}
             label={props.type == "P" ? "Vendor" : "Customer"}
           />
-          <PrintCompletedTransactions
-            startDate={startDate}
-            endDate={endDate}
-            type={props.type}
-            transactions={transactionsQuery?.data}
-          />
+          <Stack marginLeft="auto">
+            <PrintCompletedTransactions
+              startDate={startDate}
+              endDate={endDate}
+              type={props.type}
+              transactions={transactionsQuery?.data}
+            />
+          </Stack>
         </Stack>
         <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
           <Table size="sm" stickyHeader stickyFooter>

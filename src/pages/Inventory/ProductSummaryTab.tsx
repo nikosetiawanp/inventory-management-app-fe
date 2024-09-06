@@ -11,7 +11,7 @@ import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import { formatDate } from "../../helpers/dateHelpers";
 import { sum } from "../../helpers/calculationHelpers";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
-import PrintProductSummaryModal from "./PrintProductSummaryModal";
+import PrintProductSummary from "./PrintProductSummary";
 
 export default function ProductSummaryTab() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -60,7 +60,7 @@ export default function ProductSummaryTab() {
           refetch={refetch}
           label={"Tanggal"}
         />
-        <PrintProductSummaryModal
+        <PrintProductSummary
           startDate={startDate}
           endDate={endDate}
           products={productHistoryQuery?.data}

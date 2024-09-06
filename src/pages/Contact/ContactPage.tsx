@@ -56,10 +56,6 @@ export default function ContactPage() {
             <ContactTab type={"C"} setAlert={setAlert} />
           </TabPanel>
         </Tabs>
-
-        {/* SEARCH & FILTER */}
-
-        {/* </TableContainer> */}
       </Stack>
       <AlertSnackbar alert={alert} setAlert={setAlert} />
     </Stack>

@@ -46,7 +46,9 @@ export default function PrintTransactions(props: {
         size="md"
         onClick={() => setOpen(true)}
         startDecorator={<PrintIcon fontSize="small" />}
-        disabled={!props.startDate || !props.endDate}
+        disabled={
+          !props.startDate || !props.endDate || props.transactions?.length == 0
+        }
       >
         Cetak
       </Button>

@@ -18,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CategoryIcon from "@mui/icons-material/Category";
 import InputIcon from "@mui/icons-material/Input";
-import OutputIcon from "@mui/icons-material/Output";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -88,16 +87,10 @@ export default function Drawer() {
     },
     // INVENTORY
     {
-      name: "Gudang Masuk",
-      param: "/inventory-arrival",
+      name: "Gudang",
+      param: "/inventory",
       category: "Gudang",
       icon: <InputIcon fontSize="small" />,
-    },
-    {
-      name: "Gudang Keluar",
-      param: "/inventory-departure",
-      category: "Gudang",
-      icon: <OutputIcon fontSize="small" />,
     },
     {
       name: "Kas",

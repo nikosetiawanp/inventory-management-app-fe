@@ -1,9 +1,6 @@
-import { Stack, Tab, TabList, TabPanel, Tabs, Typography } from "@mui/joy";
+import { Stack, Tabs, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
-
 import ProductListTab from "./ProductListTab";
-import ProductHistoryTab from "./ProductHistoryTab";
-import ProductSummaryTab from "./ProductSummaryTab";
 
 export default function ProductPage() {
   return (
@@ -14,27 +11,7 @@ export default function ProductPage() {
           Produk
         </Typography>
         <Tabs defaultValue={0} sx={{ backgroundColor: "transparent" }}>
-          <TabList>
-            <Tab color="primary" value={0}>
-              Daftar Produk
-            </Tab>
-
-            <Tab color="primary" value={1}>
-              Rangkuman Stok
-            </Tab>
-            <Tab color="primary" value={2}>
-              Histori Stok
-            </Tab>
-          </TabList>
-          <TabPanel value={0} sx={{ paddingX: 0 }}>
-            <ProductListTab />
-          </TabPanel>
-          <TabPanel value={1} sx={{ paddingX: 0 }}>
-            <ProductSummaryTab />
-          </TabPanel>
-          <TabPanel value={2} sx={{ paddingX: 0 }}>
-            <ProductHistoryTab />
-          </TabPanel>
+          <ProductListTab />
         </Tabs>
       </Stack>
     </Stack>

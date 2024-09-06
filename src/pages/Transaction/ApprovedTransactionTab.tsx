@@ -150,13 +150,14 @@ export default function ApprovedTransactionTab(props: { type: "P" | "S" }) {
             setIncludedData={setIncludedData}
             label={props.type == "P" ? "Vendor" : "Customer"}
           />
-
-          <PrintTransactions
-            startDate={startDate}
-            endDate={endDate}
-            type={props.type}
-            transactions={transactionsQuery?.data}
-          />
+          <Stack marginLeft="auto">
+            <PrintTransactions
+              startDate={startDate}
+              endDate={endDate}
+              type={props.type}
+              transactions={transactionsQuery?.data}
+            />
+          </Stack>
         </Stack>
 
         <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>

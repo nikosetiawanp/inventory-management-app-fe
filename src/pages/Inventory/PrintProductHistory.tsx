@@ -7,7 +7,7 @@ import PrintIcon from "@mui/icons-material/Print";
 
 import { useReactToPrint } from "react-to-print";
 
-export default function PrintProductHistoryModal(props: {
+export default function PrintProductHistory(props: {
   startDate: string | null;
   endDate: string | null;
   products: Product[];
