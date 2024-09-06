@@ -14,7 +14,7 @@ import axios from "axios";
 export default function InventoryDetailRow(props: {
   index: number;
   inventoryItem: InventoryItem;
-  purchaseItems: TransactionItem[];
+  transactionItems: TransactionItem[];
   inventory: Inventory;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -93,8 +93,8 @@ export default function InventoryDetailRow(props: {
       {/* {index} */}
       <td>{props.inventoryItem?.product?.name}</td>
       <td align="center">
-        {props.purchaseItems[props.index].quantity}{" "}
-        {props.purchaseItems[props.index].product.unit}
+        {props.transactionItems[props.index].quantity}
+        {props.transactionItems[props.index].product.unit}
       </td>
       {/* QUANTITY */}
       <td align="center" style={{ width: 100 }}>
@@ -120,14 +120,12 @@ export default function InventoryDetailRow(props: {
               props.inventoryItem.quantity == 0
                 ? "danger"
                 : props.inventoryItem.quantity >=
-                  props.purchaseItems[props.index].quantity
+                  props.transactionItems[props.index].quantity
                 ? "success"
                 : "warning"
             }
           >
-            {props.inventoryItem.quantity +
-              " " +
-              props.inventoryItem.product.unit}
+            {props.inventoryItem.quantity} {props.inventoryItem.product.unit}
           </Chip>
         )}
       </td>

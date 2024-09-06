@@ -1,4 +1,4 @@
-import { Chip } from "@mui/joy";
+import { Chip, Stack } from "@mui/joy";
 import { Invoice } from "../../interfaces/interfaces";
 import { useState } from "react";
 
@@ -10,7 +10,6 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
   const [open, setOpen] = useState(false);
-
   const today = new Date();
   const dueDate = new Date(props.invoice.dueDate);
 
@@ -35,17 +34,16 @@ export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
         </td>
         <td
           style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             paddingLeft: 15,
           }}
         >
-          {props.invoice?.debts?.length == 0 ? (
-            <CancelIcon fontSize="small" color="error" />
-          ) : (
-            <CheckCircleIcon fontSize="small" color="success" />
-          )}
+          <Stack display="flex" justifyContent="center" alignItems="center">
+            {props.invoice?.debts?.length == 0 ? (
+              <CancelIcon fontSize="small" color="error" />
+            ) : (
+              <CheckCircleIcon fontSize="small" color="success" />
+            )}
+          </Stack>
         </td>
         <td style={{ paddingLeft: 15 }}></td>
       </tr>

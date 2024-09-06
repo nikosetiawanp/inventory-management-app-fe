@@ -1,6 +1,7 @@
 import { Chip } from "@mui/joy";
 import {
   Inventory,
+  InventoryItem,
   Transaction,
   TransactionItem,
 } from "../../interfaces/interfaces";
@@ -30,13 +31,18 @@ export default function TransactionDetailRow(props: {
     return sum(arrayOfArrivedQuantity);
   };
 
+  const arrayOfInventoryItemQuantity =
+    props.transactionItem?.inventoryItems?.map(
+      (inventoryItem: InventoryItem) => inventoryItem?.quantity
+    );
+
   const Row = () => {
     return (
       <tr key={props.index}>
-        <td>{props.transactionItem.product.name}</td>
+        <td>{props.transactionItem?.product.name}</td>
 
         <td align="center">
-          {props.transactionItem.quantity} {props.transactionItem.product.unit}
+          {props.transactionItem?.quantity} {props.transactionItem.product.unit}
         </td>
 
         <td align="center">
@@ -50,14 +56,16 @@ export default function TransactionDetailRow(props: {
                 : "success"
             }
           >
-            {calculateTotalArrived(props.transactionItem.productId) +
+            {sum(arrayOfInventoryItemQuantity)}{" "}
+            {props.transactionItem?.product?.unit}
+            {/* {calculateTotalArrived(props.transactionItem.productId) +
               " " +
-              props.transactionItem.product.unit}
+              props.transactionItem.product.unit} */}
           </Chip>
         </td>
-        <td align="right">{formatIDR(props.transactionItem.price)}</td>
-        <td align="center">{props.transactionItem.discount}%</td>
-        <td align="center">{props.transactionItem.tax}%</td>
+        <td align="right">{formatIDR(props.transactionItem?.price)}</td>
+        <td align="center">{props.transactionItem?.discount}%</td>
+        <td align="center">{props.transactionItem?.tax}%</td>
         <td style={{ textAlign: "right" }}>
           {formatIDR(
             calculateNetPrice(

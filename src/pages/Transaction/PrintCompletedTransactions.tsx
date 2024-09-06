@@ -3,7 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { formatDate } from "../../helpers/dateHelpers";
 import PrintIcon from "@mui/icons-material/Print";
 import { useReactToPrint } from "react-to-print";
-import { Transaction, TransactionItem } from "../../interfaces/interfaces";
+import {
+  InventoryItem,
+  Invoice,
+  Transaction,
+} from "../../interfaces/interfaces";
 import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import React from "react";
@@ -24,19 +28,19 @@ export default function PrintCompletedTransactions(props: {
     content: () => printRef.current,
   });
 
-  const arrayOfTransactionItems = props.transactions
-    ?.map((transaction: Transaction) => transaction?.transactionItems)
-    .flat();
+  // const arrayOfTransactionItems = props.transactions
+  //   ?.map((transaction: Transaction) => transaction?.transactionItems)
+  //   .flat();
 
-  const arrayOfAllNetPrice = arrayOfTransactionItems?.map(
-    (transactionItem: TransactionItem) =>
-      calculateNetPrice(
-        transactionItem?.quantity,
-        transactionItem?.price,
-        transactionItem?.discount,
-        transactionItem?.tax
-      )
-  );
+  // const arrayOfAllNetPrice = arrayOfTransactionItems?.map(
+  //   (transactionItem: TransactionItem) =>
+  //     calculateNetPrice(
+  //       transactionItem?.quantity,
+  //       transactionItem?.price,
+  //       transactionItem?.discount,
+  //       transactionItem?.tax
+  //     )
+  // );
 
   const arrayOfInvoices = props.transactions
     ?.map((transaction: Transaction) => {
@@ -44,8 +48,23 @@ export default function PrintCompletedTransactions(props: {
     })
     .flat();
 
+  const arrayOfArrivedItems = arrayOfInvoices
+    ?.map((invoice: Invoice) => invoice?.inventory?.inventoryItems)
+    .flat();
+
+  const arrayOfAllNetPrice = arrayOfArrivedItems?.map(
+    (inventoryItem: InventoryItem) => {
+      return calculateNetPrice(
+        inventoryItem?.quantity,
+        inventoryItem?.transactionItem?.price,
+        inventoryItem?.transactionItem?.discount,
+        inventoryItem?.transactionItem?.tax
+      );
+    }
+  );
+
   useEffect(() => {
-    console.log("arrayOfInvoices:", arrayOfInvoices);
+    console.log(arrayOfAllNetPrice);
   }, []);
 
   return (
@@ -188,50 +207,59 @@ export default function PrintCompletedTransactions(props: {
                     </th>
                   </tr>
                 </thead>
-
                 <tbody>
-                  {props.transactions?.map(
-                    (transaction: Transaction, index: number) => {
-                      const arrayOfNetPrice =
-                        transaction?.transactionItems?.map(
-                          (transactionItem: TransactionItem) =>
-                            calculateNetPrice(
-                              transactionItem?.quantity,
-                              transactionItem?.price,
-                              transactionItem?.discount,
-                              transactionItem?.tax
-                            )
-                        );
+                  {arrayOfInvoices?.map((invoice: Invoice, index: number) => {
+                    const arrayOfNetPrice =
+                      invoice?.inventory?.inventoryItems?.map(
+                        (inventoryItem: InventoryItem) => {
+                          return calculateNetPrice(
+                            inventoryItem?.quantity,
+                            inventoryItem?.transactionItem?.price,
+                            inventoryItem?.transactionItem?.discount,
+                            inventoryItem?.transactionItem?.tax
+                          );
+                        }
+                      );
+                    // const arrayOfNetPrice = invoice?.inventory?inventoryItems?.map(
+                    //   (transactionItem: TransactionItem) =>
+                    //     calculateNetPrice(
+                    //       transactionItem?.quantity,
+                    //       transactionItem?.price,
+                    //       transactionItem?.discount,
+                    //       transactionItem?.tax
+                    //     )
+                    // );
 
-                      return (
-                        <React.Fragment key={index}>
-                          {/* INVENTORY ITEMS */}
-                          {transaction?.transactionItems?.map(
-                            (
-                              transactionItem: TransactionItem,
-                              index: number
-                            ) => (
+                    return (
+                      <React.Fragment key={index}>
+                        {/* INVENTORY ITEMS */}
+                        {invoice?.inventory?.inventoryItems?.map(
+                          (inventoryItem: InventoryItem, index: number) => {
+                            return (
                               <tr key={index} style={{ borderTop: 2 }}>
                                 <td style={{ fontSize: "12px" }}>
                                   {index == 0
                                     ? formatDate(
-                                        transaction?.date,
+                                        invoice?.transaction?.date,
                                         "DD-MM-YYYY"
                                       )
                                     : ""}
                                 </td>
                                 <td style={{ fontSize: "12px" }}>
-                                  <b>{index == 0 ? transaction?.number : ""}</b>
+                                  <b>{index == 0 ? invoice?.number : ""}</b>
                                 </td>
                                 <td style={{ fontSize: "12px" }}>
                                   <b>
                                     {index == 0
-                                      ? transaction?.contact?.name
+                                      ? invoice?.transaction?.contact?.name
                                       : ""}
                                   </b>
                                 </td>
                                 <td style={{ fontSize: "12px" }}>
-                                  {transactionItem?.product?.name}
+                                  {
+                                    inventoryItem?.transactionItem?.product
+                                      ?.name
+                                  }
                                 </td>
                                 <td
                                   style={{
@@ -239,11 +267,16 @@ export default function PrintCompletedTransactions(props: {
                                     textAlign: "center",
                                   }}
                                 >
-                                  {transactionItem?.quantity}{" "}
-                                  {transactionItem?.product?.unit}
+                                  {inventoryItem?.quantity}{" "}
+                                  {
+                                    inventoryItem?.transactionItem?.product
+                                      ?.unit
+                                  }
                                 </td>
                                 <td style={{ fontSize: "12px" }}>
-                                  {formatIDR(transactionItem?.price)}
+                                  {formatIDR(
+                                    inventoryItem?.transactionItem?.price
+                                  )}
                                 </td>
                                 <td
                                   style={{
@@ -251,7 +284,7 @@ export default function PrintCompletedTransactions(props: {
                                     textAlign: "center",
                                   }}
                                 >
-                                  {transactionItem?.discount}%
+                                  {inventoryItem?.transactionItem?.discount}%
                                 </td>
                                 <td
                                   style={{
@@ -259,7 +292,7 @@ export default function PrintCompletedTransactions(props: {
                                     textAlign: "center",
                                   }}
                                 >
-                                  {transactionItem?.tax}%
+                                  {inventoryItem?.transactionItem?.tax}%
                                 </td>
                                 <td
                                   style={{
@@ -269,44 +302,44 @@ export default function PrintCompletedTransactions(props: {
                                 >
                                   {formatIDR(
                                     calculateNetPrice(
-                                      transactionItem?.quantity,
-                                      transactionItem?.price,
-                                      transactionItem?.discount,
-                                      transactionItem?.tax
+                                      inventoryItem?.quantity,
+                                      inventoryItem?.transactionItem?.price,
+                                      inventoryItem?.transactionItem?.discount,
+                                      inventoryItem?.transactionItem?.tax
                                     )
                                   )}
                                 </td>
                               </tr>
-                            )
-                          )}
+                            );
+                          }
+                        )}
 
-                          {/* TOTAL */}
-                          <tr>
-                            <td
-                              style={{
-                                fontSize: "12px",
-                              }}
-                            ></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td
-                              style={{
-                                fontSize: "12px",
-                                textAlign: "right",
-                              }}
-                            >
-                              <b>{formatIDR(sum(arrayOfNetPrice))}</b>
-                            </td>
-                          </tr>
-                        </React.Fragment>
-                      );
-                    }
-                  )}
+                        {/* TOTAL */}
+                        <tr>
+                          <td
+                            style={{
+                              fontSize: "12px",
+                            }}
+                          ></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td
+                            style={{
+                              fontSize: "12px",
+                              textAlign: "right",
+                            }}
+                          >
+                            <b>{formatIDR(sum(arrayOfNetPrice))}</b>
+                          </td>
+                        </tr>
+                      </React.Fragment>
+                    );
+                  })}
                 </tbody>
                 <tfoot>
                   <tr>

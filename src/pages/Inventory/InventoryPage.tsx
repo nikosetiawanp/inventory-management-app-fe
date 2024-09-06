@@ -7,7 +7,7 @@ import ProductHistoryTab from "./ProductHistoryTab";
 
 export default function InventoryPage() {
   // FILTER
-  const [tabTitle, setTabTitle] = useState("Daftar Vendor");
+  const [tabTitle, setTabTitle] = useState("Gudang Masuk");
   const handleTabChange = (event: any, newValue: number) => {
     event;
     const titles = [

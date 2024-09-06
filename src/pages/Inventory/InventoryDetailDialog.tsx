@@ -25,6 +25,7 @@ export default function InventoryDetailDialog(props: {
   setOpen: any;
   inventory: Inventory;
   transactionItems: TransactionItem[];
+  refetch: () => void;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
@@ -95,6 +96,7 @@ export default function InventoryDetailDialog(props: {
           quantity: data.quantity ? data.quantity : 0,
           productId: props.transactionItems[index].productId,
           inventoryId: props.inventory.id,
+          transactionItemId: props.transactionItems[index].id,
         };
       });
 
@@ -103,7 +105,9 @@ export default function InventoryDetailDialog(props: {
           BACKEND_URL + "inventory-items/bulk",
           dataToSubmit
         );
+
         setIsSubmitting(false);
+        props.refetch();
         return response.data;
       } catch (error) {
         setIsSubmitting(false);
@@ -213,7 +217,7 @@ export default function InventoryDetailDialog(props: {
                             {/* {index} */}
                             <td>{transactionItem?.product?.name}</td>
                             <td align="center">
-                              {transactionItem?.quantity}{" "}
+                              {transactionItem?.quantity}
                               {transactionItem.product?.unit}
                             </td>
                             {/* QUANTITY */}
@@ -237,7 +241,7 @@ export default function InventoryDetailDialog(props: {
                             index={index}
                             inventory={props.inventory}
                             inventoryItem={inventoryItem}
-                            purchaseItems={props.transactionItems}
+                            transactionItems={props.transactionItems}
                           />
                         )
                       )}

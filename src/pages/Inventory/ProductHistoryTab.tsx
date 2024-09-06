@@ -67,11 +67,13 @@ export default function ProductHistoryTab() {
           refetch={refetch}
           label={"Tanggal"}
         />
-        <PrintProductHistory
-          startDate={startDate}
-          endDate={endDate}
-          products={productHistoryQuery?.data}
-        />
+        <Stack marginLeft="auto">
+          <PrintProductHistory
+            startDate={startDate}
+            endDate={endDate}
+            products={productHistoryQuery?.data}
+          />
+        </Stack>
         {/* <PrintMultiVendorReportModal
           startDate={startDate}
           endDate={endDate}

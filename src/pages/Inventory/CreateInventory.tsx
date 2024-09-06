@@ -147,7 +147,9 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
                       selectedTransaction?.number && selectedTransaction?.number
                     }
                     getOptionLabel={(option: Transaction) => option.number}
-                    options={transactionsQuery.data}
+                    options={
+                      transactionsQuery.data ? transactionsQuery?.data : []
+                    }
                     renderOption={(props, option: Transaction) => (
                       <AutocompleteOption {...props} key={option.id}>
                         <ListItemContent>

@@ -147,44 +147,48 @@ export default function PrintInventory(props: {
                   </thead>
 
                   <tbody>
-                    {props.inventories?.map((inventory: Inventory) => {
-                      return (
-                        <tr>
-                          <td style={{ fontSize: "12px" }}>
-                            {inventory?.number}
-                          </td>
-                          <td style={{ fontSize: "12px" }}>
-                            {inventory?.receiptNumber}
-                          </td>
-                          <td style={{ fontSize: "12px" }}>
-                            {inventory?.transaction?.contact?.name}
-                          </td>
-                          <td style={{ fontSize: "12px" }}>
-                            {formatDate(inventory?.date, "DD MMMM YYYY")}
-                          </td>
-                          <td style={{ fontSize: "12px" }}>
-                            {inventory?.transaction?.number}
-                          </td>
-                          <td style={{ fontSize: "12px" }}>
-                            {inventory?.description}
-                          </td>
-                          <td style={{ fontSize: "12px", textAlign: "center" }}>
-                            <Chip
-                              size="sm"
-                              color={
-                                inventory?.inventoryItems?.length > 0
-                                  ? "success"
-                                  : "danger"
-                              }
+                    {props.inventories?.map(
+                      (inventory: Inventory, index: number) => {
+                        return (
+                          <tr key={index}>
+                            <td style={{ fontSize: "12px" }}>
+                              {inventory?.number}
+                            </td>
+                            <td style={{ fontSize: "12px" }}>
+                              {inventory?.receiptNumber}
+                            </td>
+                            <td style={{ fontSize: "12px" }}>
+                              {inventory?.transaction?.contact?.name}
+                            </td>
+                            <td style={{ fontSize: "12px" }}>
+                              {formatDate(inventory?.date, "DD MMMM YYYY")}
+                            </td>
+                            <td style={{ fontSize: "12px" }}>
+                              {inventory?.transaction?.number}
+                            </td>
+                            <td style={{ fontSize: "12px" }}>
+                              {inventory?.description}
+                            </td>
+                            <td
+                              style={{ fontSize: "12px", textAlign: "center" }}
                             >
-                              {inventory?.inventoryItems?.length > 0
-                                ? "Divalidasi"
-                                : "Menunggu validasi"}
-                            </Chip>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                              <Chip
+                                size="sm"
+                                color={
+                                  inventory?.inventoryItems?.length > 0
+                                    ? "success"
+                                    : "danger"
+                                }
+                              >
+                                {inventory?.inventoryItems?.length > 0
+                                  ? "Divalidasi"
+                                  : "Menunggu validasi"}
+                              </Chip>
+                            </td>
+                          </tr>
+                        );
+                      }
+                    )}
                   </tbody>
                 </Table>
               </Stack>

@@ -39,7 +39,6 @@ export default function CreateInvoice(props: {
 
   // DATE
   const [selectedDueDate, setSelectedDueDate] = useState();
-
   const {
     register,
     handleSubmit,

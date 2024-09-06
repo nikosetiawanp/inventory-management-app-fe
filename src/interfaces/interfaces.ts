@@ -64,6 +64,7 @@ export interface TransactionItem {
 
   transaction: Transaction;
   product: Product;
+  inventoryItems: InventoryItem[];
 }
 
 export interface Transaction {
@@ -103,7 +104,10 @@ export interface InventoryItem {
   quantity: number;
   productId: string | number;
   inventoryId: string | number;
+  transactionItemId: string | number;
+
   product: Product;
+  transactionItem: TransactionItem;
 }
 
 export interface Invoice {

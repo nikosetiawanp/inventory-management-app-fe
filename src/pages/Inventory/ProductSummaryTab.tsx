@@ -60,11 +60,13 @@ export default function ProductSummaryTab() {
           refetch={refetch}
           label={"Tanggal"}
         />
-        <PrintProductSummary
-          startDate={startDate}
-          endDate={endDate}
-          products={productHistoryQuery?.data}
-        />
+        <Stack marginLeft="auto">
+          <PrintProductSummary
+            startDate={startDate}
+            endDate={endDate}
+            products={productHistoryQuery?.data}
+          />
+        </Stack>
       </Stack>
 
       {/* TABLES */}

@@ -47,7 +47,7 @@ export default function ApprovedTransactionTab(props: { type: "P" | "S" }) {
   };
 
   useEffect(() => {
-    console.log(transactionsQuery?.data);
+    // console.log(transactionsQuery?.data);
   }, []);
 
   // CHECKLIST FILTER

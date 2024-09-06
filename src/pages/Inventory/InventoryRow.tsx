@@ -11,6 +11,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 export default function InventoryRow(props: {
   index: number;
   inventory: Inventory;
+  refetch: () => void;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -57,6 +58,7 @@ export default function InventoryRow(props: {
         setOpen={setOpen}
         inventory={props.inventory}
         transactionItems={props.inventory?.transaction?.transactionItems}
+        refetch={props.refetch}
       />
     </>
   );

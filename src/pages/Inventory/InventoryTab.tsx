@@ -141,6 +141,7 @@ export default function InventoryTab(props: { type: "A" | "D" }) {
                     key={index}
                     index={index}
                     inventory={inventory}
+                    refetch={refetch}
                   />
                 )
               )

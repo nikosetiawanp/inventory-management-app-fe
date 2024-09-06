@@ -30,7 +30,6 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
         `&endDate=${formattedEndDate}` +
         `&type=${props.type}`
     );
-
     return response.data.data;
   };
 
@@ -53,6 +52,7 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
 
   useEffect(() => {
     refetch();
+    console.log(invoicesQuery?.data);
   }, [startDate, endDate, props.type]);
   return (
     <>

@@ -1,5 +1,5 @@
 import { Button, Modal, ModalDialog, Stack, Table, Typography } from "@mui/joy";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatDate } from "../../helpers/dateHelpers";
 import PrintIcon from "@mui/icons-material/Print";
 import { useReactToPrint } from "react-to-print";

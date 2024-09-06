@@ -32,16 +32,12 @@ export default function CreateDebt(props: {
 
   const createDebt = useMutation(
     async (data: Debt) => {
-      console.log(data);
-
       try {
         const response = await axios.post(BACKEND_URL + "debts/", data);
         handleClose(event);
         return response.data;
       } catch (error) {
         console.log(error);
-
-        // throw new Error("Network response was not ok");
       }
     },
     {
@@ -79,12 +75,12 @@ export default function CreateDebt(props: {
           })}
         >
           <Typography id="nested-modal-title" level="h2">
-            {props.type == "P" ? "Buat Hutang?" : "Buat Piutang?"}{" "}
+            <b>{props.type == "P" ? "Buat Hutang?" : "Buat Piutang?"}</b>{" "}
           </Typography>
           <Typography id="nested-modal-description" textColor="text.tertiary">
             {props.type == "P"
-              ? `Anda yakin ingin membuat hutang dari faktur ${props.invoice.number}`
-              : `Anda yakin ingin membuat piutang dari faktur ${props.invoice.number}`}
+              ? `Anda yakin ingin membuat hutang dari faktur ${props.invoice.number}?`
+              : `Anda yakin ingin membuat piutang dari faktur ${props.invoice.number}?`}
           </Typography>
           <Box
             sx={{
@@ -110,7 +106,7 @@ export default function CreateDebt(props: {
                 createDebt.mutateAsync(dataToSubmit as any);
               }}
             >
-              {props.type == "P" ? "Buat Hutang" : "Buat Piutang"}{" "}
+              {props.type == "P" ? "Buat Hutang" : "Buat Piutang"}
             </Button>
           </Box>
         </ModalDialog>
