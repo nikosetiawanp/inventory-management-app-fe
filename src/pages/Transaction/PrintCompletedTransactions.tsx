@@ -149,7 +149,9 @@ export default function PrintCompletedTransactions(props: {
                   color="primary"
                   fontWeight="lg"
                 >
-                  {props.type == "P" ? "Laporan PO" : "Laporan SO"}
+                  {props.type == "P"
+                    ? "Laporan Pembelian"
+                    : "Laporan Penjualan"}
                 </Typography>
                 <Typography color="danger">
                   <b>
@@ -239,10 +241,7 @@ export default function PrintCompletedTransactions(props: {
                               <tr key={index} style={{ borderTop: 2 }}>
                                 <td style={{ fontSize: "12px" }}>
                                   {index == 0
-                                    ? formatDate(
-                                        invoice?.transaction?.date,
-                                        "DD-MM-YYYY"
-                                      )
+                                    ? formatDate(invoice?.date, "DD-MM-YYYY")
                                     : ""}
                                 </td>
                                 <td style={{ fontSize: "12px" }}>
