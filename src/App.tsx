@@ -21,6 +21,7 @@ import { CssVarsProvider as JoyCssVarsProvider } from "@mui/joy/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import InventoryPage from "./pages/Inventory/InventoryPage";
 import TransactionPage from "./pages/Transaction/TransactionPage";
+import CompletedTransactionPage from "./pages/Transaction/CompletedTransactionPage";
 
 const materialTheme = materialExtendTheme();
 
@@ -71,12 +72,20 @@ function App() {
                   element={<InvoicePage type="P" />}
                 />
                 <Route
+                  path="/purchase"
+                  element={<CompletedTransactionPage type="P" />}
+                />
+                <Route
                   path="/sales-order"
                   element={<TransactionPage type="S" />}
                 />
                 <Route
                   path="/sales-invoice"
                   element={<InvoicePage type="S" />}
+                />
+                <Route
+                  path="/sales"
+                  element={<CompletedTransactionPage type="S" />}
                 />
                 <Route path="/debt" element={<DebtPage type="D" />} />
                 <Route path="/receivable" element={<DebtPage type="R" />} />

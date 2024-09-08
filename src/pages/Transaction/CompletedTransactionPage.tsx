@@ -3,16 +3,14 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-
 import { Settings } from "@mui/icons-material";
 import Drawer from "../../components/Drawer";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import { Invoice } from "../../interfaces/interfaces";
-import InvoiceRow from "./InvoiceRow";
+import InvoiceRow from "../Invoice/InvoiceRow";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
-import PrintInvoices from "./PrintInvoices";
 
-export default function InvoicePage(props: { type: "P" | "S" }) {
+export default function CompletedTransactionPage(props: { type: "P" | "S" }) {
   // DATE
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -64,7 +62,7 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
         {/* TITLE */}
         <Stack padding={4} width={1} spacing={2}>
           <Typography fontWeight={"bold"} level="h4">
-            {props.type == "P" ? "Faktur Pembelian" : "Faktur Penjualan"}
+            {props.type == "P" ? "Pembelian" : "Penjualan"}
           </Typography>
 
           {/* DATE FILTER */}
@@ -77,14 +75,6 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
               refetch={refetch}
               label="Tanggal Faktur"
             />
-            <Stack direction="row" alignItems="end" marginLeft="auto">
-              <PrintInvoices
-                startDate={startDate}
-                endDate={endDate}
-                type={"P"}
-                invoices={invoicesQuery?.data}
-              />
-            </Stack>
           </Stack>
 
           <Sheet

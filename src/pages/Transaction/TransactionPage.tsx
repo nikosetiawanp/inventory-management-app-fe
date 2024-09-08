@@ -2,10 +2,7 @@ import { Stack, Tab, TabList, TabPanel, Tabs, Typography } from "@mui/joy";
 import { useState } from "react";
 
 import Drawer from "../../components/Drawer";
-
-import PendingPurchaseTab from "./PendingTransactionTab";
-import ApprovedTransactionTab from "./ApprovedTransactionTab";
-import CompletedTransactionTab from "./CompletedTransactionTab";
+import TransactionTab from "./TransactionTab";
 
 export default function TransactionPage(props: { type: "P" | "S" }) {
   const [tabTitle, setTabTitle] = useState("Purchase Order");
@@ -14,8 +11,8 @@ export default function TransactionPage(props: { type: "P" | "S" }) {
     event;
     const titles =
       props.type == "P"
-        ? ["Purchase Requisition", "Purchase Order", "Pembelian"]
-        : ["Sales Requisition", "Sales Order", "Penjualan"];
+        ? ["Purchase Requisition", "Purchase Order", "Selesai"]
+        : ["Sales Requisition", "Sales Order", "Selesai"];
     setTabTitle(titles[newValue]);
   };
 
@@ -41,17 +38,17 @@ export default function TransactionPage(props: { type: "P" | "S" }) {
               {props.type == "P" ? "Purchase Order" : "Sales Order"}
             </Tab>
             <Tab color="primary" value={2}>
-              {props.type == "P" ? "Pembelian" : "Penjualan"}
+              {props.type == "P" ? "Selesai" : "Selesai"}
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ paddingX: 0 }}>
-            <PendingPurchaseTab type={props.type} />
+            <TransactionTab type={props.type} isApproved={0} isDone={0} />
           </TabPanel>
           <TabPanel value={1} sx={{ paddingX: 0 }}>
-            <ApprovedTransactionTab type={props.type} />
+            <TransactionTab type={props.type} isApproved={1} isDone={0} />
           </TabPanel>
           <TabPanel value={2} sx={{ paddingX: 0 }}>
-            <CompletedTransactionTab type={props.type} />
+            <TransactionTab type={props.type} isApproved={1} isDone={1} />
           </TabPanel>
         </Tabs>
       </Stack>

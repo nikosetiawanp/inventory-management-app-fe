@@ -60,6 +60,12 @@ export default function Drawer() {
       category: "Pembelian",
       icon: <ReceiptIcon fontSize="small" />,
     },
+    {
+      name: "Pembelian",
+      param: "/purchase",
+      category: "Pembelian",
+      icon: <ShoppingCartIcon fontSize="small" />,
+    },
     // SALES
     {
       name: "Penjualan",
@@ -72,6 +78,12 @@ export default function Drawer() {
       param: "/sales-invoice",
       category: "Penjualan",
       icon: <ReceiptIcon fontSize="small" />,
+    },
+    {
+      name: "Penjualan",
+      param: "/sales",
+      category: "Penjualan",
+      icon: <ShoppingCartIcon fontSize="small" />,
     },
     // DEBT
     {

@@ -8,15 +8,7 @@ import {
   Divider,
 } from "@mui/joy";
 
-import {
-  TransactionItem,
-  InventoryItem,
-  Invoice,
-} from "../../interfaces/interfaces";
-import { useQuery } from "react-query";
-import axios from "axios";
-import RowSkeleton from "../../components/skeletons/RowSkeleton";
-
+import { InventoryItem, Invoice } from "../../interfaces/interfaces";
 import CreateDebt from "./CreateDebt";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
@@ -28,56 +20,15 @@ export default function InvoiceDetailDialog(props: {
   setOpen: any;
   invoice: Invoice;
 }) {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-
-  // GET INVENTORY ITEMS
-  const getInventoryItems = async () => {
-    const response = await axios.get(
-      BACKEND_URL + `inventory-items?inventoryId=${props.invoice.inventoryId}`
-    );
-    return response.data.data;
-  };
-  const inventoryItemsQuery = useQuery({
-    queryKey: [`inventoryItems.${props.invoice.inventoryId}`],
-    queryFn: () => getInventoryItems(),
-    refetchOnWindowFocus: false,
-    enabled: props.open,
-  });
-
-  // GET PURCHASE ITEMS
-  const getTransactionItems = async () => {
-    const response = await axios.get(
-      BACKEND_URL +
-        `transaction-items?transactionId=${props.invoice?.transactionId}`
-    );
-
-    return response.data.data;
-  };
-  const transactionItemsQuery = useQuery({
-    queryKey: [`purchaseItems.${props.invoice?.transactionId}`],
-    queryFn: () => getTransactionItems(),
-    refetchOnWindowFocus: false,
-    enabled: props.open,
-  });
-
-  const mergedArray =
-    transactionItemsQuery?.data?.map((transactionItem: TransactionItem) => {
-      const arrivedQuantity =
-        inventoryItemsQuery?.data?.find(
-          (inventoryItem: InventoryItem) =>
-            inventoryItem?.productId == transactionItem?.productId
-        )?.quantity || 0;
-
-      return { ...transactionItem, arrivedQuantity };
-    }) || transactionItemsQuery?.data;
-
-  const arrayOfNetPrice = mergedArray?.map((item: TransactionItem) =>
-    calculateNetPrice(
-      item?.arrivedQuantity,
-      item?.price,
-      item?.discount,
-      item?.tax
-    )
+  const arrayOfNetPrice = props.invoice?.inventory?.inventoryItems?.map(
+    (inventoryItem: InventoryItem) => {
+      return calculateNetPrice(
+        inventoryItem?.quantity,
+        inventoryItem?.transactionItem?.price,
+        inventoryItem?.transactionItem?.discount,
+        inventoryItem?.transactionItem?.tax
+      );
+    }
   );
 
   return (
@@ -153,7 +104,7 @@ export default function InvoiceDetailDialog(props: {
                   <th>Produk</th>
                   <th style={{ textAlign: "center" }}>Quantity</th>
 
-                  <th>Harga</th>
+                  <th style={{ textAlign: "right" }}>Harga</th>
                   <th style={{ textAlign: "center" }}>Diskon</th>
                   <th style={{ textAlign: "center" }}>Pajak</th>
                   <th style={{ textAlign: "right" }}>Total</th>
@@ -171,35 +122,40 @@ export default function InvoiceDetailDialog(props: {
                 }}
               >
                 {/* NEW ITEM */}
-                {inventoryItemsQuery.isLoading ? (
-                  <RowSkeleton rows={15} columns={8} />
-                ) : (
-                  mergedArray?.map((item: TransactionItem, index: number) => (
+
+                {props.invoice?.inventory?.inventoryItems?.map(
+                  (inventoryItem: InventoryItem, index: number) => (
                     <tr key={index}>
                       {/* PRODUK */}
-                      <td>{item.product.name}</td>
+                      <td>{inventoryItem?.product?.name}</td>
                       {/* QUANTITY */}
                       <td style={{ textAlign: "center" }}>
-                        {item.arrivedQuantity} {item.product.unit}
+                        {inventoryItem?.quantity} {inventoryItem?.product?.unit}
                       </td>
 
                       {/* HARGA */}
-                      <td style={{}}>{formatIDR(item.price)}</td>
+                      <td style={{ textAlign: "right" }}>
+                        {formatIDR(inventoryItem?.transactionItem?.price)}
+                      </td>
 
-                      <td style={{ textAlign: "center" }}>{item.discount}%</td>
-                      <td style={{ textAlign: "center" }}>{item.tax}%</td>
+                      <td style={{ textAlign: "center" }}>
+                        {inventoryItem?.transactionItem?.discount}%
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        {inventoryItem?.transactionItem?.tax}%
+                      </td>
                       <td style={{ textAlign: "right" }}>
                         {formatIDR(
                           calculateNetPrice(
-                            item.arrivedQuantity,
-                            item.price,
-                            item.discount,
-                            item.tax
+                            inventoryItem?.quantity,
+                            inventoryItem?.transactionItem?.price,
+                            inventoryItem?.transactionItem?.discount,
+                            inventoryItem?.transactionItem?.tax
                           )
                         )}
                       </td>
                     </tr>
-                  ))
+                  )
                 )}
               </tbody>
             </Table>
@@ -210,7 +166,6 @@ export default function InvoiceDetailDialog(props: {
                 justifyContent: "space-between",
                 borderColor: "neutral",
                 paddingTop: 2,
-                // borderTop: 1,
               }}
             >
               <h3>Total</h3>
