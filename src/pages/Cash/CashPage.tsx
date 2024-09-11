@@ -1,6 +1,5 @@
 import { Button, Chip, Sheet, Stack, Table, Typography } from "@mui/joy";
 
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import axios from "axios";
@@ -15,18 +14,14 @@ import CreateCash from "./CreateCash";
 export default function CashPage() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const formattedStartDate = startDate
-    ? dayjs(startDate).format("YYYY-MM-DD")
-    : "";
-  const formattedEndDate = endDate ? dayjs(endDate).format("YYYY-MM-DD") : "";
 
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getCashes = async () => {
     const response = await axios.get(
       BACKEND_URL +
         `cashes?` +
-        `startDate=${formattedStartDate}` +
-        `&endDate=${formattedEndDate}`
+        `startDate=${formatDate(startDate, "YYYY-MM-DD")}` +
+        `&endDate=${formatDate(endDate, "YYYY-MM-DD")}`
     );
     console.log(response.data.data);
 
@@ -41,11 +36,11 @@ export default function CashPage() {
   const refetch = () => {
     getCashes();
     cashesQuery.refetch();
-
-    useEffect(() => {
-      getCashes();
-    }, [startDate, endDate]);
   };
+
+  useEffect(() => {
+    cashesQuery.refetch();
+  }, [startDate, endDate]);
 
   return (
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -63,8 +58,8 @@ export default function CashPage() {
             endDate={endDate}
             setEndDate={setEndDate}
             refetch={refetch}
-            label="Tanggal Faktur"
-          />{" "}
+            label="Tanggal Kas"
+          />
           <Stack marginLeft="auto">
             <CreateCash />
           </Stack>
@@ -102,7 +97,7 @@ export default function CashPage() {
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody style={{ overflow: "scroll" }}>
               {cashesQuery?.isLoading ? (
                 <RowSkeleton rows={15} columns={5} />
               ) : (

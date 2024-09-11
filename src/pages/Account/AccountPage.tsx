@@ -1,15 +1,4 @@
-import {
-  Stack,
-  Typography,
-  TextField,
-  Table,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  IconButton,
-  TableBody,
-} from "@mui/material";
+import { Stack, Typography, Table, Sheet, Button } from "@mui/joy";
 import { useState } from "react";
 import { Settings } from "@mui/icons-material";
 
@@ -19,6 +8,7 @@ import Drawer from "../../components/Drawer";
 import CreateAccount from "./CreateAccount";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import { Account } from "../../interfaces/interfaces";
+import SearchFilter from "../../components/filters/SearchFilter";
 
 export default function AccountPage() {
   const [searchInput, setSearchInput] = useState("");
@@ -40,67 +30,75 @@ export default function AccountPage() {
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
       <Drawer />
-
-      <Stack padding={4} gap={4} width={1}>
-        <Typography fontWeight={"bold"} variant="h4">
+      <Stack padding={4} gap={2} width={1}>
+        <Typography fontWeight={"bold"} level="h4">
           Akun
         </Typography>
-
-        <Stack direction={"row"} justifyContent={"space-between"} width={1}>
-          <TextField
-            id="outlined-basic"
-            placeholder="Cari"
-            variant="outlined"
-            size="small"
-            sx={{ width: "400px" }}
-            value={searchInput}
-            onChange={(event) => {
-              setSearchInput(event.target.value);
-            }}
+        {/* SEARCH & FILTER */}
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"flex-end"}
+          spacing={2}
+        >
+          <SearchFilter
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            label={"Cari produk"}
+            placeholder={"Cari"}
           />
-          {/* BUTTON */}
           <CreateAccount />
         </Stack>
 
-        <TableContainer
-          sx={{ border: 1, borderColor: "divider", borderRadius: 2 }}
-        >
-          <Table size="small" sx={{ borderCollapse: "separate" }}>
-            <TableHead
-              sx={{
-                position: "sticky",
-                backgroundColor: "white",
-                top: 0,
-                border: 2,
-                borderColor: "divider",
-                zIndex: 50,
-              }}
-            >
-              <TableRow>
-                <TableCell>Kode</TableCell>
-                <TableCell>Nama</TableCell>
-                <TableCell width={10}>
-                  <IconButton size="small">
+        {/* BUTTON */}
+        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <Table size="sm" stickyHeader stickyFooter>
+            <thead>
+              <tr>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Id
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Kode
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Nama
+                  </Button>
+                </th>
+                <th
+                  style={{
+                    textAlign: "center",
+                    width: 60,
+                  }}
+                >
+                  <Button size="sm" variant="plain" color="neutral">
                     <Settings fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                  </Button>
+                </th>
+              </tr>
+            </thead>
 
-            <TableBody sx={{ overflowY: "scroll" }}>
+            <tbody>
               {accountsQuery.isLoading ? (
                 <RowSkeleton rows={15} columns={6} />
               ) : (
                 accountsQuery.data.map((account: Account, index: number) => (
-                  <TableRow key={index} hover>
-                    <TableCell>{account.number}</TableCell>
-                    <TableCell>{account.name}</TableCell>
-                  </TableRow>
+                  <tr key={index}>
+                    <td style={{ paddingLeft: 15 }}>{account.id}</td>
+                    <td style={{ paddingLeft: 15 }}>{account.number}</td>
+                    <td style={{ paddingLeft: 15 }}>{account.name}</td>
+                    <td></td>
+                  </tr>
                 ))
               )}
-            </TableBody>
+            </tbody>
           </Table>
-        </TableContainer>
+        </Sheet>
       </Stack>
     </Stack>
   );

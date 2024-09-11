@@ -1,10 +1,21 @@
-import { Button, Dialog, Stack, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Modal,
+  ModalDialog,
+  Stack,
+} from "@mui/joy";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Account } from "../../interfaces/interfaces";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
+import { InfoOutlined } from "@mui/icons-material";
 
 export default function CreateAccount() {
   const {
@@ -55,67 +66,95 @@ export default function CreateAccount() {
   return (
     <>
       <Button
-        startIcon={<AddIcon />}
-        variant="contained"
+        startDecorator={<AddIcon />}
+        variant="solid"
         onClick={() => setOpen(true)}
-        sx={{ height: "auto" }}
+        sx={{ whiteSpace: "nowrap" }}
       >
-        Tambah Akun
+        Buat Akun
       </Button>
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        fullWidth
-        maxWidth={"xs"}
-      >
-        <form
-          action="submit"
-          onSubmit={handleSubmit(onSubmit as any)}
-          noValidate
-        >
-          <Stack gap={3} padding={4}>
-            <Typography variant="h6">Buat Akun</Typography>
-            <TextField
-              id="number"
-              label="Nomor"
-              variant="outlined"
-              {...register("number", { required: "Tidak boleh kosong" })}
-              error={!!errors.number}
-              helperText={errors.number?.message}
-              required
-            />
-            <TextField
-              id="name"
-              label="Nama"
-              variant="outlined"
-              {...register("name", { required: "Tidak boleh kosong" })}
-              error={!!errors.name}
-              helperText={errors.name?.message}
-              required
-            />
 
-            {/* ACTIONS */}
-            <Stack
-              direction={"row"}
-              width={1}
-              justifyContent={"flex-end"}
-              gap={1}
-            >
-              <Button onClick={() => setOpen(false)} type="button">
-                Batal
-              </Button>
-              <Button
-                variant={"contained"}
-                disabled={createAccount.isLoading}
-                type="button"
-                onClick={handleSubmit(onSubmit)}
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>Buat Akun</DialogTitle>
+
+          <form
+            action="submit"
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            style={{ overflow: "scroll" }}
+          >
+            <Stack spacing={2}>
+              <FormControl error={errors.number?.message !== ""}>
+                <Stack spacing={0}>
+                  <FormLabel>Nama</FormLabel>
+                  <Input
+                    id="number"
+                    placeholder="Nomor"
+                    {...register("number", {
+                      required: "Tidak boleh kosong",
+                    })}
+                    error={!!errors.number}
+                    size="lg"
+                  />
+                  {errors.number?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.number?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+
+              <FormControl error={errors.name?.message !== ""}>
+                <Stack spacing={0}>
+                  <FormLabel>Nama</FormLabel>
+                  <Input
+                    id="nama"
+                    placeholder="Nama"
+                    {...register("name", { required: "Tidak boleh kosong" })}
+                    error={!!errors.name}
+                    size="lg"
+                  />
+                  {errors.name?.message && (
+                    <FormHelperText>
+                      <InfoOutlined />
+                      {errors.name?.message}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </FormControl>
+
+              {/* ACTIONS */}
+              <Stack
+                direction={"row"}
+                width={1}
+                justifyContent={"flex-end"}
+                gap={1}
               >
-                {createAccount.isLoading ? "Menyimpan" : "Simpan"}
-              </Button>
+                <Button
+                  onClick={() => setOpen(false)}
+                  type="button"
+                  variant="outlined"
+                  color="neutral"
+                  disabled={createAccount.isLoading}
+                >
+                  Batal
+                </Button>
+                <Button
+                  variant={"solid"}
+                  type="button"
+                  disabled={createAccount.isLoading}
+                  onClick={handleSubmit(onSubmit)}
+                  loading={createAccount.isLoading}
+                >
+                  Simpan
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-        </form>
-      </Dialog>
+          </form>
+        </ModalDialog>
+      </Modal>
     </>
   );
 }

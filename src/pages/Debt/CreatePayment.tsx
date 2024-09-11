@@ -84,7 +84,6 @@ export default function CreatePayment(props: { debt: Debt }) {
       contactId: props.debt.contactId,
       accountId: props.debt.type == "D" ? 1 : 2,
     };
-    console.log(dataToSubmit);
     try {
       await createCash.mutateAsync(dataToSubmit as any);
       await createPayment.mutateAsync(dataToSubmit as any);
