@@ -38,43 +38,43 @@ export default function ActionMenu(props: {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   const queryClient = useQueryClient();
-  const { mutate: deleteData } = useMutation(
-    async () => {
-      try {
-        const response = await axios.delete(
-          BACKEND_URL + `products/` + props.product?.id
-        );
-        props.setAlert({
-          open: true,
-          color: "success",
-          message: "Data berhasil dihapus",
-        });
-        return response.data;
-      } catch (error: any) {
-        props.setAlert({
-          open: true,
-          color: "danger",
-          message: "Terjadi kesalahan, mohon coba kembali",
-        });
-        console.log(error);
-        if (error?.code == "ERR_BAD_RESPONSE") {
+
+  const DeleteConfirmDialog = () => {
+    const { mutate: deleteData } = useMutation(
+      async () => {
+        try {
+          const response = await axios.delete(
+            BACKEND_URL + `products/` + props.product?.id
+          );
+          props.setAlert({
+            open: true,
+            color: "success",
+            message: "Data berhasil dihapus",
+          });
+          return response.data;
+        } catch (error: any) {
           props.setAlert({
             open: true,
             color: "danger",
             message: "Terjadi kesalahan, mohon coba kembali",
           });
-          throw new Error("Network response was not ok");
+          console.log(error);
+          if (error?.code == "ERR_BAD_RESPONSE") {
+            props.setAlert({
+              open: true,
+              color: "danger",
+              message: "Terjadi kesalahan, mohon coba kembali",
+            });
+            throw new Error("Network response was not ok");
+          }
         }
-      }
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("products");
       },
-    }
-  );
-
-  const DeleteConfirmDialog = () => {
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries("products");
+        },
+      }
+    );
     return (
       <Modal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <ModalDialog variant="outlined" role="alertdialog">
@@ -167,7 +167,7 @@ export default function ActionMenu(props: {
     return (
       <Modal open={updateOpen} onClose={() => setUpdateOpen(false)}>
         <ModalDialog>
-          <DialogTitle>Tambah Produk</DialogTitle>
+          <DialogTitle>Ubah Produk</DialogTitle>
           <form
             action="submit"
             onSubmit={handleSubmit(onSubmit)}
@@ -282,7 +282,7 @@ export default function ActionMenu(props: {
             <Typography color="neutral">Ubah</Typography>
           </MenuItem>
           <MenuItem onClick={() => setDeleteOpen(true)}>
-            <DeleteIcon fontSize="small" color="error" />{" "}
+            <DeleteIcon fontSize="small" color="error" />
             <Typography color="danger">Hapus</Typography>
           </MenuItem>
         </Menu>
