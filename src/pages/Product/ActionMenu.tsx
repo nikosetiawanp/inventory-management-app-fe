@@ -106,7 +106,9 @@ export default function ActionMenu(props: {
 
   const UpdateModal = () => {
     const units = ["pcs", "kg"];
-    const [selectedUnit, setSelectedUnit] = useState<string | null>(units[0]);
+    const [selectedUnit, setSelectedUnit] = useState<string | null>(
+      props.product?.unit
+    );
     const {
       register,
       handleSubmit,
@@ -222,9 +224,7 @@ export default function ActionMenu(props: {
                   value={selectedUnit}
                   onChange={handleTypeChange}
                   size="lg"
-                  defaultValue={units?.find(
-                    (unit: string) => unit == props.product?.unit
-                  )}
+                  defaultValue={props.product?.unit}
                 >
                   {units.map((unit: string, index: number) => (
                     <Option key={index} value={unit}>
