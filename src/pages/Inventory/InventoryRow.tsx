@@ -1,5 +1,4 @@
-import ArrivalHistoryOptionButton from "./ArrivalHistoryOptionButton";
-import { Inventory } from "../../interfaces/interfaces";
+import { Alert, Inventory } from "../../interfaces/interfaces";
 import { useState } from "react";
 import InventoryDetailDialog from "./InventoryDetailDialog";
 import { formatDate } from "../../helpers/dateHelpers";
@@ -7,11 +6,13 @@ import { Stack } from "@mui/joy";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import ActionMenu from "./ActionMenu";
 
 export default function InventoryRow(props: {
   index: number;
   inventory: Inventory;
   refetch: () => void;
+  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -49,7 +50,8 @@ export default function InventoryRow(props: {
           </Stack>
         </td>
         <td style={{ textAlign: "center" }}>
-          <ArrivalHistoryOptionButton inventory={props.inventory} />
+          <ActionMenu inventory={props.inventory} setAlert={props.setAlert} />
+          {/* <ArrivalHistoryOptionButton inventory={props.inventory} /> */}
         </td>
       </tr>
 

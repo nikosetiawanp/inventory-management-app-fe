@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Transaction } from "../../interfaces/interfaces";
+import { Alert, Transaction } from "../../interfaces/interfaces";
 
 import TransactionDetailDialog from "./TransactionDetailDialog";
 import { formatDate } from "../../helpers/dateHelpers";
 import { Chip } from "@mui/joy";
+import ActionMenu from "./ActionMenu";
 
 export default function TransactionRow(props: {
   index: number;
   transaction: Transaction;
   refetch: any;
+  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
 }) {
   const [open, setOpen] = useState(false);
   const isOngoing =
@@ -43,7 +45,12 @@ export default function TransactionRow(props: {
             textAlign: "center",
             width: 60,
           }}
-        ></td>
+        >
+          <ActionMenu
+            transaction={props.transaction}
+            setAlert={props.setAlert}
+          />
+        </td>
       </tr>
 
       {/* DIALOG */}
@@ -52,6 +59,7 @@ export default function TransactionRow(props: {
         setOpen={setOpen}
         transaction={props.transaction}
         refetch={props.refetch}
+        setAlert={props.setAlert}
       />
     </>
   );

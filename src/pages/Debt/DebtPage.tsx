@@ -3,8 +3,17 @@ import Drawer from "../../components/Drawer";
 import UnpaidDebtTab from "./UnpaidDebtTab";
 import MonthlyReportTab from "./MonthlyReportTab";
 import MultiVendorReportTab from "./MultiVendorReportTab";
+import { useState } from "react";
+import { Alert } from "../../interfaces/interfaces";
+import AlertSnackbar from "../../components/AlertSnackbar";
 
 export default function DebtPage(props: { type: "D" | "R" }) {
+  // ALERT
+  const [alert, setAlert] = useState<Alert>({
+    open: false,
+    color: "success",
+    message: "Data berhasil dibuat",
+  });
   return (
     <Stack
       direction={"row"}
@@ -31,7 +40,7 @@ export default function DebtPage(props: { type: "D" | "R" }) {
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ paddingX: 0 }}>
-            <UnpaidDebtTab type={props.type} />
+            <UnpaidDebtTab type={props.type} setAlert={setAlert} />
           </TabPanel>
           <TabPanel value={1} sx={{ paddingX: 0 }}>
             <MonthlyReportTab type={props.type} />
@@ -42,6 +51,7 @@ export default function DebtPage(props: { type: "D" | "R" }) {
           </TabPanel>
         </Tabs>
       </Stack>
+      <AlertSnackbar alert={alert} setAlert={setAlert} />
     </Stack>
   );
 }

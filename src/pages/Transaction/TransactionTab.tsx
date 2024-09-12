@@ -8,7 +8,7 @@ import { Settings } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
-import { Transaction } from "../../interfaces/interfaces";
+import { Alert, Transaction } from "../../interfaces/interfaces";
 import SortButton from "../../components/buttons/SortButton";
 import ChecklistFilter from "../../components/filters/ChecklistFilter";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
@@ -21,6 +21,7 @@ export default function TransactionTab(props: {
   type: "P" | "S";
   isApproved: 0 | 1;
   isDone: 0 | 1;
+  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
 }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -230,6 +231,7 @@ export default function TransactionTab(props: {
                       index={index}
                       transaction={transaction}
                       refetch={refetch}
+                      setAlert={props.setAlert}
                     />
                   );
                 })

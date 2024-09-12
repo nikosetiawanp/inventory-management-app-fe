@@ -2,13 +2,13 @@ import { Button, Sheet, Stack, Table } from "@mui/joy";
 import SearchFilter from "../../components/filters/SearchFilter";
 import CreateContact from "./CreateContact";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import AlertDialogModal from "../../components/AlertModal";
 import { Alert, Contact } from "../../interfaces/interfaces";
 import { Settings } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import axios from "axios";
 import PrintContacts from "./PrintContacts";
+import ActionMenu from "./ActionMenu";
 
 export default function ContactTab(props: {
   type: "V" | "C";
@@ -131,8 +131,7 @@ export default function ContactTab(props: {
                   <td style={{ paddingLeft: 15 }}>{contact.phone}</td>
                   <td style={{ paddingLeft: 15 }}>{contact.email}</td>
                   <td style={{ textAlign: "center" }}>
-                    <AlertDialogModal />
-                    {/* <MoreVertContactButton contact={contact} /> */}
+                    <ActionMenu contact={contact} setAlert={props.setAlert} />
                   </td>
                 </tr>
               ))

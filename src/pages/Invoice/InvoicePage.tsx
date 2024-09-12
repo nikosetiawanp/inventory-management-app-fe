@@ -7,10 +7,11 @@ import { useQuery } from "react-query";
 import { Settings } from "@mui/icons-material";
 import Drawer from "../../components/Drawer";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import { Invoice } from "../../interfaces/interfaces";
+import { Alert, Invoice } from "../../interfaces/interfaces";
 import InvoiceRow from "./InvoiceRow";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintInvoices from "./PrintInvoices";
+import AlertSnackbar from "../../components/AlertSnackbar";
 
 export default function InvoicePage(props: { type: "P" | "S" }) {
   // DATE
@@ -55,96 +56,101 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
     refetch();
     console.log(invoicesQuery?.data);
   }, [startDate, endDate, props.type]);
+
+  // ALERT
+  const [alert, setAlert] = useState<Alert>({
+    open: false,
+    color: "success",
+    message: "Data berhasil dibuat",
+  });
   return (
-    <>
-      {/* PAGE */}
-      <Stack direction={"row"} height={"100vh"} width={"100vw"}>
-        {/* DRAWER */}
-        <Drawer />
-        {/* TITLE */}
-        <Stack padding={4} width={1} spacing={2}>
-          <Typography fontWeight={"bold"} level="h4">
-            {props.type == "P" ? "Faktur Pembelian" : "Faktur Penjualan"}
-          </Typography>
+    <Stack direction={"row"} height={"100vh"} width={"100vw"}>
+      {/* DRAWER */}
+      <Drawer />
+      {/* TITLE */}
+      <Stack padding={4} width={1} spacing={2}>
+        <Typography fontWeight={"bold"} level="h4">
+          {props.type == "P" ? "Faktur Pembelian" : "Faktur Penjualan"}
+        </Typography>
 
-          {/* DATE FILTER */}
-          <Stack direction={"row"} gap={2} width={1}>
-            <DateFilterCopy
+        {/* DATE FILTER */}
+        <Stack direction={"row"} gap={2} width={1}>
+          <DateFilterCopy
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            refetch={refetch}
+            label="Tanggal Faktur"
+          />
+          <Stack direction="row" alignItems="end" marginLeft="auto">
+            <PrintInvoices
               startDate={startDate}
-              setStartDate={setStartDate}
               endDate={endDate}
-              setEndDate={setEndDate}
-              refetch={refetch}
-              label="Tanggal Faktur"
+              type={"P"}
+              invoices={invoicesQuery?.data}
             />
-            <Stack direction="row" alignItems="end" marginLeft="auto">
-              <PrintInvoices
-                startDate={startDate}
-                endDate={endDate}
-                type={"P"}
-                invoices={invoicesQuery?.data}
-              />
-            </Stack>
           </Stack>
-
-          <Sheet
-            variant="outlined"
-            sx={{ borderRadius: 2, overflow: "hidden" }}
-          >
-            <Table size="sm" stickyHeader stickyFooter>
-              {/* HEAD */}
-              <thead>
-                <tr>
-                  <th>
-                    <Button size="sm" variant="plain" color="neutral">
-                      Tanggal Faktur
-                    </Button>
-                  </th>
-                  <th>
-                    <Button size="sm" variant="plain" color="neutral">
-                      Nomor Faktur
-                    </Button>
-                  </th>
-                  <th>
-                    <Button size="sm" variant="plain" color="neutral">
-                      {props.type == "P" ? "Vendor" : "Customer"}
-                    </Button>
-                  </th>
-                  <th>
-                    <Button size="sm" variant="plain" color="neutral">
-                      Jatuh Tempo
-                    </Button>
-                  </th>
-                  <th style={{ textAlign: "center" }}>
-                    <Button size="sm" variant="plain" color="neutral">
-                      {props.type == "P" ? "Status Hutang" : "Status Piutang"}
-                    </Button>
-                  </th>
-
-                  <th style={{ width: 10 }}>
-                    <IconButton size="sm">
-                      <Settings fontSize="small" />
-                    </IconButton>
-                  </th>
-                </tr>
-              </thead>
-
-              {/* ROWS */}
-              <tbody>
-                {invoicesQuery.isLoading ? (
-                  <RowSkeleton rows={15} columns={5} />
-                ) : (
-                  invoicesQuery?.data?.map(
-                    (invoice: Invoice, index: number) => (
-                      <InvoiceRow index={index} key={index} invoice={invoice} />
-                    )
-                  )
-                )}
-              </tbody>
-            </Table>
-          </Sheet>
         </Stack>
+
+        <Sheet variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <Table size="sm" stickyHeader stickyFooter>
+            {/* HEAD */}
+            <thead>
+              <tr>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Tanggal Faktur
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Nomor Faktur
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    {props.type == "P" ? "Vendor" : "Customer"}
+                  </Button>
+                </th>
+                <th>
+                  <Button size="sm" variant="plain" color="neutral">
+                    Jatuh Tempo
+                  </Button>
+                </th>
+                <th style={{ textAlign: "center" }}>
+                  <Button size="sm" variant="plain" color="neutral">
+                    {props.type == "P" ? "Status Hutang" : "Status Piutang"}
+                  </Button>
+                </th>
+
+                <th style={{ textAlign: "center", width: 60 }}>
+                  <IconButton size="sm">
+                    <Settings fontSize="small" />
+                  </IconButton>
+                </th>
+              </tr>
+            </thead>
+
+            {/* ROWS */}
+            <tbody>
+              {invoicesQuery.isLoading ? (
+                <RowSkeleton rows={15} columns={5} />
+              ) : (
+                invoicesQuery?.data?.map((invoice: Invoice, index: number) => (
+                  <InvoiceRow
+                    index={index}
+                    key={index}
+                    invoice={invoice}
+                    setAlert={setAlert}
+                  />
+                ))
+              )}
+            </tbody>
+          </Table>
+        </Sheet>
+        <AlertSnackbar alert={alert} setAlert={setAlert} />
       </Stack>
-    </>
+    </Stack>
   );
 }

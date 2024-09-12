@@ -118,9 +118,9 @@ export default function PrintContacts(props: {
                   </thead>
 
                   <tbody>
-                    {props.contacts?.map((contact: Contact) => {
+                    {props.contacts?.map((contact: Contact, index: number) => {
                       return (
-                        <tr>
+                        <tr key={index}>
                           <td style={{ fontSize: "12px" }}>{contact?.code}</td>
                           <td style={{ fontSize: "12px" }}>{contact?.name}</td>
                           <td style={{ fontSize: "12px" }}>

@@ -22,7 +22,7 @@ export default function ContactPage() {
   const [alert, setAlert] = useState<Alert>({
     open: false,
     color: "success",
-    message: "Data created successfully",
+    message: "Data berhasil dibuat",
   });
 
   return (

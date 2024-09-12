@@ -4,6 +4,8 @@ import { useState } from "react";
 import InventoryTab from "./InventoryTab";
 import ProductSummaryTab from "./ProductSummaryTab";
 import ProductHistoryTab from "./ProductHistoryTab";
+import { Alert } from "../../interfaces/interfaces";
+import AlertSnackbar from "../../components/AlertSnackbar";
 
 export default function InventoryPage() {
   // FILTER
@@ -18,6 +20,13 @@ export default function InventoryPage() {
     ];
     setTabTitle(titles[newValue]);
   };
+
+  // ALERT
+  const [alert, setAlert] = useState<Alert>({
+    open: false,
+    color: "success",
+    message: "Data berhasil dibuat",
+  });
 
   return (
     // PAGE
@@ -49,10 +58,10 @@ export default function InventoryPage() {
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ paddingX: 0 }}>
-            <InventoryTab type="A" />
+            <InventoryTab type="A" setAlert={setAlert} />
           </TabPanel>
           <TabPanel value={1} sx={{ paddingX: 0 }}>
-            <InventoryTab type="D" />
+            <InventoryTab type="D" setAlert={setAlert} />
           </TabPanel>
           <TabPanel value={2} sx={{ paddingX: 0 }}>
             <ProductSummaryTab />
@@ -62,6 +71,7 @@ export default function InventoryPage() {
           </TabPanel>
         </Tabs>
       </Stack>
+      <AlertSnackbar alert={alert} setAlert={setAlert} />
     </Stack>
   );
 }

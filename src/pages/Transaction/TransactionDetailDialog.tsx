@@ -10,7 +10,11 @@ import {
   Chip,
 } from "@mui/joy";
 
-import { TransactionItem, Transaction } from "../../interfaces/interfaces";
+import {
+  TransactionItem,
+  Transaction,
+  Alert,
+} from "../../interfaces/interfaces";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
@@ -22,15 +26,16 @@ import TransactionDetailRow from "./TransactionDetailRow";
 import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
-import MoreTransactionButton from "./MoreTransactionButton";
 import PrintTransactionDetail from "./PrintTransactionDetail";
 import UpdateTransactionStatus from "./UpdateTransactionStatus";
+import ActionMenu from "./ActionMenu";
 
 export default function TransactionDetailDialog(props: {
   open: boolean;
   setOpen: any;
   transaction: Transaction;
   refetch: any;
+  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
@@ -226,7 +231,11 @@ export default function TransactionDetailDialog(props: {
                     transaction={props.transaction}
                     transactionItems={transactionItemsQuery?.data}
                   />
-                  <MoreTransactionButton />
+                  <ActionMenu
+                    transaction={props.transaction}
+                    setAlert={props.setAlert}
+                  />
+                  {/* <MoreTransactionButton /> */}
                 </>
               )}
             </Stack>

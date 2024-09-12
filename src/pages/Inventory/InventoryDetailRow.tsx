@@ -1,4 +1,3 @@
-import { MoreVert } from "@mui/icons-material";
 import { Chip, IconButton, Input } from "@mui/joy";
 import { useState } from "react";
 import {
@@ -60,40 +59,12 @@ export default function InventoryDetailRow(props: {
     }
   };
 
-  const OptionButton = () => {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-
-    const handleClick = (event: any) => {
-      event.stopPropagation();
-      setAnchorEl(event.currentTarget);
-    };
-    const handleClose = (event: any) => {
-      event.stopPropagation();
-      setAnchorEl(null);
-    };
-
-    return (
-      <>
-        <IconButton
-          size="sm"
-          onClick={handleClick}
-          aria-controls={open ? "demo-positioned-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-        >
-          <MoreVert fontSize="small" />
-        </IconButton>
-      </>
-    );
-  };
-
   return (
     <tr key={props.index}>
       {/* {index} */}
       <td>{props.inventoryItem?.product?.name}</td>
       <td align="center">
-        {props.transactionItems[props.index].quantity}
+        {props.transactionItems[props.index].quantity}{" "}
         {props.transactionItems[props.index].product.unit}
       </td>
       {/* QUANTITY */}

@@ -7,8 +7,10 @@ import { useQuery } from "react-query";
 import Drawer from "../../components/Drawer";
 import CreateAccount from "./CreateAccount";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import { Account } from "../../interfaces/interfaces";
+import { Account, Alert } from "../../interfaces/interfaces";
 import SearchFilter from "../../components/filters/SearchFilter";
+import AlertSnackbar from "../../components/AlertSnackbar";
+import ActionMenu from "./ActionMenu";
 
 export default function AccountPage() {
   const [searchInput, setSearchInput] = useState("");
@@ -16,15 +18,19 @@ export default function AccountPage() {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const getAccounts = async () => {
     const response = await axios.get(BACKEND_URL + "accounts/");
-    console.log(response.data.data);
-
     return response.data.data;
   };
-
   const accountsQuery = useQuery({
     queryKey: ["accounts"],
     queryFn: () => getAccounts(),
     refetchOnWindowFocus: false,
+  });
+
+  // ALERT
+  const [alert, setAlert] = useState<Alert>({
+    open: false,
+    color: "success",
+    message: "Data berhasil dibuat",
   });
   return (
     // PAGE
@@ -92,7 +98,9 @@ export default function AccountPage() {
                     <td style={{ paddingLeft: 15 }}>{account.id}</td>
                     <td style={{ paddingLeft: 15 }}>{account.number}</td>
                     <td style={{ paddingLeft: 15 }}>{account.name}</td>
-                    <td></td>
+                    <td>
+                      <ActionMenu account={account} setAlert={setAlert} />
+                    </td>
                   </tr>
                 ))
               )}
@@ -100,6 +108,7 @@ export default function AccountPage() {
           </Table>
         </Sheet>
       </Stack>
+      <AlertSnackbar alert={alert} setAlert={setAlert} />
     </Stack>
   );
 }

@@ -58,7 +58,7 @@ export default function CreateContact(props: {
         props.setAlert({
           open: true,
           color: "success",
-          message: "Kontak berhasil disimpan",
+          message: "Data berhasil disimpan",
         });
         return response.data;
       } catch (error: any) {

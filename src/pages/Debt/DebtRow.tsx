@@ -1,5 +1,5 @@
 import { Chip, Typography } from "@mui/joy";
-import { Debt, Payment } from "../../interfaces/interfaces";
+import { Alert, Debt, Payment } from "../../interfaces/interfaces";
 import CreatePayment from "./CreatePayment";
 import { sum } from "../../helpers/calculationHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
@@ -7,8 +7,13 @@ import "dayjs/locale/id";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import CompleteDebt from "./CompleteDebt";
 import PaymentListModal from "./PaymentListModal";
+import ActionMenu from "./ActionMenu";
 
-export default function DebtRow(props: { index: number; debt: Debt }) {
+export default function DebtRow(props: {
+  index: number;
+  debt: Debt;
+  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
+}) {
   const arrayOfPayments = props.debt.payments.map(
     (payment: Payment) => payment.amount
   );
@@ -55,6 +60,8 @@ export default function DebtRow(props: { index: number; debt: Debt }) {
         ) : (
           <CreatePayment debt={props.debt} />
         )}
+
+        <ActionMenu debt={props.debt} setAlert={props.setAlert} />
       </td>
       {/* <td>{props.debt?.isPaid ? null : <CreatePayment debt={props.debt} />}</td> */}
     </tr>

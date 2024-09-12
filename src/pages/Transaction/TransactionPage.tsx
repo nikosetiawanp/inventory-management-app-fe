@@ -3,6 +3,8 @@ import { useState } from "react";
 
 import Drawer from "../../components/Drawer";
 import TransactionTab from "./TransactionTab";
+import { Alert } from "../../interfaces/interfaces";
+import AlertSnackbar from "../../components/AlertSnackbar";
 
 export default function TransactionPage(props: { type: "P" | "S" }) {
   const [tabTitle, setTabTitle] = useState("Purchase Order");
@@ -15,6 +17,13 @@ export default function TransactionPage(props: { type: "P" | "S" }) {
         : ["Sales Requisition", "Sales Order", "Selesai"];
     setTabTitle(titles[newValue]);
   };
+
+  // ALERT
+  const [alert, setAlert] = useState<Alert>({
+    open: false,
+    color: "success",
+    message: "Data berhasil dibuat",
+  });
 
   return (
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -42,16 +51,32 @@ export default function TransactionPage(props: { type: "P" | "S" }) {
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ paddingX: 0 }}>
-            <TransactionTab type={props.type} isApproved={0} isDone={0} />
+            <TransactionTab
+              type={props.type}
+              isApproved={0}
+              isDone={0}
+              setAlert={setAlert}
+            />
           </TabPanel>
           <TabPanel value={1} sx={{ paddingX: 0 }}>
-            <TransactionTab type={props.type} isApproved={1} isDone={0} />
+            <TransactionTab
+              type={props.type}
+              isApproved={1}
+              isDone={0}
+              setAlert={setAlert}
+            />
           </TabPanel>
           <TabPanel value={2} sx={{ paddingX: 0 }}>
-            <TransactionTab type={props.type} isApproved={1} isDone={1} />
+            <TransactionTab
+              type={props.type}
+              isApproved={1}
+              isDone={1}
+              setAlert={setAlert}
+            />
           </TabPanel>
         </Tabs>
       </Stack>
+      <AlertSnackbar alert={alert} setAlert={setAlert} />
     </Stack>
   );
 }

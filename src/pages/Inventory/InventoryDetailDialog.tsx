@@ -217,7 +217,7 @@ export default function InventoryDetailDialog(props: {
                             {/* {index} */}
                             <td>{transactionItem?.product?.name}</td>
                             <td align="center">
-                              {transactionItem?.quantity}
+                              {transactionItem?.quantity}{" "}
                               {transactionItem.product?.unit}
                             </td>
                             {/* QUANTITY */}
