@@ -113,9 +113,9 @@ export default function PrintProducts(props: { products: Product[] }) {
                   </thead>
 
                   <tbody>
-                    {props.products?.map((product: Product) => {
+                    {props.products?.map((product: Product, index: number) => {
                       return (
-                        <tr>
+                        <tr key={index}>
                           <td style={{ fontSize: "12px" }}>{product?.code}</td>
                           <td style={{ fontSize: "12px" }}>{product?.name}</td>
                           <td style={{ fontSize: "12px" }}>{product?.unit}</td>

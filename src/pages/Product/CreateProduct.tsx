@@ -37,7 +37,6 @@ export default function CreateProductButton() {
         unit: selectedUnit,
         quantity: 0,
       };
-
       try {
         const response = await axios.post(
           BACKEND_URL + "products/",
@@ -68,7 +67,6 @@ export default function CreateProductButton() {
     } catch (error) {
       console.log("Mutation Error:", error);
     }
-    // event?.target.reset();
     setOpen(false);
   };
 
@@ -139,15 +137,6 @@ export default function CreateProductButton() {
                   )}
                 </Stack>
               </FormControl>
-              {/* <TextField
-                id="name"
-                label="Nama"
-                variant="outlined"
-                {...register("name", { required: "Tidak boleh kosong" })}
-                error={!!errors.name}
-                helperText={errors.name?.message}
-                required
-              /> */}
 
               {/* SELECT */}
               <Stack spacing={0}>
@@ -164,22 +153,7 @@ export default function CreateProductButton() {
                   ))}
                 </Select>
               </Stack>
-              {/* <TextField
-                id="unit"
-                value={watch("unit", "pcs")}
-                label="Unit"
-                select
-                {...register("unit", { required: "Tidak boleh kosong" })}
-                error={!!errors.unit}
-                helperText={errors.unit?.message}
-                required
-              >
-                {units.map((unit: string, index) => (
-                  <MenuItem key={index} value={unit}>
-                    {unit}
-                  </MenuItem>
-                ))}
-              </TextField> */}
+
               <Stack
                 direction={"row"}
                 width={1}

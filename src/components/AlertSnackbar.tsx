@@ -1,7 +1,8 @@
 import { IconButton, Snackbar } from "@mui/joy";
 
-import PlaylistAddCheckCircleRoundedIcon from "@mui/icons-material/PlaylistAddCheckCircleRounded";
 import CloseIcon from "@mui/icons-material/Close";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
 
 import { Alert } from "../interfaces/interfaces";
 
@@ -18,7 +19,9 @@ export default function AlertSnackbar(props: {
         props.setAlert((prevAlert) => ({ ...prevAlert, open: false }))
       }
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      startDecorator={<PlaylistAddCheckCircleRoundedIcon />}
+      startDecorator={
+        props.alert?.color == "success" ? <CheckCircleIcon /> : <ErrorIcon />
+      }
       endDecorator={
         <IconButton
           onClick={() =>

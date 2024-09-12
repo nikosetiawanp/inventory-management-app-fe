@@ -27,7 +27,7 @@ export default function ActionMenu(props: {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
-  const openAlert = (status: "success" | "error") => {
+  const showAlert = (status: "success" | "error") => {
     props.setAlert({
       open: true,
       color: status == "success" ? "success" : "danger",
@@ -45,13 +45,13 @@ export default function ActionMenu(props: {
         const response = await axios.delete(
           BACKEND_URL + `debts/` + props.debt?.id
         );
-        openAlert("success");
+        showAlert("success");
         return response.data;
       } catch (error: any) {
-        openAlert("error");
+        showAlert("error");
         console.log(error);
         if (error?.code == "ERR_BAD_RESPONSE") {
-          openAlert("error");
+          showAlert("error");
           throw new Error("Network response was not ok");
         }
       }
