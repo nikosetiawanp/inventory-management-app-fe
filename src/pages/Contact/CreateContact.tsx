@@ -68,8 +68,6 @@ export default function CreateContact(props: {
           color: "danger",
           message: `${error}`,
         });
-        if (error?.code == "ERR_BAD_RESPONSE")
-          throw new Error("Network response was not ok");
       }
     },
     {

@@ -129,12 +129,12 @@ export default function ActionMenu(props: {
           });
           return response.data;
         } catch (error) {
+          console.log(error);
           props.setAlert({
             open: true,
             color: "danger",
             message: `${error}`,
           });
-          console.log(error);
         }
       },
       {

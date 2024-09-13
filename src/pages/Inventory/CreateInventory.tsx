@@ -102,9 +102,7 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
     enabled: true,
   });
 
-  useEffect(() => {
-    console.log(transactionsQuery?.data);
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>

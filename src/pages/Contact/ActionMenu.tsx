@@ -60,8 +60,6 @@ export default function ActionMenu(props: {
             message: `${error}`,
           });
           console.log(error);
-          if (error?.code == "ERR_BAD_RESPONSE")
-            throw new Error("Network response was not ok");
         }
       },
       {
@@ -146,13 +144,6 @@ export default function ActionMenu(props: {
             color: "danger",
             message: `${error}`,
           });
-          if (error?.code == "ERR_BAD_RESPONSE")
-            props.setAlert({
-              open: true,
-              color: "danger",
-              message: `${error}`,
-            });
-          throw new Error("Network response was not ok");
         }
       },
       {

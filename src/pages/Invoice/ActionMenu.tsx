@@ -70,7 +70,6 @@ export default function ActionMenu(props: {
             color: "danger",
             message: `${error}`,
           });
-          throw new Error("Network response was not ok");
         }
       }
     },
@@ -141,14 +140,12 @@ export default function ActionMenu(props: {
           });
           return response.data;
         } catch (error: any) {
+          console.log(error);
           props.setAlert({
             open: true,
             color: "danger",
             message: `${error}`,
           });
-          console.log(error);
-
-          throw new Error("Network response was not ok");
         }
       },
       {
