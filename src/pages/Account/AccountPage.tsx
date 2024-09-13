@@ -61,14 +61,14 @@ export default function AccountPage() {
           <Table size="sm" stickyHeader stickyFooter>
             <thead>
               <tr>
-                <th>
+                {/* <th>
                   <Button size="sm" variant="plain" color="neutral">
                     Id
                   </Button>
-                </th>
+                </th> */}
                 <th>
                   <Button size="sm" variant="plain" color="neutral">
-                    Kode
+                    Nomor Akun
                   </Button>
                 </th>
                 <th>
@@ -95,7 +95,7 @@ export default function AccountPage() {
               ) : (
                 accountsQuery.data.map((account: Account, index: number) => (
                   <tr key={index}>
-                    <td style={{ paddingLeft: 15 }}>{account.id}</td>
+                    {/* <td style={{ paddingLeft: 15 }}>{account.id}</td> */}
                     <td style={{ paddingLeft: 15 }}>{account.number}</td>
                     <td style={{ paddingLeft: 15 }}>{account.name}</td>
                     <td>
