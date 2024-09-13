@@ -39,18 +39,7 @@ export default function ActionMenu(props: {
 
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
-  const showAlert = (status: "success" | "error") => {
-    props.setAlert({
-      open: true,
-      color: status == "success" ? "success" : "danger",
-      message:
-        status == "success"
-          ? "Data berhasil dihapus"
-          : "Terjadi kesalahan, mohon coba kembali",
-    });
-  };
   const queryClient = useQueryClient();
-
   const DeleteConfirmDialog = () => {
     const { mutate: deleteData } = useMutation(
       async () => {
@@ -58,10 +47,18 @@ export default function ActionMenu(props: {
           const response = await axios.delete(
             BACKEND_URL + `contacts/` + props.contact?.id
           );
-          showAlert("success");
+          props.setAlert({
+            open: true,
+            color: "success",
+            message: `Data berhasil dihapus`,
+          });
           return response.data;
         } catch (error: any) {
-          showAlert("error");
+          props.setAlert({
+            open: true,
+            color: "danger",
+            message: `${error}`,
+          });
           console.log(error);
           if (error?.code == "ERR_BAD_RESPONSE")
             throw new Error("Network response was not ok");
@@ -150,7 +147,12 @@ export default function ActionMenu(props: {
             message: `${error}`,
           });
           if (error?.code == "ERR_BAD_RESPONSE")
-            throw new Error("Network response was not ok");
+            props.setAlert({
+              open: true,
+              color: "danger",
+              message: `${error}`,
+            });
+          throw new Error("Network response was not ok");
         }
       },
       {

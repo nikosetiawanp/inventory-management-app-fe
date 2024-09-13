@@ -54,7 +54,6 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
 
   useEffect(() => {
     refetch();
-    console.log(invoicesQuery?.data);
   }, [startDate, endDate, props.type]);
 
   // ALERT

@@ -39,9 +39,7 @@ export default function PrintInvoices(props: {
     }
   );
 
-  useEffect(() => {
-    console.log(props.invoices);
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>
