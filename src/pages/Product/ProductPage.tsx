@@ -10,7 +10,6 @@ import CreateProduct from "./CreateProduct";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import { Settings } from "@mui/icons-material";
 import ActionMenu from "./ActionMenu";
-import AlertSnackbar from "../../components/AlertSnackbar";
 
 export default function ProductPage() {
   // FETCHING PRODUCTS
@@ -32,13 +31,6 @@ export default function ProductPage() {
       product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
       product.code.toLowerCase().includes(searchInput.toLowerCase())
   );
-
-  // ALERT
-  const [alert, setAlert] = useState<Alert>({
-    open: false,
-    color: "success",
-    message: "Data berhasil dibuat",
-  });
 
   return (
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -122,7 +114,7 @@ export default function ProductPage() {
                             {product.unit}
                           </td>
                           <td style={{ textAlign: "center" }}>
-                            <ActionMenu product={product} setAlert={setAlert} />
+                            <ActionMenu product={product} />
                           </td>
                         </tr>
                       )
@@ -134,7 +126,6 @@ export default function ProductPage() {
           </Stack>
         </Stack>
       </Stack>
-      <AlertSnackbar alert={alert} setAlert={setAlert} />
     </Stack>
   );
 }

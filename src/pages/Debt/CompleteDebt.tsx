@@ -10,8 +10,10 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { Debt } from "../../interfaces/interfaces";
 import axios from "axios";
+import { useNotification } from "../../App";
 
 export default function CompleteDebt(props: { debt: Debt }) {
+  const { triggerAlert } = useNotification();
   const [open, setOpen] = useState(false);
   const handleClickOpen = (event: any) => {
     event.stopPropagation();
@@ -35,9 +37,11 @@ export default function CompleteDebt(props: { debt: Debt }) {
           BACKEND_URL + "debts/" + debt.id,
           dataToSubmit
         );
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
-        throw new Error("Network response was not ok");
+      } catch (error: any) {
+        console.log(error);
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {

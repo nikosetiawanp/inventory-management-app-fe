@@ -10,13 +10,14 @@ import React, { useState } from "react";
 import { Transaction } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
+import { useNotification } from "../../App";
 
 export default function ApproveTransaction(props: {
   refetch(): any;
   transaction: Transaction;
 }) {
+  const { triggerAlert } = useNotification();
   const [open, setOpen] = useState(false);
-
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
   const approvePurchase = useMutation(
@@ -37,11 +38,12 @@ export default function ApproveTransaction(props: {
           BACKEND_URL + "transactions/" + data.id,
           dataToSubmit
         );
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         props.refetch();
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
-        throw new Error("Network response was not ok");
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {

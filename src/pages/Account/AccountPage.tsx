@@ -9,7 +9,7 @@ import CreateAccount from "./CreateAccount";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import { Account, Alert } from "../../interfaces/interfaces";
 import SearchFilter from "../../components/filters/SearchFilter";
-import AlertSnackbar from "../../components/AlertSnackbar";
+
 import ActionMenu from "./ActionMenu";
 
 export default function AccountPage() {
@@ -26,12 +26,6 @@ export default function AccountPage() {
     refetchOnWindowFocus: false,
   });
 
-  // ALERT
-  const [alert, setAlert] = useState<Alert>({
-    open: false,
-    color: "success",
-    message: "Data berhasil dibuat",
-  });
   return (
     // PAGE
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
@@ -99,7 +93,7 @@ export default function AccountPage() {
                     <td style={{ paddingLeft: 15 }}>{account.number}</td>
                     <td style={{ paddingLeft: 15 }}>{account.name}</td>
                     <td>
-                      <ActionMenu account={account} setAlert={setAlert} />
+                      <ActionMenu account={account} />
                     </td>
                   </tr>
                 ))
@@ -108,7 +102,6 @@ export default function AccountPage() {
           </Table>
         </Sheet>
       </Stack>
-      <AlertSnackbar alert={alert} setAlert={setAlert} />
     </Stack>
   );
 }

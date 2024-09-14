@@ -115,7 +115,7 @@ export default function ActionMenu(props: { transaction: Transaction }) {
             BACKEND_URL + "transactions/" + props.transaction?.id,
             data
           );
-          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
+          triggerAlert({ message: "Data berhasil diubah", color: "success" });
           return response.data;
         } catch (error: any) {
           triggerAlert({ message: `Error: ${error.message}`, color: "danger" });

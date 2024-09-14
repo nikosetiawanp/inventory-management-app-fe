@@ -11,7 +11,6 @@ import { Alert, Invoice } from "../../interfaces/interfaces";
 import InvoiceRow from "./InvoiceRow";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintInvoices from "./PrintInvoices";
-import AlertSnackbar from "../../components/AlertSnackbar";
 
 export default function InvoicePage(props: { type: "P" | "S" }) {
   // DATE
@@ -56,12 +55,6 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
     refetch();
   }, [startDate, endDate, props.type]);
 
-  // ALERT
-  const [alert, setAlert] = useState<Alert>({
-    open: false,
-    color: "success",
-    message: "Data berhasil dibuat",
-  });
   return (
     <Stack direction={"row"} height={"100vh"} width={"100vw"}>
       {/* DRAWER */}
@@ -137,18 +130,12 @@ export default function InvoicePage(props: { type: "P" | "S" }) {
                 <RowSkeleton rows={15} columns={5} />
               ) : (
                 invoicesQuery?.data?.map((invoice: Invoice, index: number) => (
-                  <InvoiceRow
-                    index={index}
-                    key={index}
-                    invoice={invoice}
-                    setAlert={setAlert}
-                  />
+                  <InvoiceRow index={index} key={index} invoice={invoice} />
                 ))
               )}
             </tbody>
           </Table>
         </Sheet>
-        <AlertSnackbar alert={alert} setAlert={setAlert} />
       </Stack>
     </Stack>
   );
