@@ -22,17 +22,16 @@ import {
   Option,
 } from "@mui/joy";
 import { useState } from "react";
-import { Alert, Product } from "../../interfaces/interfaces";
+import { Product } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNotification } from "../../App";
 
-export default function ActionMenu(props: {
-  product: Product;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function ActionMenu(props: { product: Product }) {
+  const { triggerAlert } = useNotification();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -46,27 +45,11 @@ export default function ActionMenu(props: {
           const response = await axios.delete(
             BACKEND_URL + `products/` + props.product?.id
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: "Data berhasil dihapus",
-          });
+          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
           return response.data;
         } catch (error: any) {
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: "Terjadi kesalahan, mohon coba kembali",
-          });
           console.log(error);
-          if (error?.code == "ERR_BAD_RESPONSE") {
-            props.setAlert({
-              open: true,
-              color: "danger",
-              message: "Terjadi kesalahan, mohon coba kembali",
-            });
-            throw new Error("Network response was not ok");
-          }
+          triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
         }
       },
       {
@@ -127,19 +110,11 @@ export default function ActionMenu(props: {
             BACKEND_URL + "products/" + props.product?.id,
             dataToSubmit
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: "Data berhasil diubah",
-          });
+          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
           return response.data;
-        } catch (error) {
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: "Terjadi kesalahan, mohon coba kembali",
-          });
-          throw new Error("Network response was not ok");
+        } catch (error: any) {
+          console.log(error);
+          triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
         }
       },
       {

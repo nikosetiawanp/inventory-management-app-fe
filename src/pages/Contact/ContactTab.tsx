@@ -2,7 +2,7 @@ import { Button, Sheet, Stack, Table } from "@mui/joy";
 import SearchFilter from "../../components/filters/SearchFilter";
 import CreateContact from "./CreateContact";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import { Alert, Contact } from "../../interfaces/interfaces";
+import { Contact } from "../../interfaces/interfaces";
 import { Settings } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -10,10 +10,7 @@ import axios from "axios";
 import PrintContacts from "./PrintContacts";
 import ActionMenu from "./ActionMenu";
 
-export default function ContactTab(props: {
-  type: "V" | "C";
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function ContactTab(props: { type: "V" | "C" }) {
   const [searchInput, setSearchInput] = useState("");
 
   //   GET DATA
@@ -55,7 +52,7 @@ export default function ContactTab(props: {
           placeholder={"Cari"}
         />
         <Stack direction={"row"} gap={2} width="auto" alignItems={"end"}>
-          <CreateContact type={props.type} setAlert={props.setAlert} />
+          <CreateContact type={props.type} />
           <PrintContacts contacts={contactsQuery?.data} type={props.type} />
         </Stack>
       </Stack>
@@ -131,7 +128,7 @@ export default function ContactTab(props: {
                   <td style={{ paddingLeft: 15 }}>{contact.phone}</td>
                   <td style={{ paddingLeft: 15 }}>{contact.email}</td>
                   <td style={{ textAlign: "center" }}>
-                    <ActionMenu contact={contact} setAlert={props.setAlert} />
+                    <ActionMenu contact={contact} />
                   </td>
                 </tr>
               ))

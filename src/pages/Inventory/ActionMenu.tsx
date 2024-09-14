@@ -27,7 +27,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
-import { Alert, Inventory, Transaction } from "../../interfaces/interfaces";
+import { Inventory, Transaction } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { formatDate } from "../../helpers/dateHelpers";
@@ -35,11 +35,10 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { SubmitHandler, useForm } from "react-hook-form";
 import dayjs from "dayjs";
+import { useNotification } from "../../App";
 
-export default function ActionMenu(props: {
-  inventory: Inventory;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function ActionMenu(props: { inventory: Inventory }) {
+  const { triggerAlert } = useNotification();
   const [updateOpen, setUpdateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -53,18 +52,10 @@ export default function ActionMenu(props: {
           const response = await axios.delete(
             BACKEND_URL + `inventories/` + props.inventory?.id
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: `Data berhasil dihapus`,
-          });
+          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
           return response.data;
         } catch (error: any) {
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
+          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
           console.log(error);
         }
       },
@@ -128,19 +119,11 @@ export default function ActionMenu(props: {
             BACKEND_URL + "inventories/" + props.inventory?.id,
             data
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: `Data berhasil diubah`,
-          });
+          triggerAlert({ message: "Data berhasil diubah", color: "success" });
           setUpdateOpen(false);
           return response.data;
         } catch (error) {
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
+          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
           console.log(error);
         }
       },

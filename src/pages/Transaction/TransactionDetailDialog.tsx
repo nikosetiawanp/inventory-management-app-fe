@@ -10,11 +10,7 @@ import {
   Chip,
 } from "@mui/joy";
 
-import {
-  TransactionItem,
-  Transaction,
-  Alert,
-} from "../../interfaces/interfaces";
+import { TransactionItem, Transaction } from "../../interfaces/interfaces";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
@@ -35,7 +31,6 @@ export default function TransactionDetailDialog(props: {
   setOpen: any;
   transaction: Transaction;
   refetch: any;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
 }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
@@ -231,10 +226,7 @@ export default function TransactionDetailDialog(props: {
                     transaction={props.transaction}
                     transactionItems={transactionItemsQuery?.data}
                   />
-                  <ActionMenu
-                    transaction={props.transaction}
-                    setAlert={props.setAlert}
-                  />
+                  <ActionMenu transaction={props.transaction} />
                   {/* <MoreTransactionButton /> */}
                 </>
               )}

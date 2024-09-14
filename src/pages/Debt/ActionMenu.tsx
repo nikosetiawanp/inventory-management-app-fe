@@ -16,14 +16,13 @@ import {
 } from "@mui/joy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
-import { Alert, Debt } from "../../interfaces/interfaces";
+import { Debt } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
+import { useNotification } from "../../App";
 
-export default function ActionMenu(props: {
-  debt: Debt;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function ActionMenu(props: { debt: Debt }) {
+  const { triggerAlert } = useNotification();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
@@ -36,18 +35,10 @@ export default function ActionMenu(props: {
           const response = await axios.delete(
             BACKEND_URL + `debts/` + props.debt?.id
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: `Data berhasil dihapus`,
-          });
+          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
           return response.data;
         } catch (error: any) {
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
+          triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
           console.log(error);
         }
       },

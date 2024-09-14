@@ -10,17 +10,16 @@ import {
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
-import { Alert, Contact } from "../../interfaces/interfaces";
+import { Contact } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { provinces } from "../../public/ProvinceData";
 import { FormHelperText, FormLabel, Input } from "@mui/joy";
 import AddIcon from "@mui/icons-material/Add";
 import { InfoOutlined } from "@mui/icons-material";
+import { useNotification } from "../../App";
 
-export default function CreateContact(props: {
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-  type: "V" | "C";
-}) {
+export default function CreateContact(props: { type: "V" | "C" }) {
+  const { triggerAlert } = useNotification();
   const {
     register,
     handleSubmit,
@@ -55,19 +54,12 @@ export default function CreateContact(props: {
           BACKEND_URL + "contacts/",
           dataToSubmit
         );
-        props.setAlert({
-          open: true,
-          color: "success",
-          message: "Data berhasil disimpan",
-        });
+        triggerAlert({ message: "Data berhasil dihapus", color: "success" });
+
         return response.data;
       } catch (error: any) {
         console.log(error);
-        props.setAlert({
-          open: true,
-          color: "danger",
-          message: `${error}`,
-        });
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {

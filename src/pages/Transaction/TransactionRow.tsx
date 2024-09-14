@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Transaction } from "../../interfaces/interfaces";
+import { Transaction } from "../../interfaces/interfaces";
 
 import TransactionDetailDialog from "./TransactionDetailDialog";
 import { formatDate } from "../../helpers/dateHelpers";
@@ -10,7 +10,6 @@ export default function TransactionRow(props: {
   index: number;
   transaction: Transaction;
   refetch: any;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
 }) {
   const [open, setOpen] = useState(false);
   const isOngoing =
@@ -46,10 +45,7 @@ export default function TransactionRow(props: {
             width: 60,
           }}
         >
-          <ActionMenu
-            transaction={props.transaction}
-            setAlert={props.setAlert}
-          />
+          <ActionMenu transaction={props.transaction} />
         </td>
       </tr>
 
@@ -59,7 +55,6 @@ export default function TransactionRow(props: {
         setOpen={setOpen}
         transaction={props.transaction}
         refetch={props.refetch}
-        setAlert={props.setAlert}
       />
     </>
   );

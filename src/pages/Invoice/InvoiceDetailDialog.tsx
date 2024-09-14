@@ -8,7 +8,7 @@ import {
   Divider,
 } from "@mui/joy";
 
-import { Alert, InventoryItem, Invoice } from "../../interfaces/interfaces";
+import { InventoryItem, Invoice } from "../../interfaces/interfaces";
 import CreateDebt from "./CreateDebt";
 import { formatIDR } from "../../helpers/currencyHelpers";
 import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
@@ -19,7 +19,6 @@ export default function InvoiceDetailDialog(props: {
   open: boolean;
   setOpen: any;
   invoice: Invoice;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
 }) {
   const arrayOfNetPrice = props.invoice?.inventory?.inventoryItems?.map(
     (inventoryItem: InventoryItem) => {
@@ -83,7 +82,7 @@ export default function InvoiceDetailDialog(props: {
               Buat Hutang
             </Button> */}
               {/* <MoreInvoiceButton /> */}
-              <ActionMenu invoice={props.invoice} setAlert={props.setAlert} />
+              <ActionMenu invoice={props.invoice} />
             </Stack>
           </Stack>
 

@@ -1,5 +1,5 @@
 import { Chip, Typography } from "@mui/joy";
-import { Alert, Debt, Payment } from "../../interfaces/interfaces";
+import { Debt, Payment } from "../../interfaces/interfaces";
 import CreatePayment from "./CreatePayment";
 import { sum } from "../../helpers/calculationHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
@@ -9,11 +9,7 @@ import CompleteDebt from "./CompleteDebt";
 import PaymentListModal from "./PaymentListModal";
 import ActionMenu from "./ActionMenu";
 
-export default function DebtRow(props: {
-  index: number;
-  debt: Debt;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function DebtRow(props: { index: number; debt: Debt }) {
   const arrayOfPayments = props.debt.payments.map(
     (payment: Payment) => payment.amount
   );
@@ -61,7 +57,7 @@ export default function DebtRow(props: {
           <CreatePayment debt={props.debt} />
         )}
 
-        <ActionMenu debt={props.debt} setAlert={props.setAlert} />
+        <ActionMenu debt={props.debt} />
       </td>
       {/* <td>{props.debt?.isPaid ? null : <CreatePayment debt={props.debt} />}</td> */}
     </tr>

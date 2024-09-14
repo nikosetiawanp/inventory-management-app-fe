@@ -19,23 +19,20 @@ import {
   Input,
   FormHelperText,
 } from "@mui/joy";
-
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
-import { Account, Alert } from "../../interfaces/interfaces";
+import { Account } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNotification } from "../../App";
 
-export default function ActionMenu(props: {
-  account: Account;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function ActionMenu(props: { account: Account }) {
+  const { triggerAlert } = useNotification();
   const [updateOpen, setUpdateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-
   const queryClient = useQueryClient();
 
   const DeleteConfirmDialog = () => {
@@ -45,18 +42,10 @@ export default function ActionMenu(props: {
           const response = await axios.delete(
             BACKEND_URL + `accounts/` + props.account?.id
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: `Data berhasil dihapus`,
-          });
+          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
           return response.data;
         } catch (error: any) {
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
+          triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
           console.log(error);
         }
       },
@@ -66,6 +55,7 @@ export default function ActionMenu(props: {
         },
       }
     );
+
     return (
       <Modal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <ModalDialog variant="outlined" role="alertdialog">
@@ -104,27 +94,15 @@ export default function ActionMenu(props: {
 
     const updateAccount = useMutation(
       async (data: Account) => {
-        console.log(data);
-
         try {
           const response = await axios.put(
             BACKEND_URL + "accounts/" + props.account?.id,
             data
           );
-
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: `Data berhasil diubah`,
-          });
+          triggerAlert({ message: "Data berhasil diubah", color: "success" });
           return response.data;
         } catch (error: any) {
-          console.log(error);
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
+          triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
         }
       },
       {
@@ -137,25 +115,23 @@ export default function ActionMenu(props: {
     const onSubmit: SubmitHandler<Account> = async (data) => {
       try {
         await updateAccount.mutateAsync(data);
-
         setUpdateOpen(false);
       } catch (error) {
         console.log(error);
       }
     };
+
     return (
       <Modal open={updateOpen} onClose={() => setUpdateOpen(false)}>
         <ModalDialog>
           <DialogTitle>Ubah Akun</DialogTitle>
-
           <form
-            action="submit"
             onSubmit={handleSubmit(onSubmit)}
             noValidate
             style={{ overflow: "scroll" }}
           >
             <Stack spacing={2}>
-              <FormControl error={errors.number?.message !== ""}>
+              <FormControl error={!!errors.number}>
                 <Stack spacing={0}>
                   <FormLabel>Nomor</FormLabel>
                   <Input
@@ -177,11 +153,11 @@ export default function ActionMenu(props: {
                 </Stack>
               </FormControl>
 
-              <FormControl error={errors.name?.message !== ""}>
+              <FormControl error={!!errors.name}>
                 <Stack spacing={0}>
                   <FormLabel>Nama</FormLabel>
                   <Input
-                    id="nama"
+                    id="name"
                     placeholder="Nama"
                     {...register("name", { required: "Tidak boleh kosong" })}
                     error={!!errors.name}
@@ -197,7 +173,6 @@ export default function ActionMenu(props: {
                 </Stack>
               </FormControl>
 
-              {/* ACTIONS */}
               <Stack
                 direction={"row"}
                 width={1}
@@ -215,9 +190,8 @@ export default function ActionMenu(props: {
                 </Button>
                 <Button
                   variant={"solid"}
-                  type="button"
+                  type="submit"
                   disabled={updateAccount.isLoading}
-                  onClick={handleSubmit(onSubmit)}
                   loading={updateAccount.isLoading}
                 >
                   Simpan
@@ -246,7 +220,7 @@ export default function ActionMenu(props: {
             <Typography color="neutral">Ubah</Typography>
           </MenuItem>
           <MenuItem onClick={() => setDeleteOpen(true)}>
-            <DeleteIcon fontSize="small" color="error" />{" "}
+            <DeleteIcon fontSize="small" color="error" />
             <Typography color="danger">Hapus</Typography>
           </MenuItem>
         </Menu>

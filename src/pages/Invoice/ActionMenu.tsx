@@ -27,7 +27,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
-import { Alert, Inventory, Invoice } from "../../interfaces/interfaces";
+import { Inventory, Invoice } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -35,11 +35,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { formatDate } from "../../helpers/dateHelpers";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useNotification } from "../../App";
 
-export default function ActionMenu(props: {
-  invoice: Invoice;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function ActionMenu(props: { invoice: Invoice }) {
+  const { triggerAlert } = useNotification();
   const [updateOpen, setUpdateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
@@ -51,26 +50,12 @@ export default function ActionMenu(props: {
         const response = await axios.delete(
           BACKEND_URL + `invoices/` + props.invoice?.id
         );
-        props.setAlert({
-          open: true,
-          color: "success",
-          message: "Data berhasil diubah",
-        });
+        triggerAlert({ message: "Data berhasil dihapus", color: "success" });
+
         return response.data;
       } catch (error: any) {
-        props.setAlert({
-          open: true,
-          color: "danger",
-          message: `${error}`,
-        });
         console.log(error);
-        if (error?.code == "ERR_BAD_RESPONSE") {
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
-        }
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {
@@ -133,19 +118,11 @@ export default function ActionMenu(props: {
             BACKEND_URL + "invoices/" + props.invoice?.id,
             data
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: "Data berhasil diubah",
-          });
+          triggerAlert({ message: "Data berhasil diubah", color: "success" });
           return response.data;
         } catch (error: any) {
+          triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
           console.log(error);
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
         }
       },
       {

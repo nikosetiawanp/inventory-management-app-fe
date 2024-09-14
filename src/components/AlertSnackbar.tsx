@@ -6,10 +6,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 
 import { Alert } from "../interfaces/interfaces";
 
-export default function AlertSnackbar(props: {
-  alert: Alert;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function AlertSnackbar(props: { alert: Alert }) {
   return (
     <Snackbar
       variant="soft"

@@ -24,16 +24,15 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
-import { Alert, Contact } from "../../interfaces/interfaces";
+import { Contact } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { provinces } from "../../public/ProvinceData";
+import { useNotification } from "../../App";
 
-export default function ActionMenu(props: {
-  contact: Contact;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function ActionMenu(props: { contact: Contact }) {
+  const { triggerAlert } = useNotification();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
 
@@ -47,18 +46,10 @@ export default function ActionMenu(props: {
           const response = await axios.delete(
             BACKEND_URL + `contacts/` + props.contact?.id
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: `Data berhasil dihapus`,
-          });
+          triggerAlert({ message: "Data berhasil dihapus", color: "success" });
           return response.data;
         } catch (error: any) {
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
+          triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
           console.log(error);
         }
       },
@@ -131,19 +122,11 @@ export default function ActionMenu(props: {
             BACKEND_URL + "contacts/" + props.contact?.id,
             dataToSubmit
           );
-          props.setAlert({
-            open: true,
-            color: "success",
-            message: "Data berhasil disimpan",
-          });
+          triggerAlert({ message: "Data berhasil diubah", color: "success" });
           return response.data;
         } catch (error: any) {
           console.log(error);
-          props.setAlert({
-            open: true,
-            color: "danger",
-            message: `${error}`,
-          });
+          triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
         }
       },
       {

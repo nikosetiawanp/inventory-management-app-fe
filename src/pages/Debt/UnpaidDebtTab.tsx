@@ -5,7 +5,7 @@ import axios from "axios";
 import { useQuery } from "react-query";
 
 import { Settings } from "@mui/icons-material";
-import { Alert, Debt, Payment } from "../../interfaces/interfaces";
+import { Debt, Payment } from "../../interfaces/interfaces";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import DebtRow from "./DebtRow";
 import ChecklistFilter from "../../components/filters/ChecklistFilter";
@@ -15,10 +15,7 @@ import { formatIDR } from "../../helpers/currencyHelpers";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import { formatDate } from "../../helpers/dateHelpers";
 
-export default function UnpaidDebtTab(props: {
-  type: "D" | "R";
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function UnpaidDebtTab(props: { type: "D" | "R" }) {
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
   // DATE
@@ -262,12 +259,7 @@ export default function UnpaidDebtTab(props: {
               <RowSkeleton rows={15} columns={6} />
             ) : (
               sortedData?.map((debt: Debt, index: number) => (
-                <DebtRow
-                  key={index}
-                  index={index}
-                  debt={debt}
-                  setAlert={props.setAlert}
-                />
+                <DebtRow key={index} index={index} debt={debt} />
               ))
             )}
           </tbody>

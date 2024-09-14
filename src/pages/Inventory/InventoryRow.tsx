@@ -1,4 +1,4 @@
-import { Alert, Inventory } from "../../interfaces/interfaces";
+import { Inventory } from "../../interfaces/interfaces";
 import { useState } from "react";
 import InventoryDetailDialog from "./InventoryDetailDialog";
 import { formatDate } from "../../helpers/dateHelpers";
@@ -12,7 +12,6 @@ export default function InventoryRow(props: {
   index: number;
   inventory: Inventory;
   refetch: () => void;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -50,7 +49,7 @@ export default function InventoryRow(props: {
           </Stack>
         </td>
         <td style={{ textAlign: "center" }}>
-          <ActionMenu inventory={props.inventory} setAlert={props.setAlert} />
+          <ActionMenu inventory={props.inventory} />
           {/* <ArrivalHistoryOptionButton inventory={props.inventory} /> */}
         </td>
       </tr>

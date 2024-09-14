@@ -1,5 +1,5 @@
 import { Chip, Stack } from "@mui/joy";
-import { Alert, Invoice } from "../../interfaces/interfaces";
+import { Invoice } from "../../interfaces/interfaces";
 import { useState } from "react";
 
 import InvoiceDetailDialog from "./InvoiceDetailDialog";
@@ -9,11 +9,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ActionMenu from "./ActionMenu";
 
-export default function InvoiceRow(props: {
-  index: number;
-  invoice: Invoice;
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function InvoiceRow(props: { index: number; invoice: Invoice }) {
   const [open, setOpen] = useState(false);
   const today = new Date();
   const dueDate = new Date(props.invoice.dueDate);
@@ -51,7 +47,7 @@ export default function InvoiceRow(props: {
           </Stack>
         </td>
         <td style={{ textAlign: "center" }}>
-          <ActionMenu invoice={props.invoice} setAlert={props.setAlert} />
+          <ActionMenu invoice={props.invoice} />
         </td>
       </tr>
 
@@ -59,7 +55,6 @@ export default function InvoiceRow(props: {
         open={open}
         setOpen={setOpen}
         invoice={props.invoice}
-        setAlert={props.setAlert}
       />
     </>
   );

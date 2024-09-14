@@ -8,13 +8,10 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 import { Settings } from "@mui/icons-material";
-import { Alert, Inventory } from "../../interfaces/interfaces";
+import { Inventory } from "../../interfaces/interfaces";
 import InventoryRow from "./InventoryRow";
 
-export default function InventoryTab(props: {
-  type: "A" | "D";
-  setAlert: React.Dispatch<React.SetStateAction<Alert>>;
-}) {
+export default function InventoryTab(props: { type: "A" | "D" }) {
   // DATE
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -145,7 +142,6 @@ export default function InventoryTab(props: {
                     index={index}
                     inventory={inventory}
                     refetch={refetch}
-                    setAlert={props.setAlert}
                   />
                 )
               )
