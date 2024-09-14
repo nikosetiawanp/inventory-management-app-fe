@@ -27,43 +27,36 @@ export default function ActionMenu(props: {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
 
-  const showAlert = (status: "success" | "error") => {
-    props.setAlert({
-      open: true,
-      color: status == "success" ? "success" : "danger",
-      message:
-        status == "success"
-          ? "Data berhasil dihapus"
-          : "Terjadi kesalahan, mohon coba kembali",
-    });
-  };
-
   const queryClient = useQueryClient();
-  const { mutate: deleteData } = useMutation(
-    async () => {
-      try {
-        const response = await axios.delete(
-          BACKEND_URL + `debts/` + props.debt?.id
-        );
-        showAlert("success");
-        return response.data;
-      } catch (error: any) {
-        showAlert("error");
-        console.log(error);
-        if (error?.code == "ERR_BAD_RESPONSE") {
-          showAlert("error");
-          throw new Error("Network response was not ok");
-        }
-      }
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("debts");
-      },
-    }
-  );
 
   const DeleteConfirmDialog = () => {
+    const { mutate: deleteData } = useMutation(
+      async () => {
+        try {
+          const response = await axios.delete(
+            BACKEND_URL + `debts/` + props.debt?.id
+          );
+          props.setAlert({
+            open: true,
+            color: "success",
+            message: `Data berhasil dihapus`,
+          });
+          return response.data;
+        } catch (error: any) {
+          props.setAlert({
+            open: true,
+            color: "danger",
+            message: `${error}`,
+          });
+          console.log(error);
+        }
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries("debts");
+        },
+      }
+    );
     return (
       <Modal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <ModalDialog variant="outlined" role="alertdialog">

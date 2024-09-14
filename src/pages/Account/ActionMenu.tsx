@@ -104,10 +104,6 @@ export default function ActionMenu(props: {
 
     const updateAccount = useMutation(
       async (data: Account) => {
-        // const dataToSubmit = {
-        //   number: data?.number,
-        //   name: data?.name,
-        // };
         console.log(data);
 
         try {
