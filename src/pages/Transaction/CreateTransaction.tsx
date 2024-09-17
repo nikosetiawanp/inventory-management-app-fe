@@ -22,8 +22,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import AddIcon from "@mui/icons-material/Add";
 import { InfoOutlined } from "@mui/icons-material";
+import { useNotification } from "../../App";
 
 export default function CreateTransaction(props: { type: "P" | "S" }) {
+  const { triggerAlert } = useNotification();
+
   const {
     register,
     handleSubmit,
@@ -58,10 +61,11 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
     async (data: Transaction) => {
       try {
         const response = await axios.post(BACKEND_URL + "transactions/", data);
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
-        throw new Error("Network response was not ok");
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {

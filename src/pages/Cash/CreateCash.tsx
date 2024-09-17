@@ -9,8 +9,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SelectAccount from "../../components/select/SelectAccount";
+import { useNotification } from "../../App";
 
 export default function CreateCash() {
+  const { triggerAlert } = useNotification();
   const {
     register,
     handleSubmit,
@@ -33,10 +35,11 @@ export default function CreateCash() {
     async (data: Cash) => {
       try {
         const response = await axios.post(BACKEND_URL + "cashes/", data);
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
-        throw new Error("Network response was not ok");
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {

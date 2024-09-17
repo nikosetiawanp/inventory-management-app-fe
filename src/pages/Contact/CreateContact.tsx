@@ -54,7 +54,7 @@ export default function CreateContact(props: { type: "V" | "C" }) {
           BACKEND_URL + "contacts/",
           dataToSubmit
         );
-        triggerAlert({ message: "Data berhasil dihapus", color: "success" });
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
 
         return response.data;
       } catch (error: any) {
@@ -253,8 +253,9 @@ export default function CreateContact(props: { type: "V" | "C" }) {
               disabled={createContact.isLoading}
               type="button"
               onClick={handleSubmit(onSubmit)}
+              loading={createContact?.isLoading}
             >
-              {createContact.isLoading ? "Menyimpan" : "Simpan"}
+              Simpan{" "}
             </Button>
           </Stack>
         </ModalDialog>

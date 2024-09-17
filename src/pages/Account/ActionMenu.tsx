@@ -65,11 +65,7 @@ export default function ActionMenu(props: { account: Account }) {
             Data yang sudah dihapus tidak dapat dikembalikan.
           </DialogContent>
           <DialogActions>
-            <Button
-              variant="solid"
-              color="danger"
-              onClick={() => deleteData()} // Call the mutate function here
-            >
+            <Button variant="solid" color="danger" onClick={() => deleteData()}>
               Hapus
             </Button>
             <Button

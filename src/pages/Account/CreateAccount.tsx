@@ -16,8 +16,10 @@ import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
 import { InfoOutlined } from "@mui/icons-material";
+import { useNotification } from "../../App";
 
 export default function CreateAccount() {
+  const { triggerAlert } = useNotification();
   const {
     register,
     handleSubmit,
@@ -33,18 +35,16 @@ export default function CreateAccount() {
         number: data.number,
         name: data.name,
       };
-      console.log(dataToSubmit);
-
       try {
         const response = await axios.post(
           BACKEND_URL + "accounts/",
           dataToSubmit
         );
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
       } catch (error: any) {
         console.log(error);
-        if (error?.code == "ERR_BAD_RESPONSE")
-          throw new Error("Network response was not ok");
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {

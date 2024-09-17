@@ -25,11 +25,13 @@ import { Inventory, Transaction } from "../../interfaces/interfaces";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import { formatDate } from "../../helpers/dateHelpers";
 import { InfoOutlined } from "@mui/icons-material";
+import { useNotification } from "../../App";
 
 export default function CreateInvoice(props: {
   inventories: Inventory[];
   transaction: Transaction;
 }) {
+  const { triggerAlert } = useNotification();
   const [open, setOpen] = useState(false);
 
   // INVENTORY
@@ -52,9 +54,11 @@ export default function CreateInvoice(props: {
     async (data: any) => {
       try {
         const response = await axios.post(BACKEND_URL + "invoices/", data);
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
-        throw new Error("Network response was not ok");
+      } catch (error: any) {
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
+        console.log(error);
       }
     },
     {

@@ -19,8 +19,10 @@ import { useMutation, useQueryClient } from "react-query";
 import { Product } from "../../interfaces/interfaces";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { InfoOutlined } from "@mui/icons-material";
+import { useNotification } from "../../App";
 
 export default function CreateProductButton() {
+  const { triggerAlert } = useNotification();
   const units = ["pcs", "kg"];
 
   const [open, setOpen] = useState(false);
@@ -42,9 +44,11 @@ export default function CreateProductButton() {
           BACKEND_URL + "products/",
           dataToSubmit
         );
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
-        throw new Error("Network response was not ok");
+      } catch (error: any) {
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
+        console.log(error);
       }
     },
     {

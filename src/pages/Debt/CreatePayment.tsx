@@ -19,8 +19,10 @@ import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { formatDate } from "../../helpers/dateHelpers";
 import { InfoOutlined } from "@mui/icons-material";
+import { useNotification } from "../../App";
 
 export default function CreatePayment(props: { debt: Debt }) {
+  const { triggerAlert } = useNotification();
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
@@ -35,10 +37,11 @@ export default function CreatePayment(props: { debt: Debt }) {
     async (data: Cash) => {
       try {
         const response = await axios.post(BACKEND_URL + "cashes/", data);
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
-        throw new Error("Network response was not ok");
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {

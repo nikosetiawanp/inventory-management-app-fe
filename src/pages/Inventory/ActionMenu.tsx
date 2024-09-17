@@ -304,11 +304,11 @@ export default function ActionMenu(props: { inventory: Inventory }) {
                 </Button>
                 <Button
                   variant={"solid"}
-                  disabled={updateInventory.isLoading}
+                  loading={updateInventory.isLoading}
                   type="button"
                   onClick={handleSubmit(onSubmit)}
                 >
-                  {updateInventory.isLoading ? "Menyimpan" : "Simpan"}
+                  Simpan
                 </Button>
               </Stack>
             </Stack>

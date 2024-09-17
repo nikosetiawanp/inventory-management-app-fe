@@ -15,7 +15,6 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import { useState } from "react";
 import NewTransactionItem from "./NewTransactionItem";
 import CreateInvoice from "./CreateInvoice";
 import TransactionDetailRow from "./TransactionDetailRow";
@@ -25,6 +24,7 @@ import { formatDate } from "../../helpers/dateHelpers";
 import PrintTransactionDetail from "./PrintTransactionDetail";
 import UpdateTransactionStatus from "./UpdateTransactionStatus";
 import ActionMenu from "./ActionMenu";
+import { useNotification } from "../../App";
 
 export default function TransactionDetailDialog(props: {
   open: boolean;
@@ -32,6 +32,7 @@ export default function TransactionDetailDialog(props: {
   transaction: Transaction;
   refetch: any;
 }) {
+  const { triggerAlert } = useNotification();
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
 
@@ -104,20 +105,18 @@ export default function TransactionDetailDialog(props: {
   };
 
   // POST
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const createItems = useMutation(
+  const createTransactionItems = useMutation(
     async (data: TransactionItem[]) => {
-      setIsSubmitting(true);
       try {
         const response = await axios.post(
           BACKEND_URL + "transaction-items/bulk",
           data
         );
-        setIsSubmitting(false);
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
-        setIsSubmitting(false);
-        throw new Error("Network response was not ok");
+      } catch (error: any) {
+        console.log(error);
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {
@@ -133,7 +132,7 @@ export default function TransactionDetailDialog(props: {
     transactionItems: TransactionItem[];
   }) => {
     try {
-      await createItems.mutateAsync(data.transactionItems);
+      await createTransactionItems.mutateAsync(data.transactionItems);
       clearFieldsArray();
     } catch (error) {
       console.log("Mutation Error:", error);
@@ -195,10 +194,10 @@ export default function TransactionDetailDialog(props: {
                   variant="solid"
                   onClick={handleSubmit(onSubmit as any)}
                   type="submit"
-                  disabled={isSubmitting}
+                  loading={createTransactionItems?.isLoading}
                   sx={{ minHeight: "100%" }}
                 >
-                  {isSubmitting ? "Menyimpan" : "Simpan"}
+                  Simpan
                 </Button>
               ) : (
                 <>

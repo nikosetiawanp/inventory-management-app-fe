@@ -3,12 +3,14 @@ import axios from "axios";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { Debt, Invoice } from "../../interfaces/interfaces";
+import { useNotification } from "../../App";
 
 export default function CreateDebt(props: {
   debtAmount: number;
   invoice: Invoice;
   type: "P" | "S";
 }) {
+  const { triggerAlert } = useNotification();
   const [open, setOpen] = useState(false);
   const handleClickOpen = (event: any) => {
     event.stopPropagation();
@@ -35,9 +37,11 @@ export default function CreateDebt(props: {
       try {
         const response = await axios.post(BACKEND_URL + "debts/", data);
         handleClose(event);
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {

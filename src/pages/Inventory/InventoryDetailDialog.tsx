@@ -17,8 +17,8 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
-import { useState } from "react";
 import InventoryDetailRow from "./InventoryDetailRow";
+import { useNotification } from "../../App";
 
 export default function InventoryDetailDialog(props: {
   open: boolean;
@@ -27,6 +27,7 @@ export default function InventoryDetailDialog(props: {
   transactionItems: TransactionItem[];
   refetch: () => void;
 }) {
+  const { triggerAlert } = useNotification();
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
 
@@ -86,11 +87,8 @@ export default function InventoryDetailDialog(props: {
   };
 
   // POST
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const createInventoryItems = useMutation(
     async (data: InventoryItem[]) => {
-      setIsSubmitting(true);
-
       const dataToSubmit = await data.map((data, index) => {
         return {
           quantity: data.quantity ? data.quantity : 0,
@@ -105,13 +103,11 @@ export default function InventoryDetailDialog(props: {
           BACKEND_URL + "inventory-items/bulk",
           dataToSubmit
         );
-
-        setIsSubmitting(false);
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         props.refetch();
         return response.data;
-      } catch (error) {
-        setIsSubmitting(false);
-        throw new Error("Network response was not ok");
+      } catch (error: any) {
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
       }
     },
     {
@@ -166,8 +162,9 @@ export default function InventoryDetailDialog(props: {
                   type="submit"
                   disabled={inventoryItemsQuery?.data?.length > 0}
                   sx={{ minHeight: "100%" }}
+                  loading={createInventoryItems?.isLoading}
                 >
-                  {isSubmitting ? "Memvalidasi" : "Validasi"}
+                  Validasi
                 </Button>
               </Stack>
             </Stack>

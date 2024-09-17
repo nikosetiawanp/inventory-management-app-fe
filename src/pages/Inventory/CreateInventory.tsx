@@ -26,8 +26,10 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { InfoOutlined } from "@mui/icons-material";
 import { formatDate } from "../../helpers/dateHelpers";
+import { useNotification } from "../../App";
 
 export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
+  const { triggerAlert } = useNotification();
   const {
     register,
     handleSubmit,
@@ -52,9 +54,11 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
       try {
         const response = await axios.post(BACKEND_URL + "inventories", data);
         setOpen(false);
+        triggerAlert({ message: "Data berhasil disimpan", color: "success" });
         return response.data;
-      } catch (error) {
-        throw new Error("Network response was not ok");
+      } catch (error: any) {
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
+        console.log(error);
       }
     },
     {
@@ -257,11 +261,11 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
                 </Button>
                 <Button
                   variant={"solid"}
-                  disabled={createInventory.isLoading}
+                  loading={createInventory.isLoading}
                   type="button"
                   onClick={handleSubmit(onSubmit)}
                 >
-                  {createInventory.isLoading ? "Menyimpan" : "Simpan"}
+                  Simpan
                 </Button>
               </Stack>
             </Stack>
