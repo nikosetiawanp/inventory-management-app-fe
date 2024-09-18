@@ -14,6 +14,7 @@ import { formatIDR } from "../../helpers/currencyHelpers";
 import { calculateNetPrice, sum } from "../../helpers/calculationHelpers";
 import { formatDate } from "../../helpers/dateHelpers";
 import ActionMenu from "./ActionMenu";
+import PrintInvoiceDetail from "./PrintInvoiceDetail";
 
 export default function InvoiceDetailDialog(props: {
   open: boolean;
@@ -78,6 +79,10 @@ export default function InvoiceDetailDialog(props: {
                 invoice={props.invoice}
                 type={props.invoice?.transaction?.type}
               />
+              {props.invoice?.transaction?.type == "S" && (
+                <PrintInvoiceDetail invoice={props.invoice} />
+              )}
+
               {/* <Button variant="contained" onClick={() => {}}>
               Buat Hutang
             </Button> */}

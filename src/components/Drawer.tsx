@@ -68,7 +68,7 @@ export default function Drawer() {
     },
     // SALES
     {
-      name: "Penjualan",
+      name: "Sales Order",
       param: "/sales-order",
       category: "Penjualan",
       icon: <ShoppingCartIcon fontSize="small" />,
