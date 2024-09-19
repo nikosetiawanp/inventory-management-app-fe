@@ -14,6 +14,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import { useReactToPrint } from "react-to-print";
 import { formatDate } from "../../helpers/dateHelpers";
 import { formatIDR } from "../../helpers/currencyHelpers";
+import { sum } from "../../helpers/calculationHelpers";
 
 export default function PrintInvoiceDetail(props: { invoice: Invoice }) {
   const [open, setOpen] = useState(false);
@@ -23,6 +24,36 @@ export default function PrintInvoiceDetail(props: { invoice: Invoice }) {
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
+
+  const arrayOfTotal = props.invoice?.inventory?.inventoryItems?.map(
+    (inventoryItem: InventoryItem) => {
+      return inventoryItem?.quantity * inventoryItem?.transactionItem?.price;
+    }
+  );
+
+  const arrayOfDiscount = props.invoice?.inventory?.inventoryItems?.map(
+    (inventoryItem: InventoryItem) => {
+      return (
+        (inventoryItem?.quantity *
+          inventoryItem?.transactionItem?.price *
+          inventoryItem?.transactionItem?.discount) /
+        100
+      );
+    }
+  );
+
+  const arrayOfTax = props.invoice?.inventory?.inventoryItems?.map(
+    (inventoryItem: InventoryItem) => {
+      return (
+        (inventoryItem?.quantity *
+          inventoryItem?.transactionItem?.price *
+          inventoryItem?.transactionItem?.tax) /
+        100
+      );
+    }
+  );
+
+  const total = sum(arrayOfTotal) - sum(arrayOfDiscount) + sum(arrayOfTax);
 
   return (
     <>
@@ -100,8 +131,8 @@ export default function PrintInvoiceDetail(props: { invoice: Invoice }) {
               <Stack direction="row" justifyContent="space-between" spacing={8}>
                 {/* LEFT */}
                 <Stack width={1}>
-                  <Typography color="primary">
-                    <b>PT SAMPLE SPECIAL</b>
+                  <Typography color="primary" fontWeight="bold">
+                    PT SAMPLE SPECIAL
                   </Typography>
                   <Typography fontSize={12}>
                     Jl. HR Rasuna Said No. 343
@@ -134,11 +165,15 @@ export default function PrintInvoiceDetail(props: { invoice: Invoice }) {
                     borderColor="divider"
                     padding={0.8}
                     marginTop={2}
+                    minHeight={50}
                   >
-                    <Typography fontSize={12}>
+                    <Typography
+                      fontSize={12}
+                      sx={{ textTransform: "capitalize" }}
+                    >
                       SOLD TO :
                       <br />
-                      SAMPLE INDONESIA, PT.
+                      {props.invoice?.transaction?.contact?.name}
                     </Typography>
                   </Box>
                   <Box
@@ -146,16 +181,14 @@ export default function PrintInvoiceDetail(props: { invoice: Invoice }) {
                     borderColor="divider"
                     padding={0.8}
                     marginTop={0.8}
+                    minHeight={100}
                   >
                     <Typography fontSize={12}>
-                      DELIVERED TO : SAMPLE INDONESIA, PT.
+                      DELIVERED TO :
                       <br />
-                      JL. IMAM BONJOL NO. 60 JAKARTA PUSAT 10221
-                      <br />
-                      INDONESIA
-                      <br />
-                      <br />
-                      Up. Mr. Dimas Prasetyo
+                      {props.invoice?.transaction?.contact?.address},{" "}
+                      {props.invoice?.transaction?.contact?.province},{" "}
+                      {props.invoice?.transaction?.contact?.city}
                     </Typography>
                   </Box>
                 </Stack>
@@ -184,19 +217,16 @@ export default function PrintInvoiceDetail(props: { invoice: Invoice }) {
                       <br />
                       DATE
                       <br />
-                      P/O NO
+                      NO. S/O
                       <br />
-                      TERMS
-                      <br />
-                      PAGE NUMBER
+                      TGL JATUH TEMPO
                     </Typography>
                     <Typography fontSize={12}>
                       : {props.invoice?.number}
                       <br />: {formatDate(props.invoice?.date, "DD MMMM YYYY")}
                       <br />: {props.invoice?.transaction?.number}
-                      <br />
-                      : Cash/Tunai
-                      <br /> : 1
+                      <br />:{" "}
+                      {formatDate(props.invoice?.dueDate, "DD MMMM YYYY")}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -204,41 +234,38 @@ export default function PrintInvoiceDetail(props: { invoice: Invoice }) {
               {/* ----- END OF INVOICE HEADER ----- */}
 
               {/* TABLE */}
-              <Table size="sm" borderAxis="both">
+              <Table size="sm" borderAxis="both" sx={{ fontSize: 12 }}>
                 <thead style={{ backgroundColor: "primary" }}>
                   <tr>
-                    <th style={{ fontSize: 12 }}>Produk</th>
-                    <th style={{ fontSize: 12 }}>Quantity</th>
-                    <th style={{ fontSize: 12 }}>Harga</th>
-                    <th style={{ fontSize: 12 }}>Diskon</th>
-                    <th style={{ fontSize: 12 }}>Pajak</th>
-                    <th style={{ fontSize: 12, textAlign: "right" }}>Total</th>
+                    <th>Produk</th>
+                    <th style={{ width: 70 }}>Quantity</th>
+                    <th>Harga</th>
+                    <th style={{ width: 70 }}>Diskon</th>
+                    <th style={{ width: 70 }}>Pajak</th>
+                    <th style={{ textAlign: "right" }}>Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   {props.invoice?.inventory?.inventoryItems?.map(
-                    (inventoryItem: InventoryItem, index: number) => (
-                      <tr key={index}>
-                        <td style={{ fontSize: 12 }}>
-                          {inventoryItem?.product?.name}
-                        </td>
-                        <td style={{ fontSize: 12 }}>
-                          {inventoryItem?.quantity}
-                        </td>
-                        <td style={{ fontSize: 12 }}>
-                          {formatIDR(inventoryItem?.transactionItem?.price)}
-                        </td>
-                        <td style={{ fontSize: 12 }}>
-                          {inventoryItem?.transactionItem?.discount}%
-                        </td>
-                        <td style={{ fontSize: 12 }}>
-                          {inventoryItem?.transactionItem?.tax}%
-                        </td>
-                        <td style={{ fontSize: 12, textAlign: "right" }}>
-                          Total
-                        </td>
-                      </tr>
-                    )
+                    (inventoryItem: InventoryItem, index: number) => {
+                      const total =
+                        inventoryItem?.quantity *
+                        inventoryItem?.transactionItem?.price;
+                      return (
+                        <tr key={index}>
+                          <td>{inventoryItem?.product?.name}</td>
+                          <td>{inventoryItem?.quantity}</td>
+                          <td>
+                            {formatIDR(inventoryItem?.transactionItem?.price)}
+                          </td>
+                          <td>{inventoryItem?.transactionItem?.discount}%</td>
+                          <td>{inventoryItem?.transactionItem?.tax}%</td>
+                          <td style={{ textAlign: "right" }}>
+                            {formatIDR(total)}
+                          </td>
+                        </tr>
+                      );
+                    }
                   )}
                   {/* SUB TOTAL */}
                   <tr>
@@ -246,68 +273,48 @@ export default function PrintInvoiceDetail(props: { invoice: Invoice }) {
                       colSpan={4}
                       rowSpan={5}
                       style={{ borderLeft: 0, borderBottom: 0, fontSize: 11 }}
-                    >
-                      IMPORTANT NOTE:
-                      <ul>
-                        <li>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit.
-                        </li>
-                        <li>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit.
-                        </li>
-                        <li>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit.
-                        </li>
-                        <li>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit.
-                        </li>
-                      </ul>
-                    </td>
-                    <td style={{ fontSize: 12, fontWeight: "bold" }}>
-                      Sub Total
-                    </td>
+                    ></td>
+                    <td style={{ fontWeight: "bold" }}>Sub Total</td>
                     <td
                       style={{
-                        fontSize: 12,
                         fontWeight: "bold",
                         textAlign: "right",
                       }}
                     >
-                      Rp 000.000,00
+                      {formatIDR(sum(arrayOfTotal))}
                     </td>
                   </tr>
                   {/* DISCOUNT TOTAL */}
                   <tr>
-                    <td style={{ fontSize: 12, fontWeight: "bold" }}>Diskon</td>
+                    <td style={{ fontWeight: "bold" }}>Diskon</td>
                     <td
                       style={{
-                        fontSize: 12,
                         textAlign: "right",
                         fontWeight: "bold",
                       }}
                     >
-                      Rp 000.000,00
+                      {formatIDR(sum(arrayOfDiscount))}
                     </td>
                   </tr>
                   {/* TAX TOTAL */}
                   <tr>
-                    <td style={{ fontSize: 12 }}>
+                    <td>
                       <Typography fontWeight="bold">PPN 11%</Typography>
                     </td>
-                    <td style={{ fontSize: 12, textAlign: "right" }}>
-                      <Typography fontWeight="bold">Rp 000.000,00</Typography>
+                    <td style={{ textAlign: "right" }}>
+                      <Typography fontWeight="bold">
+                        {formatIDR(sum(arrayOfTax))}
+                      </Typography>
                     </td>
                   </tr>
                   <tr>
-                    <td style={{ fontSize: 12 }}>
+                    <td>
                       <Typography fontWeight="bold">TOTAL </Typography>
                     </td>
-                    <td style={{ fontSize: 12, textAlign: "right" }}>
-                      <Typography fontWeight="bold">Rp 000.000,00</Typography>
+                    <td style={{ textAlign: "right" }}>
+                      <Typography fontWeight="bold">
+                        {formatIDR(total)}
+                      </Typography>
                     </td>
                   </tr>
                 </tbody>

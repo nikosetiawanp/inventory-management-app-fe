@@ -45,7 +45,6 @@ export default function ProductHistoryTab() {
 
   useEffect(() => {
     refetch();
-    console.log(productHistoryQuery?.data);
   }, [startDate, endDate]);
 
   return (
@@ -53,7 +52,7 @@ export default function ProductHistoryTab() {
       {/* FILTERS */}
       <Stack direction={"row"} gap={2} width={1} alignItems={"end"}>
         {/* <ChecklistFilter
-          data={contacts}
+          data={contactsQuery?.data}
           includedData={selectedContacts}
           setIncludedData={setSelectedContacts}
           label={"Vendor"}
@@ -133,17 +132,17 @@ export default function ProductHistoryTab() {
                           Keterangan
                         </Button>
                       </th>
-                      <th>
+                      <th style={{ textAlign: "center" }}>
                         <Button size="sm" variant="plain" color="neutral">
                           Masuk
                         </Button>
                       </th>
-                      <th>
+                      <th style={{ textAlign: "center" }}>
                         <Button size="sm" variant="plain" color="neutral">
                           Keluar
                         </Button>
                       </th>
-                      <th>
+                      <th style={{ textAlign: "center" }}>
                         <Button size="sm" variant="plain" color="neutral">
                           Saldo
                         </Button>
@@ -165,7 +164,7 @@ export default function ProductHistoryTab() {
                       <td></td>
                       <td></td>
                       <td></td>
-                      <td style={{ paddingLeft: 15 }}>
+                      <td style={{ paddingLeft: 15, textAlign: "center" }}>
                         <b>
                           {productHistoryQuery?.data[index].initialQuantity}
                         </b>
@@ -188,17 +187,23 @@ export default function ProductHistoryTab() {
                             <td style={{ paddingLeft: 15 }}>
                               <Typography>{history?.description}</Typography>
                             </td>{" "}
-                            <td style={{ paddingLeft: 15 }}>
+                            <td
+                              style={{ paddingLeft: 15, textAlign: "center" }}
+                            >
                               <Typography color="success">
                                 {history?.type == "A" ? history?.quantity : 0}
                               </Typography>
                             </td>
-                            <td style={{ paddingLeft: 15 }}>
+                            <td
+                              style={{ paddingLeft: 15, textAlign: "center" }}
+                            >
                               <Typography color="danger">
                                 {history?.type == "D" ? history?.quantity : 0}
                               </Typography>
                             </td>
-                            <td style={{ paddingLeft: 15 }}>
+                            <td
+                              style={{ paddingLeft: 15, textAlign: "center" }}
+                            >
                               {arrayOfHistoryQuantity &&
                                 product?.initialQuantity +
                                   sum(
@@ -218,12 +223,12 @@ export default function ProductHistoryTab() {
                       </td>
                       <td></td>
                       <td></td>
-                      <td style={{ paddingLeft: 15 }}>
+                      <td style={{ paddingLeft: 15, textAlign: "center" }}>
                         <Typography color="success">
                           {sum(arrayOfArrivalQuantity)}
                         </Typography>
                       </td>
-                      <td style={{ paddingLeft: 15 }}>
+                      <td style={{ paddingLeft: 15, textAlign: "center" }}>
                         <Typography color="danger">
                           {sum(arrayOfDepartureQuantity)}
                         </Typography>

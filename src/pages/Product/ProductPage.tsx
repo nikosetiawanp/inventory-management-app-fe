@@ -1,7 +1,7 @@
 import { Button, Sheet, Stack, Table, Typography } from "@mui/joy";
 import Drawer from "../../components/Drawer";
 import { useState } from "react";
-import { Alert, Product } from "../../interfaces/interfaces";
+import { Product } from "../../interfaces/interfaces";
 import { useQuery } from "react-query";
 import axios from "axios";
 import SearchFilter from "../../components/filters/SearchFilter";

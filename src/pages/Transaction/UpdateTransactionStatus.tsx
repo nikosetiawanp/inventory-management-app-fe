@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useNotification } from "../../App";
 
 export default function UpdateTransactionStatus(props: {
   refetch(): any;
@@ -20,8 +21,8 @@ export default function UpdateTransactionStatus(props: {
   dialogOpen: boolean;
   setDialogOpen: any;
 }) {
+  const { triggerAlert } = useNotification();
   const [open, setOpen] = useState(false);
-
   const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
   const queryClient = useQueryClient();
   const updateStatus = useMutation(
@@ -35,20 +36,20 @@ export default function UpdateTransactionStatus(props: {
         contactId: data?.contactId,
         type: props.transaction.type,
       };
-      console.log(dataToSubmit);
 
       try {
         const response = await axios.put(
           BACKEND_URL + "transactions/" + data.id,
           dataToSubmit
         );
+        triggerAlert({ message: "Data berhasil diapprove", color: "success" });
         props.refetch();
         setOpen(false);
         props.setDialogOpen(false);
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
+        triggerAlert({ message: `Error: ${error.message}`, color: "danger" });
         console.log(error);
-        throw new Error("Network response was not ok");
       }
     },
     {

@@ -19,6 +19,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import InventoryDetailRow from "./InventoryDetailRow";
 import { useNotification } from "../../App";
+import PrintInventoryDetail from "./PrintInventoryDetail";
 
 export default function InventoryDetailDialog(props: {
   open: boolean;
@@ -156,6 +157,7 @@ export default function InventoryDetailDialog(props: {
               </Stack>
               {/* BUTTONS */}
               <Stack direction="row" alignItems={"center"} gap={2}>
+                <PrintInventoryDetail inventory={props.inventory} />
                 <Button
                   variant="solid"
                   onClick={() => handleSubmit(onSubmit as any)}

@@ -1,10 +1,9 @@
-import { Button, IconButton, Sheet, Stack, Table, Typography } from "@mui/joy";
+import { Button, Sheet, Stack, Table, Typography } from "@mui/joy";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 
-import { Settings } from "@mui/icons-material";
 import { Product, ProductHistory } from "../../interfaces/interfaces";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
 
@@ -90,30 +89,25 @@ export default function ProductSummaryTab() {
                     Produk
                   </Button>
                 </th>
-                <th>
+                <th style={{ textAlign: "center" }}>
                   <Button size="sm" variant="plain" color="neutral">
                     Awal
                   </Button>
                 </th>
-                <th>
+                <th style={{ textAlign: "center" }}>
                   <Button size="sm" variant="plain" color="neutral">
                     Masuk
                   </Button>
                 </th>
-                <th>
+                <th style={{ textAlign: "center" }}>
                   <Button size="sm" variant="plain" color="neutral">
                     Keluar
                   </Button>
                 </th>
-                <th>
+                <th style={{ textAlign: "center" }}>
                   <Button size="sm" variant="plain" color="neutral">
                     Total
                   </Button>
-                </th>
-                <th style={{ textAlign: "center", width: 50 }}>
-                  <IconButton size="sm">
-                    <Settings fontSize="small" />
-                  </IconButton>
                 </th>
               </tr>
             </thead>
@@ -135,20 +129,20 @@ export default function ProductSummaryTab() {
                   return (
                     <tr>
                       <td style={{ paddingLeft: 15 }}>{product.name}</td>
-                      <td style={{ paddingLeft: 15 }}>
+                      <td style={{ textAlign: "center" }}>
                         {product.initialQuantity}
                       </td>
-                      <td style={{ paddingLeft: 15 }}>
+                      <td style={{ textAlign: "center" }}>
                         <Typography color="success">
                           {sum(arrayOfArrivalQuantity)}
                         </Typography>
                       </td>
-                      <td style={{ paddingLeft: 15 }}>
+                      <td style={{ textAlign: "center" }}>
                         <Typography color="danger">
                           {sum(arrayOfDepartureQuantity)}
                         </Typography>
                       </td>
-                      <td style={{ paddingLeft: 15 }}>
+                      <td style={{ textAlign: "center" }}>
                         <b>{product.currentQuantity}</b>
                       </td>
                     </tr>

@@ -31,7 +31,6 @@ export default function ApproveTransaction(props: {
         contactId: data?.contactId,
         type: props.transaction.type,
       };
-      console.log(dataToSubmit);
 
       try {
         const response = await axios.put(
