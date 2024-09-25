@@ -9,7 +9,6 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import { Contact } from "../../interfaces/interfaces";
 import DeleteRecord from "../../components/DeleteRecord";
-import AlertDialogModal from "../../components/AlertModal";
 
 export default function MoreVertContactButton(props: { contact: Contact }) {
   return (

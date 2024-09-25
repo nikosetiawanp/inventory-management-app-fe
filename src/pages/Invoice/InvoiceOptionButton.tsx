@@ -15,7 +15,7 @@ import {
 import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Inventory, Invoice } from "../../interfaces/interfaces";
+import { Invoice } from "../../interfaces/interfaces";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 

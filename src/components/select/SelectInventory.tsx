@@ -12,10 +12,9 @@ import {
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import axios from "axios";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useState } from "react";
+
 import { Inventory } from "../../interfaces/interfaces";
 
 export default function SelectInventory(props: {
@@ -25,9 +24,6 @@ export default function SelectInventory(props: {
 }) {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
-  const selectedYear = formattedDate.split("-")[0];
-  const selectedMonth = formattedDate.split("-")[1];
 
   return (
     <>

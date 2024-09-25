@@ -7,7 +7,7 @@ import { useQuery } from "react-query";
 import { Settings } from "@mui/icons-material";
 import Drawer from "../../components/Drawer";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import { Alert, Invoice } from "../../interfaces/interfaces";
+import { Invoice } from "../../interfaces/interfaces";
 import InvoiceRow from "./InvoiceRow";
 import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintInvoices from "./PrintInvoices";

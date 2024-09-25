@@ -1,14 +1,11 @@
-import { Chip, IconButton, Input } from "@mui/joy";
+import { Chip, Input } from "@mui/joy";
 import { useState } from "react";
 import {
   Inventory,
   InventoryItem,
   TransactionItem,
 } from "../../interfaces/interfaces";
-import { SubmitHandler, useForm } from "react-hook-form";
-
-import { useMutation, useQueryClient } from "react-query";
-import axios from "axios";
+import { useForm } from "react-hook-form";
 
 export default function InventoryDetailRow(props: {
   index: number;
@@ -16,48 +13,11 @@ export default function InventoryDetailRow(props: {
   transactionItems: TransactionItem[];
   inventory: Inventory;
 }) {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
-  const queryClient = useQueryClient();
-
   const {
     register,
-    formState: { errors },
+    formState: {},
   } = useForm<InventoryItem>();
-  const [editing, setEditing] = useState(false);
-
-  const updateInventoryItem = useMutation(
-    async (data: InventoryItem) => {
-      const dataToSubmit = {
-        quantity: data.quantity,
-        productId: props.inventoryItem.productId,
-        inventoryId: props.inventoryItem.inventoryId,
-      };
-
-      try {
-        const response = await axios.patch(
-          BACKEND_URL + "inventory-items/" + props.inventoryItem.id,
-          dataToSubmit
-        );
-        return response;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(`inventoryItems.${props.inventory.id}`);
-      },
-    }
-  );
-
-  const onSubmit: SubmitHandler<InventoryItem> = async (data, event) => {
-    try {
-      await updateInventoryItem.mutateAsync(data);
-      setEditing(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [editing] = useState(false);
 
   return (
     <tr key={props.index}>

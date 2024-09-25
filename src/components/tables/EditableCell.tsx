@@ -1,4 +1,4 @@
-import { TableCell, Paper, InputBase, Menu } from "@mui/material";
+import { TableCell, InputBase, Menu } from "@mui/material";
 import { useState } from "react";
 
 export default function EditableCell() {

@@ -7,7 +7,7 @@ import { useQuery } from "react-query";
 import Drawer from "../../components/Drawer";
 import CreateAccount from "./CreateAccount";
 import RowSkeleton from "../../components/skeletons/RowSkeleton";
-import { Account, Alert } from "../../interfaces/interfaces";
+import { Account } from "../../interfaces/interfaces";
 import SearchFilter from "../../components/filters/SearchFilter";
 
 import ActionMenu from "./ActionMenu";

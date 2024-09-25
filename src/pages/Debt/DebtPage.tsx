@@ -3,7 +3,6 @@ import Drawer from "../../components/Drawer";
 import UnpaidDebtTab from "./UnpaidDebtTab";
 import MonthlyReportTab from "./MonthlyReportTab";
 import MultiVendorReportTab from "./MultiVendorReportTab";
-import { useState } from "react";
 
 export default function DebtPage(props: { type: "D" | "R" }) {
   return (
