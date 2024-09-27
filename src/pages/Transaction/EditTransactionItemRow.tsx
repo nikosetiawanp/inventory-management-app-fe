@@ -24,7 +24,7 @@ export default function EditTransactionItemRow(props: {
   inventories: Inventory[];
   transaction: Transaction;
 }) {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const queryClient = useQueryClient();
   const { register, handleSubmit } = useForm();
 
@@ -38,8 +38,6 @@ export default function EditTransactionItemRow(props: {
         transactionId: props.transactionItem?.transactionId,
         productId: props.transactionItem?.productId,
       };
-
-      console.log(dataToSubmit);
 
       try {
         const response = await axios.put(

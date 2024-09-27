@@ -48,7 +48,7 @@ export default function CreateInvoice(props: {
   } = useForm<any>();
 
   // CREATE INVOICE
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const queryClient = useQueryClient();
   const createInvoice = useMutation(
     async (data: any) => {
@@ -77,11 +77,8 @@ export default function CreateInvoice(props: {
       inventoryId: selectedInventory?.id,
     };
 
-    console.log(dataToSubmit);
-
     try {
       await createInvoice.mutateAsync(dataToSubmit);
-      console.log(dataToSubmit);
       setOpen(false);
     } catch (error) {
       console.log("Mutation Error:", error);

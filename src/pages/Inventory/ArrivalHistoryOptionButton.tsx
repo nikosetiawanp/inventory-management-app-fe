@@ -30,7 +30,7 @@ const DeleteInventory = (props: { inventory: Inventory }) => {
     setOpen(false);
   };
 
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const queryClient = useQueryClient();
   const deleteInventory = useMutation(
     async (id: number | any) => {

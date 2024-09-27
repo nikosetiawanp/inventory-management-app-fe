@@ -20,7 +20,7 @@ export default function CompletedTransactionPage(props: { type: "P" | "S" }) {
   const formattedEndDate = endDate ? dayjs(endDate).format("YYYY-MM-DD") : "";
 
   // FETCHING PRODUCTS
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const getInvoices = async () => {
     const response = await axios.get(
       BACKEND_URL +

@@ -21,8 +21,6 @@ export default function PrintInventoryDetail(props: { inventory: Inventory }) {
     content: () => printRef.current,
   });
 
-  console.log(props.inventory);
-
   return (
     <>
       <Button

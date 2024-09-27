@@ -26,7 +26,7 @@ export default function TransactionTab(props: {
   const [endDate, setEndDate] = useState(null);
 
   // FETCHING PRODUCTS
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +

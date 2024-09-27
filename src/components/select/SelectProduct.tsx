@@ -27,7 +27,7 @@ export default function SelectProduct(props: {
   const [open, setOpen] = useState(false);
 
   // GET PURCHASES
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const getProducts = async () => {
     const response = await axios.get(BACKEND_URL + "products");
     return response.data.data;

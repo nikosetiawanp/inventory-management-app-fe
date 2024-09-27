@@ -20,7 +20,7 @@ export default function DeleteTransactionItemButton(props: {
   transaction: Transaction;
   transactionItem: TransactionItem;
 }) {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);

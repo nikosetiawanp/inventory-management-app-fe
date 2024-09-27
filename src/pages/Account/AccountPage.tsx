@@ -15,7 +15,7 @@ import ActionMenu from "./ActionMenu";
 export default function AccountPage() {
   const [searchInput, setSearchInput] = useState("");
   // FETCHING DATA
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const getAccounts = async () => {
     const response = await axios.get(BACKEND_URL + "accounts/");
     return response.data.data;
@@ -84,10 +84,10 @@ export default function AccountPage() {
             </thead>
 
             <tbody>
-              {accountsQuery.isLoading ? (
+              {accountsQuery?.isLoading ? (
                 <RowSkeleton rows={15} columns={6} />
               ) : (
-                accountsQuery.data.map((account: Account, index: number) => (
+                accountsQuery?.data?.map((account: Account, index: number) => (
                   <tr key={index}>
                     {/* <td style={{ paddingLeft: 15 }}>{account.id}</td> */}
                     <td style={{ paddingLeft: 15 }}>{account.number}</td>

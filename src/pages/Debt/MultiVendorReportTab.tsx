@@ -16,7 +16,7 @@ import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintMultiVendorReportModal from "./PrintMultiVendorReportModal";
 
 export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   // DATE
   const [startDate, setStartDate] = useState(null);
@@ -40,7 +40,6 @@ export default function MultiVendorReportTab(props: { type: "D" | "R" }) {
         `&endDate=${formatDate(endDate, "YYYY-MM-DD")}` +
         selectedConctactsParam
     );
-    console.log(response.data);
 
     return response.data;
   };

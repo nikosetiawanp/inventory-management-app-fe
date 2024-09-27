@@ -55,7 +55,7 @@ export default function CreateTransaction(props: { type: "P" | "S" }) {
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
 
   // POST
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const queryClient = useQueryClient();
   const createTransaction = useMutation(
     async (data: Transaction) => {

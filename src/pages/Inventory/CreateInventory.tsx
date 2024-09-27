@@ -36,7 +36,7 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
     formState: { errors },
   } = useForm<Inventory>();
 
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [open, setOpen] = useState(false);
   // VENDOR
   const [selectedTransaction, setSelectedTransaction] =
@@ -78,7 +78,6 @@ export default function CreateInventoryArrival(props: { type: "A" | "D" }) {
       transactionId: selectedTransaction?.id,
     };
     try {
-      console.log(dataToSubmit);
       await createInventory.mutateAsync(dataToSubmit as any);
     } catch (error) {
       console.log("Mutation Error:", error);

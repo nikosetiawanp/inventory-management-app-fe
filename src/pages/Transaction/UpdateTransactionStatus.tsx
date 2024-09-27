@@ -23,7 +23,7 @@ export default function UpdateTransactionStatus(props: {
 }) {
   const { triggerAlert } = useNotification();
   const [open, setOpen] = useState(false);
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const queryClient = useQueryClient();
   const updateStatus = useMutation(
     async (data: Transaction) => {

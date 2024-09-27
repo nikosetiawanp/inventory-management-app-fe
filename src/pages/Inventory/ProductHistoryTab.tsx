@@ -14,7 +14,7 @@ import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintProductHistory from "./PrintProductHistory";
 
 export default function ProductHistoryTab() {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   // DATE
   const [startDate, setStartDate] = useState(null);

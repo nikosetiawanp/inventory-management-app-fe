@@ -16,7 +16,7 @@ import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintMonthlyReportModal from "./PrintMonthlyReportModal";
 
 export default function MonthlyReportTab(props: { type: "D" | "R" }) {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null); // const [selectedYear, setSelectedYear] = useState(dayjs().format("YYYY"));
@@ -30,7 +30,6 @@ export default function MonthlyReportTab(props: { type: "D" | "R" }) {
         `&startDate=${formatDate(startDate, "YYYY-MM-DD")}` +
         `&endDate=${formatDate(endDate, "YYYY-MM-DD")}`
     );
-    console.log(response.data);
     return response.data;
   };
 

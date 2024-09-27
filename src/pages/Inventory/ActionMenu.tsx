@@ -41,7 +41,7 @@ export default function ActionMenu(props: { inventory: Inventory }) {
   const { triggerAlert } = useNotification();
   const [updateOpen, setUpdateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const queryClient = useQueryClient();
 
@@ -144,7 +144,6 @@ export default function ActionMenu(props: { inventory: Inventory }) {
         transactionId: props.inventory?.transactionId,
       };
       try {
-        console.log(dataToSubmit);
         await updateInventory.mutateAsync(dataToSubmit as any);
       } catch (error) {
         console.log("Mutation Error:", error);

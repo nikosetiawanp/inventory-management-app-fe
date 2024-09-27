@@ -14,7 +14,8 @@ export default function ContactTab(props: { type: "V" | "C" }) {
   const [searchInput, setSearchInput] = useState("");
 
   //   GET DATA
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const getContacts = async () => {
     const response = await axios.get(
       BACKEND_URL + `contacts?type=${props.type}`

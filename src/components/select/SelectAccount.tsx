@@ -24,10 +24,9 @@ export default function SelectAccount(props: {
   const [open, setOpen] = useState(false);
 
   // GET PURCHASES
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const getAccounts = async () => {
     const response = await axios.get(BACKEND_URL + "accounts/");
-    console.log(response.data.data);
 
     return response.data.data;
   };

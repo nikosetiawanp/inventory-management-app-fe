@@ -41,7 +41,7 @@ export default function ActionMenu(props: { invoice: Invoice }) {
   const { triggerAlert } = useNotification();
   const [updateOpen, setUpdateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const queryClient = useQueryClient();
   const { mutate: deleteData } = useMutation(
@@ -143,10 +143,9 @@ export default function ActionMenu(props: { invoice: Invoice }) {
 
       try {
         await updateInvoice.mutateAsync(dataToSubmit);
-        console.log(dataToSubmit);
         setUpdateOpen(false);
       } catch (error) {
-        console.log("Mutation Error:", error);
+        console.log(error);
       }
       event?.target.reset();
       setUpdateOpen(false);

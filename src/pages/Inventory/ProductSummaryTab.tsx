@@ -13,7 +13,7 @@ import DateFilterCopy from "../../components/filters/DateFilterCopy";
 import PrintProductSummary from "./PrintProductSummary";
 
 export default function ProductSummaryTab() {
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   // DATE
   const [startDate, setStartDate] = useState(null);
@@ -44,7 +44,6 @@ export default function ProductSummaryTab() {
 
   useEffect(() => {
     refetch();
-    console.log(productHistoryQuery?.data);
   }, [startDate, endDate]);
 
   return (

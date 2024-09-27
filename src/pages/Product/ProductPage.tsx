@@ -13,7 +13,9 @@ import ActionMenu from "./ActionMenu";
 
 export default function ProductPage() {
   // FETCHING PRODUCTS
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  console.log(BACKEND_URL);
+
   const getProducts = async () => {
     const response = await axios.get(BACKEND_URL + "products/");
     return response.data.data;
@@ -105,7 +107,7 @@ export default function ProductPage() {
                   {productsQuery.isLoading ? (
                     <RowSkeleton rows={15} columns={4} />
                   ) : (
-                    filteredProductsQuery.map(
+                    filteredProductsQuery?.map(
                       (product: Product, index: number) => (
                         <tr key={index}>
                           <td style={{ paddingLeft: 15 }}>{product.code}</td>

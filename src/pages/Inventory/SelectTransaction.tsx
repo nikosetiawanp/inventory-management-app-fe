@@ -30,7 +30,7 @@ export default function SelectPurchase(props: {
   const type = props.type == "A" ? "P" : "D";
 
   // GET TRANSACTIONS
-  const BACKEND_URL = "http://127.0.0.1:8000/api/v1/";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const getTransactions = async () => {
     const response = await axios.get(
       BACKEND_URL +
@@ -41,7 +41,6 @@ export default function SelectPurchase(props: {
         `&endDate=${endDate ? formatDate(endDate, "YYYY-MM-DD") : ""}` +
         `&isDone=0`
     );
-    console.log(response.data.data);
 
     return response.data.data;
   };
