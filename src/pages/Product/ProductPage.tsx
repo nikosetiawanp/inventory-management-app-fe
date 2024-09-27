@@ -14,7 +14,6 @@ import ActionMenu from "./ActionMenu";
 export default function ProductPage() {
   // FETCHING PRODUCTS
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  console.log(BACKEND_URL);
 
   const getProducts = async () => {
     const response = await axios.get(BACKEND_URL + "products/");
